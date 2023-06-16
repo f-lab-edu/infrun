@@ -6,6 +6,7 @@ public enum ErrorCode {
     INVALID_PARAMETER("요청값이 올바르지 않습니다."),
 
     // MEMBER
+    DUPLICATED_NICKNAME("이미 존재하는 닉네임입니다."),
     DUPLICATED_EMAIL("이미 존재하는 이메일입니다.");
 
     private final String message;
