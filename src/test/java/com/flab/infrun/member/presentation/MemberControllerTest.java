@@ -68,7 +68,7 @@ final class MemberControllerTest {
     }
 
     @Test
-    @DisplayName("회원가입 시 이메일이 중복이면 400 상태코드와 에러 메시지를 반환한다")
+    @DisplayName("회원가입 시 닉네임 또는 이메일이 중복이면 400 상태코드와 에러 메시지를 반환한다")
     void register_duplicateEmail() {
         signup(createCorrectRequest());
         var response = signup(createCorrectRequest());

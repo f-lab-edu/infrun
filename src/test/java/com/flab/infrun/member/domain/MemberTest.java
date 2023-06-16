@@ -59,6 +59,12 @@ final class MemberTest {
             return persistence.values().stream()
                 .anyMatch(member -> member.getEmail().equals(email));
         }
+
+        @Override
+        public boolean existsByNickname(final String nickname) {
+            return persistence.values().stream()
+                .anyMatch(member -> member.getNickname().equals(nickname));
+        }
     }
 
     private static final class MemberFixture {
