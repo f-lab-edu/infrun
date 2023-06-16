@@ -8,4 +8,6 @@ public interface MemberJpaRepository extends JpaRepository<Member, Long> {
     Member save(Member member);
 
     boolean existsByEmail(String email);
+
+    boolean existsByNickname(String nickname);
 }
