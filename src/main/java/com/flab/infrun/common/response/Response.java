@@ -12,11 +12,11 @@ public record Response<T>(
     ErrorCode errorCode
 ) {
 
-    public static <T> Response<T> success(T data) {
+    public static <T> Response<T> success(final T data) {
         return new Response<>(true, data, null);
     }
 
-    public static <T> Response<T> fail(T data, ErrorCode errorCode) {
+    public static <T> Response<T> fail(final T data, final ErrorCode errorCode) {
         return new Response<>(false, data, errorCode);
     }
 }
