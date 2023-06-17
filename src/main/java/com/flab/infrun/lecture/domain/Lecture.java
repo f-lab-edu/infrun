@@ -1,9 +1,11 @@
 package com.flab.infrun.lecture.domain;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 
 @Getter
+@EqualsAndHashCode
 public class Lecture {
 
     private Long id;
@@ -19,7 +21,11 @@ public class Lecture {
         this.introduce = introduce;
     }
 
-    public Lecture of(String name, int price, String introduce) {
+    public static Lecture of(String name, int price, String introduce) {
         return new Lecture(name, price, introduce);
+    }
+
+    public void setId(long key) {
+        this.id = key;
     }
 }
