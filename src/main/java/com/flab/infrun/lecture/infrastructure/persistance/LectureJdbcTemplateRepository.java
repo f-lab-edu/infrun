@@ -4,7 +4,6 @@ import com.flab.infrun.lecture.domain.Lecture;
 import java.util.Map;
 import java.util.Optional;
 import javax.sql.DataSource;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -31,7 +30,15 @@ public class LectureJdbcTemplateRepository {
     }
 
     private RowMapper<Lecture> itemRowMapper() {
-        return BeanPropertyRowMapper.newInstance(Lecture.class);
+        return (rs, rowNum) -> {
+            Lecture lecture = Lecture.of(
+                rs.getString("name"),
+                rs.getInt("price"),
+                rs.getString("introduce")
+            );
+            lecture.setId(rs.getLong("id"));
+            return lecture;
+        };
     }
 
     public Lecture save(Lecture entity) {
