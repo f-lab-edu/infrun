@@ -8,10 +8,12 @@ import com.flab.infrun.member.domain.MemberRepository;
 import com.flab.infrun.member.domain.exception.DuplicatedEmailException;
 import com.flab.infrun.member.domain.exception.DuplicatedNicknameException;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 final class MemberProcessorTest {
 
@@ -21,7 +23,7 @@ final class MemberProcessorTest {
     @BeforeEach
     void setUp() {
         repository = new StubMemberRepository();
-        processor = new MemberProcessor(repository);
+        processor = new MemberProcessor(repository, new FakePasswordEncoder());
     }
 
     @Test
@@ -75,6 +77,19 @@ final class MemberProcessorTest {
         public boolean existsByNickname(final String nickname) {
             return persistence.values().stream()
                 .anyMatch(member -> member.getNickname().equals(nickname));
+        }
+    }
+
+    private static class FakePasswordEncoder implements PasswordEncoder {
+
+        @Override
+        public String encode(final CharSequence rawPassword) {
+            return rawPassword.toString();
+        }
+
+        @Override
+        public boolean matches(final CharSequence rawPassword, final String encodedPassword) {
+            return Objects.equals(rawPassword.toString(), encodedPassword);
         }
     }
 }
