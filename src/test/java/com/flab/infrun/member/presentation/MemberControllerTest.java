@@ -22,7 +22,7 @@ final class MemberControllerTest {
     private int port;
 
     public static SignupRequest createCorrectRequest() {
-        return new SignupRequest("nickname", "test@test.com", "password");
+        return new SignupRequest("nickname", "test@test.com", "1234Qwer!");
     }
 
     public static SignupRequest createIncorrectRequest() {
