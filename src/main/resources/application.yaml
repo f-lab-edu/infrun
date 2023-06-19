@@ -11,7 +11,3 @@ spring:
     username: sa
     password:
     driver-class-name: org.h2.Driver
-  servlet:
-    multipart:
-      max-file-size: 500MB
-      max-request-size: 500MB
