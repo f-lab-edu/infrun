@@ -2,7 +2,9 @@ package com.flab.infrun.lecture.application;
 
 import com.flab.infrun.lecture.application.command.LectureRegisterCommand;
 import com.flab.infrun.lecture.domain.Lecture;
+import com.flab.infrun.lecture.domain.LectureDetail;
 import com.flab.infrun.lecture.domain.LectureVideoFile;
+import com.flab.infrun.lecture.infrastructure.persistance.LectureDetailRepositoryAdapter;
 import com.flab.infrun.lecture.infrastructure.persistance.LectureRepositoryAdapter;
 import com.flab.infrun.lecture.infrastructure.persistance.LectureVideoFileRepositoryAdapter;
 import java.io.IOException;
@@ -19,15 +21,32 @@ import org.springframework.web.multipart.MultipartFile;
 public class LectureProcessor {
 
     private final LectureRepositoryAdapter lectureRepositoryAdapter;
+    private final LectureDetailRepositoryAdapter lectureDetailRepositoryAdapter;
     private final LectureVideoFileRepositoryAdapter lectureVideoFileRepositoryAdapter;
 
-    public Long registerLecture(LectureRegisterCommand lectureRegisterCommand) {
-        Lecture savedLecture = lectureRepositoryAdapter.save(Lecture.of(
+    
+    public long registerLecture(LectureRegisterCommand lectureRegisterCommand) {
+        Lecture savedLecture = getSavedLecture(lectureRegisterCommand);
+
+        savedDetail(lectureRegisterCommand, savedLecture);
+
+        return savedLecture.getId();
+    }
+
+    private Lecture getSavedLecture(LectureRegisterCommand lectureRegisterCommand) {
+        return lectureRepositoryAdapter.save(Lecture.of(
             lectureRegisterCommand.name(),
             lectureRegisterCommand.price(),
             lectureRegisterCommand.introduce()));
-        return savedLecture.getId();
     }
+
+    private void savedDetail(LectureRegisterCommand lectureRegisterCommand, Lecture savedLecture) {
+        lectureRegisterCommand.lectureDetailRequest().forEach(
+            detail -> lectureDetailRepositoryAdapter.save(
+                LectureDetail.of(detail.chapter(), detail.name(),
+                    savedLecture.getId())));
+    }
+
 
     public String uploadFile(MultipartFile lectureVideoFile) {
         //todo-반환값, if, 영상처리, saved 관련부분 개선

@@ -1,5 +1,7 @@
 package com.flab.infrun.lecture.infrastructure.config;
 
+import com.flab.infrun.lecture.infrastructure.persistance.LectureDetailJdbcTemplateRepository;
+import com.flab.infrun.lecture.infrastructure.persistance.LectureDetailRepositoryAdapter;
 import com.flab.infrun.lecture.infrastructure.persistance.LectureJdbcTemplateRepository;
 import com.flab.infrun.lecture.infrastructure.persistance.LectureRepositoryAdapter;
 import com.flab.infrun.lecture.infrastructure.persistance.LectureVideoFileJdbcTemplateRepository;
@@ -14,6 +16,12 @@ public class LecturePersistenceConfig {
     @Bean
     public LectureRepositoryAdapter lectureRepository(DataSource dataSource) {
         return new LectureRepositoryAdapter(new LectureJdbcTemplateRepository(dataSource));
+    }
+
+    @Bean
+    public LectureDetailRepositoryAdapter lectureDetailRepository(DataSource dataSource) {
+        return new LectureDetailRepositoryAdapter(
+            new LectureDetailJdbcTemplateRepository(dataSource));
     }
 
     @Bean
