@@ -5,7 +5,6 @@ import com.flab.infrun.lecture.presentation.request.LectureRegisterRequest;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -19,8 +18,7 @@ public class LectureController {
 
     private final LectureFacade lectureFacade;
 
-    @PostMapping(value = "/lecture", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE,
-        MediaType.APPLICATION_JSON_VALUE})
+    @PostMapping(value = "/lecture")
     //Todo-responseEntity body 로 변경
     public ResponseEntity<Object> registerLecture(
         @RequestPart("lecture") LectureRegisterRequest lecture,
@@ -31,7 +29,7 @@ public class LectureController {
 
         //todo-Role check (Teacher)
 
-        //todo- file도 command로 변경해서 던질 것인지
+        //todo- file도 command로 변경해서 전송
         lectureVideoFile.forEach(lectureFacade::uploadFile);
 
         long lectureId = lectureFacade.registerLecture(lecture.toCommand());
