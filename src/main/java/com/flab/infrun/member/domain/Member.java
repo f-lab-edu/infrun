@@ -1,5 +1,6 @@
 package com.flab.infrun.member.domain;
 
+import com.google.common.annotations.VisibleForTesting;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -46,11 +47,7 @@ public class Member {
         return new Member(nickname, email, password);
     }
 
-    /**
-     * 테스트를 위해 id를 할당하는 메서드
-     *
-     * @param id
-     */
+    @VisibleForTesting
     void assignId(Long id) {
         this.id = id;
     }
