@@ -7,6 +7,7 @@ import com.flab.infrun.member.domain.exception.DuplicatedEmailException;
 import com.flab.infrun.member.domain.exception.DuplicatedNicknameException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class MemberProcessor {
@@ -19,6 +20,7 @@ public class MemberProcessor {
         this.passwordEncoder = passwordEncoder;
     }
 
+    @Transactional
     public Long register(SignupCommand command) {
         validateRegisterMember(command);
 
