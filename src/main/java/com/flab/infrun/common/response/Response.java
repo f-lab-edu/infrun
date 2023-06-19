@@ -18,11 +18,11 @@ public record Response<T>(
         return new Response<>(true, data, null, null);
     }
 
-    public static <T> Response<T> fail(final ErrorCode errorCode) {
-        return new Response<>(false, null, errorCode, null);
+    public static Response<ErrorCode> fail(final ErrorCode errorCode) {
+        return new Response<>(false, null, errorCode, errorCode.getMessage());
     }
 
-    public static <T> Response<T> fail(final ErrorCode errorCode, final String message) {
+    public static Response<ErrorCode> fail(final ErrorCode errorCode, final String message) {
         return new Response<>(false, null, errorCode, message);
     }
 }
