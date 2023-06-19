@@ -13,7 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 class LectureDetailJdbcTemplateRepositoryTest {
 
     @Autowired
-    private LectureDetailRepositoryAdapter repositoryAdapter;
+    private LectureDetailRepository repositoryAdapter;
 
     //todo-Transaction으로 처리
     @Test

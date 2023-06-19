@@ -3,10 +3,10 @@ package com.flab.infrun.lecture.application;
 import com.flab.infrun.lecture.application.command.LectureRegisterCommand;
 import com.flab.infrun.lecture.domain.Lecture;
 import com.flab.infrun.lecture.domain.LectureDetail;
+import com.flab.infrun.lecture.domain.LectureRepository;
 import com.flab.infrun.lecture.domain.LectureVideoFile;
-import com.flab.infrun.lecture.infrastructure.persistance.LectureDetailRepositoryAdapter;
-import com.flab.infrun.lecture.infrastructure.persistance.LectureRepositoryAdapter;
-import com.flab.infrun.lecture.infrastructure.persistance.LectureVideoFileRepositoryAdapter;
+import com.flab.infrun.lecture.domain.LectureVideoFileRepository;
+import com.flab.infrun.lecture.infrastructure.persistance.LectureDetailRepository;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
@@ -20,11 +20,11 @@ import org.springframework.web.multipart.MultipartFile;
 @Component
 public class LectureProcessor {
 
-    private final LectureRepositoryAdapter lectureRepositoryAdapter;
-    private final LectureDetailRepositoryAdapter lectureDetailRepositoryAdapter;
-    private final LectureVideoFileRepositoryAdapter lectureVideoFileRepositoryAdapter;
+    private final LectureRepository lectureRepository;
+    private final LectureDetailRepository lectureDetailRepository;
+    private final LectureVideoFileRepository lectureVideoFileRepository;
 
-    
+
     public long registerLecture(LectureRegisterCommand lectureRegisterCommand) {
         Lecture savedLecture = getSavedLecture(lectureRegisterCommand);
 
@@ -34,7 +34,7 @@ public class LectureProcessor {
     }
 
     private Lecture getSavedLecture(LectureRegisterCommand lectureRegisterCommand) {
-        return lectureRepositoryAdapter.save(Lecture.of(
+        return lectureRepository.save(Lecture.of(
             lectureRegisterCommand.name(),
             lectureRegisterCommand.price(),
             lectureRegisterCommand.introduce()));
@@ -42,7 +42,7 @@ public class LectureProcessor {
 
     private void savedDetail(LectureRegisterCommand lectureRegisterCommand, Lecture savedLecture) {
         lectureRegisterCommand.lectureDetailRequest().forEach(
-            detail -> lectureDetailRepositoryAdapter.save(
+            detail -> lectureDetailRepository.save(
                 LectureDetail.of(detail.chapter(), detail.name(),
                     savedLecture.getId())));
     }
@@ -60,7 +60,7 @@ public class LectureProcessor {
             try (OutputStream os = Files.newOutputStream(filepath)) {
                 os.write(lectureVideoFile.getBytes());
                 //todo-중복 file에 대한 중복 저장 issue
-                saved = lectureVideoFileRepositoryAdapter.save(lectureVideo);
+                saved = lectureVideoFileRepository.save(lectureVideo);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

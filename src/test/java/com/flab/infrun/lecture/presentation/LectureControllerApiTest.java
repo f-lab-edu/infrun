@@ -1,34 +1,62 @@
 package com.flab.infrun.lecture.presentation;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flab.infrun.lecture.presentation.request.LectureDetailRequest;
 import com.flab.infrun.lecture.presentation.request.LectureRegisterRequest;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.web.servlet.MockMvc;
 
-@SpringBootTest
+@SpringBootTest(webEnvironment = WebEnvironment.MOCK)
+@AutoConfigureMockMvc
 class LectureControllerApiTest {
 
-    @Test
-    void 강의_등록() {
+    @Autowired
+    private MockMvc mockMvc;
+    private ObjectMapper mapper = new ObjectMapper();
 
-        //todo- Request 작성 - file 관련 처리
-//        final LectureRegisterRequest request = 강의등록요청_생성();
-//
-//        RestAssured.given()
-//            .log().all()
-//            .contentType(MediaType.APPLICATION_JSON_VALUE)
-//            .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
-//            .body(request)
-//            .when()
-//            .post("/lecture")
-//            .then()
-//            .log().all().extract();
+    @Test
+    void 강의_등록() throws Exception {
+
+        //given
+        MockMultipartFile multipartFile1 = new MockMultipartFile("file", "test.txt",
+            "text/plain", "test file".getBytes(
+            StandardCharsets.UTF_8));
+
+        MockMultipartFile multipartFile2 = new MockMultipartFile("file", "test1.txt",
+            "text/plain", "test file2".getBytes(
+            StandardCharsets.UTF_8));
+
+        LectureRegisterRequest lecture = 강의등록요청_생성();
+        String lectureJson = mapper.writeValueAsString(lecture);
+        MockMultipartFile mockLecture = new MockMultipartFile("lecture", "lecture",
+            "application/json", lectureJson.getBytes(StandardCharsets.UTF_8));
+
+        //when
+        mockMvc.perform(multipart("/lecture")
+                .file(multipartFile1)
+                .file(multipartFile2)
+                .file(mockLecture)
+            )
+            .andDo(print())
+            .andExpect(status().is2xxSuccessful())
+            .andReturn();
 
     }
 
 
     private static LectureRegisterRequest 강의등록요청_생성() {
+
         final String name = "스프링 기본 강의";
         int price = 54000;
         String introduce = "스프링 핵심 코어 강의 입니다.";
@@ -42,4 +70,5 @@ class LectureControllerApiTest {
 
         return new LectureRegisterRequest(name, price, introduce, lectureDetailRequest);
     }
+
 }

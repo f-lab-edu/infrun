@@ -1,15 +1,15 @@
 package com.flab.infrun.lecture.infrastructure.persistance;
 
 import com.flab.infrun.lecture.domain.LectureDetail;
-import com.flab.infrun.lecture.domain.LectureDetailRepository;
 import java.util.Optional;
 
 
-public class LectureDetailRepositoryAdapter implements LectureDetailRepository {
+public class LectureDetailRepository implements
+    com.flab.infrun.lecture.domain.LectureDetailRepository {
 
     private final LectureDetailJdbcTemplateRepository lectureDetailJdbcTemplateRepository;
 
-    public LectureDetailRepositoryAdapter(
+    public LectureDetailRepository(
         LectureDetailJdbcTemplateRepository lectureDetailJdbcTemplateRepository) {
         this.lectureDetailJdbcTemplateRepository = lectureDetailJdbcTemplateRepository;
     }
