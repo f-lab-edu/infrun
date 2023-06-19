@@ -24,7 +24,6 @@ public class CommonExceptionHandler {
         StringBuilder sb = new StringBuilder()
             .append("Request Error")
             .append(" ").append(fieldError.getField())
-            .append(" =").append(fieldError.getRejectedValue())
             .append(" ").append(fieldError.getDefaultMessage());
 
         return ResponseEntity
