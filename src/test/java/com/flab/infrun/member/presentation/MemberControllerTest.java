@@ -16,7 +16,7 @@ import org.springframework.http.MediaType;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 final class MemberControllerTest {
 
-    private static final String REGISTER_MEMBER_URI = "/members/signup";
+    private static final String REGISTER_MEMBER_URI = "/members";
 
     @LocalServerPort
     private int port;
