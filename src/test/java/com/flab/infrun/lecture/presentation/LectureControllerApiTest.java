@@ -36,7 +36,7 @@ class LectureControllerApiTest {
         MockMultipartFile multipartFile2 = new MockMultipartFile("file", "test1.txt",
             "text/plain", "test file2".getBytes(
             StandardCharsets.UTF_8));
-        LectureRegisterRequest lecture = 강의등록요청_생성();
+        LectureRegisterRequest lecture = lectureRequestCreate();
         String lectureJson = mapper.writeValueAsString(lecture);
         MockMultipartFile mockLecture = new MockMultipartFile("lecture", "lecture",
             "application/json", lectureJson.getBytes(StandardCharsets.UTF_8));
@@ -52,7 +52,7 @@ class LectureControllerApiTest {
     }
 
 
-    private static LectureRegisterRequest 강의등록요청_생성() {
+    private static LectureRegisterRequest lectureRequestCreate() {
 
         final String name = "스프링 기본 강의";
         int price = 54000;
