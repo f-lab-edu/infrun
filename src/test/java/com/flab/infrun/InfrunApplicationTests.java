@@ -9,5 +9,4 @@ class InfrunApplicationTests {
     @Test
     void contextLoads() {
     }
-
 }

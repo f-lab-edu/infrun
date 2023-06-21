@@ -19,7 +19,6 @@ public class LectureVideoFileRepositoryAdapter implements LectureVideoFileReposi
         return jdbcTemplateRepository.save(lectureVideoFile);
     }
 
-
     @Override
     public Optional<LectureVideoFile> findById(Long id) {
         return jdbcTemplateRepository.findById(id);

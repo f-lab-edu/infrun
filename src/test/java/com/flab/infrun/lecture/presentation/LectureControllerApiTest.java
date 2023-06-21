@@ -9,6 +9,7 @@ import com.flab.infrun.lecture.presentation.request.LectureDetailRequest;
 import com.flab.infrun.lecture.presentation.request.LectureRegisterRequest;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -26,23 +27,20 @@ class LectureControllerApiTest {
     private ObjectMapper mapper = new ObjectMapper();
 
     @Test
-    void 강의_등록() throws Exception {
+    @DisplayName("Multipart 요청 파일과 request 객체가 함께 들어 온 경우 정상적인 처리 확인")
+    void lectureRegisterTest() throws Exception {
 
-        //given
         MockMultipartFile multipartFile1 = new MockMultipartFile("file", "test.txt",
             "text/plain", "test file".getBytes(
             StandardCharsets.UTF_8));
-
         MockMultipartFile multipartFile2 = new MockMultipartFile("file", "test1.txt",
             "text/plain", "test file2".getBytes(
             StandardCharsets.UTF_8));
-
         LectureRegisterRequest lecture = 강의등록요청_생성();
         String lectureJson = mapper.writeValueAsString(lecture);
         MockMultipartFile mockLecture = new MockMultipartFile("lecture", "lecture",
             "application/json", lectureJson.getBytes(StandardCharsets.UTF_8));
 
-        //when
         mockMvc.perform(multipart("/lecture")
                 .file(multipartFile1)
                 .file(multipartFile2)
@@ -51,7 +49,6 @@ class LectureControllerApiTest {
             .andDo(print())
             .andExpect(status().is2xxSuccessful())
             .andReturn();
-
     }
 
 
@@ -70,5 +67,4 @@ class LectureControllerApiTest {
 
         return new LectureRegisterRequest(name, price, introduce, lectureDetailRequest);
     }
-
 }

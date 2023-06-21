@@ -19,13 +19,13 @@ public class LectureVideoFileJdbcTemplateRepository {
         this.jdbcInsert = new SimpleJdbcInsert(dataSource)
             .withTableName("file")
             .usingGeneratedKeyColumns("id");
-
     }
 
     public Optional<LectureVideoFile> findById(Long id) {
         String sql = "select id , name, url FROM file where id = :id";
         Map<String, Object> param = Map.of("id", id);
         LectureVideoFile lecture = jdbcTemplate.queryForObject(sql, param, itemRowMapper());
+
         return Optional.ofNullable(lecture);
     }
 
@@ -48,6 +48,4 @@ public class LectureVideoFileJdbcTemplateRepository {
         entity.setId(key.longValue());
         return entity;
     }
-
-
 }

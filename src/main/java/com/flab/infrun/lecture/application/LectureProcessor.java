@@ -24,7 +24,6 @@ public class LectureProcessor {
     private final LectureDetailRepository lectureDetailRepository;
     private final LectureVideoFileRepository lectureVideoFileRepository;
 
-
     public long registerLecture(LectureRegisterCommand lectureRegisterCommand) {
         Lecture savedLecture = getSavedLecture(lectureRegisterCommand);
 
@@ -47,7 +46,6 @@ public class LectureProcessor {
                     savedLecture.getId())));
     }
 
-
     public String uploadFile(MultipartFile lectureVideoFile) {
         //todo-반환값, if, 영상처리, saved 관련부분 개선
         if (!lectureVideoFile.isEmpty()) {
@@ -56,7 +54,9 @@ public class LectureProcessor {
 
             LectureVideoFile lectureVideo = LectureVideoFile.of("/lectureVideo",
                 lectureVideoFile.getOriginalFilename());
+
             LectureVideoFile saved;
+
             try (OutputStream os = Files.newOutputStream(filepath)) {
                 os.write(lectureVideoFile.getBytes());
                 //todo-중복 file에 대한 중복 저장 issue
@@ -68,6 +68,4 @@ public class LectureProcessor {
         }
         return null;
     }
-
-
 }

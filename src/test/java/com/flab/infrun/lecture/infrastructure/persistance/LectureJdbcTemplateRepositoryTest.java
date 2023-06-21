@@ -19,13 +19,10 @@ class LectureJdbcTemplateRepositoryTest {
     @Test
     @DisplayName("강의 저장 테스트")
     void save() {
-        //given
         Lecture lecture = Lecture.of("lectureA", 20000, "이것은 강의 A");
 
-        //when
         Lecture saved = lectureRepositoryAdapter.save(lecture);
 
-        //then
         Optional<Lecture> lecture1 = lectureRepositoryAdapter.findById(saved.getId());
         assertThat(saved).isEqualTo(lecture1.get());
     }

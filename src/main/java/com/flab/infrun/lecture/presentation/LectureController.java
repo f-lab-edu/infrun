@@ -24,9 +24,6 @@ public class LectureController {
         @RequestPart("lecture") LectureRegisterRequest lecture,
         @RequestPart("file") List<MultipartFile> lectureVideoFile) {
 
-        log.info("lecture :{}", lecture);
-        lectureVideoFile.forEach(file -> log.info("fileName :{}", file.getOriginalFilename()));
-
         //todo-Role check (Teacher)
 
         //todo- file도 command로 변경해서 전송
@@ -36,6 +33,5 @@ public class LectureController {
 
         return null;
     }
-
 }
 

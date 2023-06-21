@@ -1,10 +1,7 @@
 package com.flab.infrun.lecture.domain;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import java.util.Objects;
 
-@Getter
-@EqualsAndHashCode
 public class LectureVideoFile {
 
     private Long id;
@@ -12,7 +9,7 @@ public class LectureVideoFile {
     private final String url;
     private final String name;
 
-    public LectureVideoFile(String url, String name) {
+    private LectureVideoFile(String url, String name) {
         this.url = url;
         this.name = name;
     }
@@ -25,4 +22,39 @@ public class LectureVideoFile {
         this.id = key;
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        LectureVideoFile that = (LectureVideoFile) o;
+
+        if (!Objects.equals(id, that.id)) {
+            return false;
+        }
+        if (!Objects.equals(url, that.url)) {
+            return false;
+        }
+        return Objects.equals(name, that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (url != null ? url.hashCode() : 0);
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        return result;
+    }
 }

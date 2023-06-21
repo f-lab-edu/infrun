@@ -23,5 +23,4 @@ public class LectureDetailRepository implements
     public Optional<LectureDetail> findById(Long id) {
         return lectureDetailJdbcTemplateRepository.findById(id);
     }
-
 }

@@ -8,6 +8,7 @@ public record LectureRegisterCommand(
     String name,
     int price,
     String introduce,
-    List<LectureDetailRequest> lectureDetailRequest) {
+    List<LectureDetailRequest> lectureDetailRequest
+) {
 
 }

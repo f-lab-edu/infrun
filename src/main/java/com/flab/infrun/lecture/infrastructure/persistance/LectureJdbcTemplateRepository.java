@@ -49,6 +49,4 @@ public class LectureJdbcTemplateRepository {
         entity.setId(key.longValue());
         return entity;
     }
-
-
 }

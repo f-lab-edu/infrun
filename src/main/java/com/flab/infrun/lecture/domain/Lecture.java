@@ -1,11 +1,7 @@
 package com.flab.infrun.lecture.domain;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import java.util.Objects;
 
-
-@Getter
-@EqualsAndHashCode
 public class Lecture {
 
     private Long id;
@@ -27,5 +23,41 @@ public class Lecture {
 
     public void setId(long key) {
         this.id = key;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        Lecture lecture = (Lecture) o;
+
+        if (price != lecture.price) {
+            return false;
+        }
+        if (!Objects.equals(id, lecture.id)) {
+            return false;
+        }
+        if (!Objects.equals(name, lecture.name)) {
+            return false;
+        }
+        return Objects.equals(introduce, lecture.introduce);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + price;
+        result = 31 * result + (introduce != null ? introduce.hashCode() : 0);
+        return result;
     }
 }

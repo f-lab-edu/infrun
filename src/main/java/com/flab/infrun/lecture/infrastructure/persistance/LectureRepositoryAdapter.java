@@ -22,5 +22,4 @@ public class LectureRepositoryAdapter implements LectureRepository {
     public Optional<Lecture> findById(Long id) {
         return lectureJdbcRepository.findById(id);
     }
-
 }

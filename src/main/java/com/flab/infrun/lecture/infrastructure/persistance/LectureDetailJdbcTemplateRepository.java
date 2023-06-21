@@ -19,13 +19,13 @@ public class LectureDetailJdbcTemplateRepository {
         this.jdbcInsert = new SimpleJdbcInsert(dataSource)
             .withTableName("lecture_detail")
             .usingGeneratedKeyColumns("id");
-
     }
 
     public Optional<LectureDetail> findById(Long id) {
         String sql = "select id , chapter, name FROM LECTURE_DETAIL where id = :id";
         Map<String, Object> param = Map.of("id", id);
         LectureDetail lectureDetail = jdbcTemplate.queryForObject(sql, param, itemRowMapper());
+
         return Optional.ofNullable(lectureDetail);
     }
 
@@ -42,12 +42,11 @@ public class LectureDetailJdbcTemplateRepository {
     }
 
     public LectureDetail save(LectureDetail entity) {
-
         BeanPropertySqlParameterSource param = new BeanPropertySqlParameterSource(
             entity);
         Number key = jdbcInsert.executeAndReturnKey(param);
         entity.setId(key.longValue());
+
         return entity;
     }
-
 }

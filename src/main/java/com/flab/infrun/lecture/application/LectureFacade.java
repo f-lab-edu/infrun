@@ -18,6 +18,4 @@ public class LectureFacade {
     public void uploadFile(MultipartFile lectureVideoFile) {
         lectureProcessor.uploadFile(lectureVideoFile);
     }
-
-
 }
