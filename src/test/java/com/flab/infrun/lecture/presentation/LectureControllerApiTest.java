@@ -58,11 +58,11 @@ class LectureControllerApiTest {
         int price = 54000;
         String introduce = "스프링 핵심 코어 강의 입니다.";
         List<LectureDetailRequest> lectureDetailRequest = List.of(
-            new LectureDetailRequest("1챕터", "스프링 핵심 원리"),
-            new LectureDetailRequest("1챕터", "스프링 핵심 동작"),
-            new LectureDetailRequest("2챕터", "스프링 기능 첫번째"),
-            new LectureDetailRequest("2챕터", "스프링 기능 두번째"),
-            new LectureDetailRequest("3챕터", "스프링 최종장")
+            new LectureDetailRequest("1챕터", "스프링 핵심 원리", "test.txt"),
+            new LectureDetailRequest("1챕터", "스프링 핵심 동작", ""),
+            new LectureDetailRequest("2챕터", "스프링 기능 첫번째", ""),
+            new LectureDetailRequest("2챕터", "스프링 기능 두번째", "test1.txt"),
+            new LectureDetailRequest("3챕터", "스프링 최종장", "")
         );
 
         return new LectureRegisterRequest(name, price, introduce, lectureDetailRequest);

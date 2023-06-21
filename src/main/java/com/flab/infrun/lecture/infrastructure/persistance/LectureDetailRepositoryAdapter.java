@@ -4,12 +4,12 @@ import com.flab.infrun.lecture.domain.LectureDetail;
 import java.util.Optional;
 
 
-public class LectureDetailRepository implements
+public class LectureDetailRepositoryAdapter implements
     com.flab.infrun.lecture.domain.LectureDetailRepository {
 
     private final LectureDetailJdbcTemplateRepository lectureDetailJdbcTemplateRepository;
 
-    public LectureDetailRepository(
+    public LectureDetailRepositoryAdapter(
         LectureDetailJdbcTemplateRepository lectureDetailJdbcTemplateRepository) {
         this.lectureDetailJdbcTemplateRepository = lectureDetailJdbcTemplateRepository;
     }
@@ -23,4 +23,5 @@ public class LectureDetailRepository implements
     public Optional<LectureDetail> findById(Long id) {
         return lectureDetailJdbcTemplateRepository.findById(id);
     }
+
 }

@@ -1,10 +1,12 @@
 package com.flab.infrun.lecture.presentation;
 
+import com.flab.infrun.common.response.Response;
 import com.flab.infrun.lecture.application.LectureFacade;
 import com.flab.infrun.lecture.presentation.request.LectureRegisterRequest;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -20,18 +22,14 @@ public class LectureController {
 
     @PostMapping(value = "/lecture")
     //Todo-responseEntity body 로 변경
-    public ResponseEntity<Object> registerLecture(
+    public ResponseEntity<Response<Long>> registerLecture(
         @RequestPart("lecture") LectureRegisterRequest lecture,
         @RequestPart("file") List<MultipartFile> lectureVideoFile) {
-
         //todo-Role check (Teacher)
 
-        //todo- file도 command로 변경해서 전송
-        lectureVideoFile.forEach(lectureFacade::uploadFile);
+        var result = lectureFacade.registerLecture(lecture.toCommand(lectureVideoFile));
 
-        long lectureId = lectureFacade.registerLecture(lecture.toCommand());
-
-        return null;
+        return ResponseEntity.status(HttpStatus.CREATED).body(Response.success(result));
     }
 }
 

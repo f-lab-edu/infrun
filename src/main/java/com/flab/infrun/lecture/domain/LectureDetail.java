@@ -9,16 +9,17 @@ public class LectureDetail {
     private final String chapter;
     private final String name;
     private final Long lectureId;
+    private final Long fileId;
 
-
-    private LectureDetail(String chapter, String name, Long lectureId) {
+    private LectureDetail(String chapter, String name, Long lectureId, Long fileId) {
         this.chapter = chapter;
         this.name = name;
         this.lectureId = lectureId;
+        this.fileId = fileId;
     }
 
-    public static LectureDetail of(String chapter, String name, Long lectureId) {
-        return new LectureDetail(chapter, name, lectureId);
+    public static LectureDetail of(String chapter, String name, Long lectureId, Long fileId) {
+        return new LectureDetail(chapter, name, lectureId, fileId);
     }
 
     public void setId(long key) {

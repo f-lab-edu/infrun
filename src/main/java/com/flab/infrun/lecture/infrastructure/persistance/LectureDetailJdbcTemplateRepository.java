@@ -22,7 +22,7 @@ public class LectureDetailJdbcTemplateRepository {
     }
 
     public Optional<LectureDetail> findById(Long id) {
-        String sql = "select id , chapter, name FROM LECTURE_DETAIL where id = :id";
+        String sql = "select id , chapter, name, lecture_id, file_id FROM LECTURE_DETAIL where id = :id";
         Map<String, Object> param = Map.of("id", id);
         LectureDetail lectureDetail = jdbcTemplate.queryForObject(sql, param, itemRowMapper());
 
@@ -34,7 +34,8 @@ public class LectureDetailJdbcTemplateRepository {
             LectureDetail lecture = LectureDetail.of(
                 rs.getString("chapter"),
                 rs.getString("name"),
-                rs.getLong("lecture_id")
+                rs.getLong("lecture_id"),
+                rs.getLong("file_id")
             );
             lecture.setId(rs.getLong("id"));
             return lecture;

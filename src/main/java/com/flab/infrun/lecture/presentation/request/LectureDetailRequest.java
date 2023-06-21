@@ -5,10 +5,12 @@ import com.flab.infrun.lecture.application.command.LectureDetailCommand;
 public record LectureDetailRequest(
     //todo-gradle 의존성 주입 Notnull 등
     String chapter,
-    String name
+    String name,
+    String fileName
+
 ) {
 
     public LectureDetailCommand toCommand() {
-        return new LectureDetailCommand(chapter, name);
+        return new LectureDetailCommand(chapter, name, fileName);
     }
 }

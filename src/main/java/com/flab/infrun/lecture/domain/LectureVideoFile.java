@@ -26,8 +26,8 @@ public class LectureVideoFile {
         return id;
     }
 
-    public String getUrl() {
-        return url;
+    public String getName() {
+        return name;
     }
 
     @Override
