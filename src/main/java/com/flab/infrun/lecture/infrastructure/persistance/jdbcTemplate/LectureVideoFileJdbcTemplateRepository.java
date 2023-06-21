@@ -1,4 +1,4 @@
-package com.flab.infrun.lecture.infrastructure.persistance;
+package com.flab.infrun.lecture.infrastructure.persistance.jdbcTemplate;
 
 import com.flab.infrun.lecture.domain.LectureVideoFile;
 import java.util.Map;

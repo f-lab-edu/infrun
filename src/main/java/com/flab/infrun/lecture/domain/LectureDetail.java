@@ -50,7 +50,10 @@ public class LectureDetail {
         if (!Objects.equals(name, that.name)) {
             return false;
         }
-        return Objects.equals(lectureId, that.lectureId);
+        if (!Objects.equals(lectureId, that.lectureId)) {
+            return false;
+        }
+        return Objects.equals(fileId, that.fileId);
     }
 
     @Override
@@ -59,6 +62,7 @@ public class LectureDetail {
         result = 31 * result + (chapter != null ? chapter.hashCode() : 0);
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (lectureId != null ? lectureId.hashCode() : 0);
+        result = 31 * result + (fileId != null ? fileId.hashCode() : 0);
         return result;
     }
 }

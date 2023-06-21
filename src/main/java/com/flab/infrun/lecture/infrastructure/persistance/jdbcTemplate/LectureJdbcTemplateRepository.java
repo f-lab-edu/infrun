@@ -1,6 +1,6 @@
-package com.flab.infrun.lecture.infrastructure.persistance;
+package com.flab.infrun.lecture.infrastructure.persistance.jdbcTemplate;
 
-import com.flab.infrun.lecture.domain.LectureDetail;
+import com.flab.infrun.lecture.domain.Lecture;
 import java.util.Map;
 import java.util.Optional;
 import javax.sql.DataSource;
@@ -9,45 +9,44 @@ import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 
-public class LectureDetailJdbcTemplateRepository {
+public class LectureJdbcTemplateRepository {
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
 
-    public LectureDetailJdbcTemplateRepository(DataSource dataSource) {
+    public LectureJdbcTemplateRepository(DataSource dataSource) {
         this.jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
         this.jdbcInsert = new SimpleJdbcInsert(dataSource)
-            .withTableName("lecture_detail")
+            .withTableName("lecture")
             .usingGeneratedKeyColumns("id");
+
     }
 
-    public Optional<LectureDetail> findById(Long id) {
-        String sql = "select id , chapter, name, lecture_id, file_id FROM LECTURE_DETAIL where id = :id";
+    public Optional<Lecture> findById(Long id) {
+        String sql = "select id , name, price, introduce FROM LECTURE where id = :id";
         Map<String, Object> param = Map.of("id", id);
-        LectureDetail lectureDetail = jdbcTemplate.queryForObject(sql, param, itemRowMapper());
-
-        return Optional.ofNullable(lectureDetail);
+        Lecture lecture = jdbcTemplate.queryForObject(sql, param, itemRowMapper());
+        return Optional.ofNullable(lecture);
     }
 
-    private RowMapper<LectureDetail> itemRowMapper() {
+    private RowMapper<Lecture> itemRowMapper() {
         return (rs, rowNum) -> {
-            LectureDetail lecture = LectureDetail.of(
-                rs.getString("chapter"),
+            Lecture lecture = Lecture.of(
                 rs.getString("name"),
-                rs.getLong("lecture_id"),
-                rs.getLong("file_id")
+                rs.getInt("price"),
+                rs.getString("introduce")
             );
             lecture.setId(rs.getLong("id"));
             return lecture;
         };
     }
 
-    public LectureDetail save(LectureDetail entity) {
+    public Lecture save(Lecture entity) {
+
         BeanPropertySqlParameterSource param = new BeanPropertySqlParameterSource(
             entity);
         Number key = jdbcInsert.executeAndReturnKey(param);
         entity.setId(key.longValue());
-
         return entity;
     }
 }

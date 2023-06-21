@@ -3,6 +3,7 @@ package com.flab.infrun.lecture.infrastructure.persistance;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.flab.infrun.lecture.domain.LectureDetail;
+import com.flab.infrun.lecture.domain.LectureDetailRepository;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -10,10 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class LectureDetailJdbcTemplateRepositoryTest {
+class LectureDetailRepositoryTest {
 
     @Autowired
-    private LectureDetailRepositoryAdapter repositoryAdapter;
+    private LectureDetailRepository adapter;
 
     //todo-Transaction으로 처리
     @Test
@@ -21,9 +22,9 @@ class LectureDetailJdbcTemplateRepositoryTest {
     void save() {
         LectureDetail lectureDetail = LectureDetail.of("1", "강의 A의 챕터1", 1L, 2L);
 
-        LectureDetail saved = repositoryAdapter.save(lectureDetail);
+        LectureDetail saved = adapter.save(lectureDetail);
 
-        Optional<LectureDetail> lecture1 = repositoryAdapter.findById(saved.getId());
-        assertThat(saved).isEqualTo(lecture1.get());
+        Optional<LectureDetail> lecture1 = adapter.findById(saved.getId());
+        assertThat(lecture1.get()).isEqualTo(lectureDetail);
     }
 }

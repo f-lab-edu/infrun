@@ -31,59 +31,51 @@ public class LectureProcessor {
     public long registerLecture(LectureRegisterCommand lectureRegisterCommand) {
 
         //todo-filName 중복 체크
-        List<LectureVideoFile> lectureVideoFiles = uploadFile(lectureRegisterCommand);
-        Map<String, Long> mappingFileId = mappingFileId(lectureRegisterCommand, lectureVideoFiles);
+        List<Long> uploadedFileId = uploadFile(lectureRegisterCommand);
+        Map<String, Long> mappingFileId = mappingFileId(uploadedFileId);
 
-        Lecture savedLecture = getSavedLecture(lectureRegisterCommand);
+        long savedLectureId = getSavedLecture(lectureRegisterCommand);
 
         //todo-fileNameDetail fileId Mapping
-        savedDetail(lectureRegisterCommand, savedLecture, mappingFileId);
+        savedDetail(lectureRegisterCommand, savedLectureId, mappingFileId);
 
-        return savedLecture.getId();
+        return savedLectureId;
     }
 
-    private Lecture getSavedLecture(LectureRegisterCommand lectureRegisterCommand) {
+    private long getSavedLecture(LectureRegisterCommand lectureRegisterCommand) {
         return lectureRepository.save(Lecture.of(
             lectureRegisterCommand.name(),
             lectureRegisterCommand.price(),
-            lectureRegisterCommand.introduce()));
+            lectureRegisterCommand.introduce())).getId();
     }
 
-    private Map<String, Long> mappingFileId(LectureRegisterCommand lectureRegisterCommand,
-        List<LectureVideoFile> lectureVideoFiles) {
+    private Map<String, Long> mappingFileId(List<Long> uploadedFileId) {
         Map<String, Long> result = new HashMap<>();
-
-        //todo-stream 개선
-        lectureRegisterCommand.lectureDetailCommandList()
-            .forEach(detail -> lectureVideoFiles.forEach(file -> {
-                if (file.getName().equals(detail.fileName())) {
-                    result.put(detail.fileName(), file.getId());
-                }
-            }))
-        ;
+        uploadedFileId.forEach(
+            id -> result.put(lectureVideoFileRepository.findById(id).get().getName(), id));
 
         return result;
     }
 
-    private void savedDetail(LectureRegisterCommand lectureRegisterCommand, Lecture savedLecture,
+    private void savedDetail(LectureRegisterCommand lectureRegisterCommand, long savedLectureId,
         Map<String, Long> mappingFileId) {
         lectureRegisterCommand.lectureDetailCommandList().forEach(
             detail -> lectureDetailRepository.save(
                 LectureDetail.of(detail.chapter(), detail.name(),
-                    savedLecture.getId(), mappingFileId.get(detail.fileName()))));
+                    savedLectureId, mappingFileId.get(detail.fileName()))));
     }
 
-    public List<LectureVideoFile> uploadFile(LectureRegisterCommand lectureRegisterCommand) {
+    public List<Long> uploadFile(LectureRegisterCommand lectureRegisterCommand) {
 
-        List<LectureVideoFile> lectureVideoFileList = new ArrayList<>();
+        List<Long> lectureVideoFileIdList = new ArrayList<>();
 
         lectureRegisterCommand.lectureFileList()
-            .forEach(file -> lectureVideoFileList.add(getMultipartFiles(file)));
+            .forEach(file -> lectureVideoFileIdList.add(getMultipartFiles(file)));
 
-        return lectureVideoFileList;
+        return lectureVideoFileIdList;
     }
 
-    private LectureVideoFile getMultipartFiles(MultipartFile lectureVideoFile) {
+    private long getMultipartFiles(MultipartFile lectureVideoFile) {
 
         //todo-반환값, if, 영상처리, saved 관련부분 개선
         if (!lectureVideoFile.isEmpty()) {
@@ -93,17 +85,17 @@ public class LectureProcessor {
             LectureVideoFile lectureVideo = LectureVideoFile.of("/lectureVideo",
                 lectureVideoFile.getOriginalFilename());
 
-            LectureVideoFile saved;
+            long savedVideoId;
 
             try (OutputStream os = Files.newOutputStream(filepath)) {
                 os.write(lectureVideoFile.getBytes());
                 //todo-중복 file에 대한 중복 저장 issue
-                saved = lectureVideoFileRepository.save(lectureVideo);
+                savedVideoId = lectureVideoFileRepository.save(lectureVideo).getId();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            return saved;
+            return savedVideoId;
         }
-        return null;
+        return 0L;
     }
 }

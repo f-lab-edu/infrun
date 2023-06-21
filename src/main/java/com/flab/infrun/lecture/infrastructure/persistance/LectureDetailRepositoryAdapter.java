@@ -1,27 +1,29 @@
 package com.flab.infrun.lecture.infrastructure.persistance;
 
 import com.flab.infrun.lecture.domain.LectureDetail;
+import com.flab.infrun.lecture.domain.LectureDetailRepository;
+import com.flab.infrun.lecture.infrastructure.persistance.mybatis.LectureDetailMyBatisRepository;
 import java.util.Optional;
 
 
 public class LectureDetailRepositoryAdapter implements
-    com.flab.infrun.lecture.domain.LectureDetailRepository {
+    LectureDetailRepository {
 
-    private final LectureDetailJdbcTemplateRepository lectureDetailJdbcTemplateRepository;
+    private final LectureDetailMyBatisRepository myBatisRepository;
 
     public LectureDetailRepositoryAdapter(
-        LectureDetailJdbcTemplateRepository lectureDetailJdbcTemplateRepository) {
-        this.lectureDetailJdbcTemplateRepository = lectureDetailJdbcTemplateRepository;
+        LectureDetailMyBatisRepository myBatisRepository) {
+        this.myBatisRepository = myBatisRepository;
     }
 
     @Override
     public LectureDetail save(LectureDetail entity) {
-        return lectureDetailJdbcTemplateRepository.save(entity);
+        return myBatisRepository.save(entity);
     }
 
     @Override
     public Optional<LectureDetail> findById(Long id) {
-        return lectureDetailJdbcTemplateRepository.findById(id);
+        return myBatisRepository.findById(id);
     }
 
 }

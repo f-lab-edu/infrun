@@ -67,4 +67,9 @@ class LectureControllerApiTest {
 
         return new LectureRegisterRequest(name, price, introduce, lectureDetailRequest);
     }
+
+
 }
+
+
+

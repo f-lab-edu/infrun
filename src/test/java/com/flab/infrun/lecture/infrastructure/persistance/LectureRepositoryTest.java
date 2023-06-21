@@ -10,10 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class LectureJdbcTemplateRepositoryTest {
+class LectureRepositoryTest {
 
     @Autowired
-    private LectureRepositoryAdapter lectureRepositoryAdapter;
+    private LectureRepositoryAdapter adapter;
 
     //todo-Transaction으로 처리
     @Test
@@ -21,9 +21,9 @@ class LectureJdbcTemplateRepositoryTest {
     void save() {
         Lecture lecture = Lecture.of("lectureA", 20000, "이것은 강의 A");
 
-        Lecture saved = lectureRepositoryAdapter.save(lecture);
+        Lecture savedId = adapter.save(lecture);
 
-        Optional<Lecture> lecture1 = lectureRepositoryAdapter.findById(saved.getId());
-        assertThat(saved).isEqualTo(lecture1.get());
+        Optional<Lecture> lecture1 = adapter.findById(savedId.getId());
+        assertThat(lecture1.get()).isEqualTo(lecture);
     }
 }
