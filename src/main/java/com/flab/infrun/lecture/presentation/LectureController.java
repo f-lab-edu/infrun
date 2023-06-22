@@ -3,6 +3,7 @@ package com.flab.infrun.lecture.presentation;
 import com.flab.infrun.common.response.Response;
 import com.flab.infrun.lecture.application.LectureFacade;
 import com.flab.infrun.lecture.presentation.request.LectureRegisterRequest;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,9 +22,8 @@ public class LectureController {
     private final LectureFacade lectureFacade;
 
     @PostMapping(value = "/lecture")
-    //Todo-responseEntity body 로 변경
     public ResponseEntity<Response<Long>> registerLecture(
-        @RequestPart("lecture") LectureRegisterRequest lecture,
+        @Valid @RequestPart("lecture") LectureRegisterRequest lecture,
         @RequestPart("file") List<MultipartFile> lectureVideoFile) {
         //todo-Role check (Teacher)
 
