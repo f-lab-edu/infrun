@@ -1,6 +1,7 @@
 package com.flab.infrun.lecture.application;
 
 import com.flab.infrun.lecture.application.command.LectureRegisterCommand;
+import com.flab.infrun.lecture.application.exception.DuplicateLectureFileNameException;
 import com.flab.infrun.lecture.domain.Lecture;
 import com.flab.infrun.lecture.domain.LectureDetail;
 import com.flab.infrun.lecture.domain.LectureRepository;
@@ -30,13 +31,13 @@ public class LectureProcessor {
 
     public long registerLecture(LectureRegisterCommand lectureRegisterCommand) {
 
-        //todo-filName 중복 체크
+        validateLectureFile(lectureRegisterCommand);
+
         List<Long> uploadedFileId = uploadFile(lectureRegisterCommand);
         Map<String, Long> mappingFileId = mappingFileId(uploadedFileId);
 
         long savedLectureId = getSavedLecture(lectureRegisterCommand);
 
-        //todo-fileNameDetail fileId Mapping
         savedDetail(lectureRegisterCommand, savedLectureId, mappingFileId);
 
         return savedLectureId;
@@ -97,5 +98,17 @@ public class LectureProcessor {
             return savedVideoId;
         }
         return 0L;
+    }
+
+    private void validateLectureFile(LectureRegisterCommand lectureRegisterCommand) {
+
+        boolean duplicated = lectureRegisterCommand.lectureFileList().stream()
+            .map(MultipartFile::getOriginalFilename)
+            .distinct()
+            .count() != lectureRegisterCommand.lectureFileList().size();
+
+        if (duplicated) {
+            throw new DuplicateLectureFileNameException();
+        }
     }
 }

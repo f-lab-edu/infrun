@@ -4,8 +4,8 @@ import java.util.Objects;
 
 public class Lecture {
 
+    //todo- validating?
     private Long id;
-    //todo- Notnull Gradle 의존성 -> PR merge
     private final String name;
     private final int price;
     private final String introduce;
