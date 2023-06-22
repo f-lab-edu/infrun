@@ -22,8 +22,8 @@ class LectureRepositoryTest {
         Lecture lecture = Lecture.of("lectureA", 20000, "이것은 강의 A");
 
         Lecture savedId = adapter.save(lecture);
-
         Optional<Lecture> lecture1 = adapter.findById(savedId.getId());
+
         assertThat(lecture1.get()).isEqualTo(lecture);
     }
 }

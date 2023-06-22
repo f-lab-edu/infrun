@@ -23,8 +23,8 @@ class LectureDetailRepositoryTest {
         LectureDetail lectureDetail = LectureDetail.of("1", "강의 A의 챕터1", 1L, 2L);
 
         LectureDetail saved = adapter.save(lectureDetail);
-
         Optional<LectureDetail> lecture1 = adapter.findById(saved.getId());
+
         assertThat(lecture1.get()).isEqualTo(lectureDetail);
     }
 }
