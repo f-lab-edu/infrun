@@ -25,6 +25,8 @@ public class LectureController {
     public ResponseEntity<Response<Long>> registerLecture(
         @Valid @RequestPart("lecture") LectureRegisterRequest lecture,
         @RequestPart("file") List<MultipartFile> lectureVideoFile) {
+        log.debug("lecutre : {}", lecture);
+        lectureVideoFile.forEach(file -> log.debug("fileName :{}", file.getOriginalFilename()));
         //todo-Role check (Teacher)
 
         var result = lectureFacade.registerLecture(lecture.toCommand(lectureVideoFile));
