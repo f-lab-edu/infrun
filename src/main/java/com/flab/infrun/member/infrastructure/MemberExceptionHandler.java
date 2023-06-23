@@ -20,7 +20,7 @@ public class MemberExceptionHandler {
         DuplicatedEmailException.class
     })
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Response<ErrorCode> handleException(SystemException e) {
+    public Response<ErrorCode> handleException(final SystemException e) {
         return Response.fail(e.getErrorCode());
     }
 }
