@@ -57,6 +57,10 @@ public final class Member {
         return email;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
     @VisibleForTesting
     void assignId(final Long id) {
         this.id = id;
