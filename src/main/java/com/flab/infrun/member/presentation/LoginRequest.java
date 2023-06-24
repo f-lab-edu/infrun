@@ -1,5 +1,6 @@
 package com.flab.infrun.member.presentation;
 
+import com.flab.infrun.member.application.command.LoginCommand;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -16,4 +17,7 @@ public record LoginRequest(
     String password
 ) {
 
+    public LoginCommand toCommand() {
+        return new LoginCommand(email, password);
+    }
 }
