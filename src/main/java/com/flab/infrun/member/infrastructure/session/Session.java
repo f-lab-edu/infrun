@@ -14,6 +14,10 @@ public class Session {
         return new Session(token);
     }
 
+    public String getToken() {
+        return token;
+    }
+
     public boolean isSameToken(final String token) {
         return Objects.equals(this.token, token);
     }
