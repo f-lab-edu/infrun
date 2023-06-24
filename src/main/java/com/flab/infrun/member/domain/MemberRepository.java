@@ -1,10 +1,14 @@
 package com.flab.infrun.member.domain;
 
+import java.util.Optional;
+
 public interface MemberRepository {
 
-    Member save(Member member);
+    Member save(final Member member);
 
-    boolean existsByEmail(String email);
+    boolean existsByEmail(final String email);
 
-    boolean existsByNickname(String nickname);
+    boolean existsByNickname(final String nickname);
+
+    Optional<Member> findByEmailAndPassword(final String email, final String password);
 }

@@ -2,6 +2,7 @@ package com.flab.infrun.member.infrastructure.persistence;
 
 import com.flab.infrun.member.domain.Member;
 import com.flab.infrun.member.domain.MemberRepository;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -22,5 +23,10 @@ public class MemberRepositoryAdapter implements MemberRepository {
     @Override
     public boolean existsByNickname(final String nickname) {
         return jpaRepository.existsByNickname(nickname);
+    }
+
+    @Override
+    public Optional<Member> findByEmailAndPassword(final String email, final String password) {
+        return jpaRepository.findByEmailAndPassword(email, password);
     }
 }
