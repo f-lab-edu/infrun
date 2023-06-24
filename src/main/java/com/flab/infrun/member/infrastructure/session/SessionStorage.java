@@ -17,13 +17,13 @@ public class SessionStorage {
         return storage.get(email);
     }
 
-    public void validateSession(final String email, final String token) {
+    public void verifyToken(final String email, final String token) {
         final Session session = storage.get(email);
 
-        isValidateToken(token, session);
+        tokenValidation(token, session);
     }
 
-    private void isValidateToken(final String token, final Session session) {
+    private void tokenValidation(final String token, final Session session) {
         if (session == null || !session.isSameToken(token)) {
             throw new InvalidAuthenticationException(ErrorCode.INVALID_AUTHENTICATION);
         }

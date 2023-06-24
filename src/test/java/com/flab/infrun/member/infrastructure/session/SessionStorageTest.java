@@ -44,7 +44,7 @@ class SessionStorageTest {
     @MethodSource("provideInvalidEmailOrToken")
     @DisplayName("이메일이나 토큰이 유효하지 않으면 예외가 발생한다")
     void invalidEmailOrToken_throwException(final String email, final String token) {
-        assertThatThrownBy(() -> sessionStorage.validateSession(email, token))
+        assertThatThrownBy(() -> sessionStorage.verifyToken(email, token))
             .isInstanceOf(InvalidAuthenticationException.class);
     }
 }
