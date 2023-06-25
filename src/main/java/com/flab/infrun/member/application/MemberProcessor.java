@@ -6,9 +6,12 @@ import com.flab.infrun.member.domain.Member;
 import com.flab.infrun.member.domain.MemberRepository;
 import com.flab.infrun.member.domain.exception.DuplicatedEmailException;
 import com.flab.infrun.member.domain.exception.DuplicatedNicknameException;
-import com.flab.infrun.member.domain.exception.NotFoundMemberException;
-import com.flab.infrun.member.infrastructure.session.SessionStorage;
+import com.flab.infrun.member.infrastructure.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +22,8 @@ public class MemberProcessor {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
-    private final SessionStorage sessionStorage;
+    private final TokenProvider tokenProvider;
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
     @Transactional
     public Long register(final SignupCommand command) {
@@ -32,19 +36,6 @@ public class MemberProcessor {
         return member.getId();
     }
 
-    @Transactional(readOnly = true)
-    public String login(final LoginCommand command) {
-        final Member member = memberRepository.findByEmail(command.email())
-            .orElseThrow(NotFoundMemberException::new);
-
-        if (!passwordEncoder.matches(command.password(), member.getPassword())) {
-            throw new NotFoundMemberException();
-        }
-
-        return sessionStorage.store(member.getEmail(), member.getPassword())
-            .getToken();
-    }
-
     private void validateRegisterMember(final SignupCommand command) {
         if (memberRepository.existsByEmail(command.email())) {
             throw new DuplicatedEmailException();
@@ -52,5 +43,17 @@ public class MemberProcessor {
         if (memberRepository.existsByNickname(command.nickname())) {
             throw new DuplicatedNicknameException();
         }
+    }
+
+    @Transactional(readOnly = true)
+    public String login(final LoginCommand command) {
+        final UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+            command.email(), command.password());
+
+        final Authentication authentication = authenticationManagerBuilder.getObject()
+            .authenticate(authenticationToken);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        return tokenProvider.generateToken(authentication);
     }
 }
