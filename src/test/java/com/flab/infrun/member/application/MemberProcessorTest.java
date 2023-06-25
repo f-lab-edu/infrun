@@ -48,7 +48,7 @@ final class MemberProcessorTest {
     @Test
     @DisplayName("회원가입 시 닉네임이 중복인 경우 예외가 발생한다")
     void register_duplicateNicknameException() {
-        final SignupCommand command = new SignupCommand("nickname", "userB@test.com", "password");
+        final SignupCommand command = new SignupCommand("userA", "userB@test.com", "password");
 
         assertThatThrownBy(() -> processor.register(command))
             .isInstanceOf(DuplicatedNicknameException.class);

@@ -34,9 +34,12 @@ public class MemberProcessor {
 
     @Transactional(readOnly = true)
     public String login(final LoginCommand command) {
-        final Member member = memberRepository.findByEmailAndPassword(command.email(),
-                command.password())
+        final Member member = memberRepository.findByEmail(command.email())
             .orElseThrow(NotFoundMemberException::new);
+
+        if (!passwordEncoder.matches(command.password(), member.getPassword())) {
+            throw new NotFoundMemberException();
+        }
 
         return sessionStorage.store(member.getEmail(), member.getPassword())
             .getToken();
