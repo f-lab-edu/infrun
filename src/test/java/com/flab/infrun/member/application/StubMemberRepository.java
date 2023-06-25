@@ -31,11 +31,9 @@ final class StubMemberRepository implements MemberRepository {
     }
 
     @Override
-    public Optional<Member> findByEmailAndPassword(final String email, final String password) {
+    public Optional<Member> findByEmail(final String email) {
         return persistence.values().stream()
-            .filter(member ->
-                Objects.equals(member.getEmail(), email) &&
-                    Objects.equals(member.getPassword(), password))
+            .filter(member -> Objects.equals(member.getEmail(), email))
             .findAny();
     }
 }

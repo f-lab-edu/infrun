@@ -26,7 +26,7 @@ public class MemberRepositoryAdapter implements MemberRepository {
     }
 
     @Override
-    public Optional<Member> findByEmailAndPassword(final String email, final String password) {
-        return jpaRepository.findByEmailAndPassword(email, password);
+    public Optional<Member> findByEmail(final String email) {
+        return jpaRepository.findByEmail(email);
     }
 }
