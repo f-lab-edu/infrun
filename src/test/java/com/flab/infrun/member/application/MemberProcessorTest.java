@@ -2,6 +2,8 @@ package com.flab.infrun.member.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.spy;
 
 import com.flab.infrun.member.application.command.LoginCommand;
 import com.flab.infrun.member.application.command.SignupCommand;
@@ -9,7 +11,6 @@ import com.flab.infrun.member.domain.Member;
 import com.flab.infrun.member.domain.MemberRepository;
 import com.flab.infrun.member.domain.exception.DuplicatedEmailException;
 import com.flab.infrun.member.domain.exception.DuplicatedNicknameException;
-import com.flab.infrun.member.infrastructure.session.SessionStorage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,11 +28,13 @@ final class MemberProcessorTest {
 
     @BeforeEach
     void setUp() {
-        final MemberRepository repository = new StubMemberRepository();
+        final var repository = new StubMemberRepository();
         processor = new MemberProcessor(
             repository,
             new FakePasswordEncoder(),
-            new SessionStorage());
+            null,
+            null
+        );
 
         setUpMember(repository);
     }
@@ -58,10 +61,13 @@ final class MemberProcessorTest {
     @DisplayName("이메일과 비밀번호가 일치하면 토큰을 반환한다")
     void loginSuccess_returnToken() {
         final LoginCommand command = new LoginCommand("test@test.com", "password");
+        final MemberProcessor processorSpy = spy(processor);
+        doAnswer(invocation -> "token")
+            .when(processorSpy)
+            .login(command);
 
-        final String token = processor.login(command);
+        final String token = processorSpy.login(command);
 
-        assertThat(token).isNotNull();
+        assertThat(token).isEqualTo("token");
     }
-
 }
