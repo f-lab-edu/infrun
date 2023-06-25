@@ -25,7 +25,7 @@ public class SessionStorage {
 
     private void tokenValidation(final String token, final Session session) {
         if (session == null || !session.isSameToken(token)) {
-            throw new InvalidAuthenticationException(ErrorCode.INVALID_AUTHENTICATION);
+            throw new InvalidAuthenticationException(ErrorCode.UN_AUTHORIZATION);
         }
     }
 }
