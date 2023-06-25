@@ -4,7 +4,7 @@ import java.util.Objects;
 
 public class Lecture {
 
-    //todo- validating?
+    //todo- validating POJO
     private Long id;
     private final String name;
     private final int price;

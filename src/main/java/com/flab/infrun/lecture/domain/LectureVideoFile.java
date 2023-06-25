@@ -5,7 +5,7 @@ import java.util.Objects;
 public class LectureVideoFile {
 
     private Long id;
-    //todo- Notnull Gradle 의존성 -> PR merge
+    //todo- validating POJO
     private final String url;
     private final String name;
 

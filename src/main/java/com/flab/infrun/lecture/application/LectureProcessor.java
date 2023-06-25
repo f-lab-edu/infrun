@@ -8,6 +8,7 @@ import com.flab.infrun.lecture.domain.LectureRepository;
 import com.flab.infrun.lecture.domain.LectureVideoFile;
 import com.flab.infrun.lecture.domain.LectureVideoFileRepository;
 import com.flab.infrun.lecture.infrastructure.persistance.LectureDetailRepositoryAdapter;
+import com.google.common.annotations.VisibleForTesting;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
@@ -31,7 +32,7 @@ public class LectureProcessor {
 
     public long registerLecture(LectureRegisterCommand lectureRegisterCommand) {
 
-        validateLectureFile(lectureRegisterCommand);
+        validateLectureFile(lectureRegisterCommand.lectureFileList());
 
         List<Long> uploadedFileId = uploadFile(lectureRegisterCommand);
         Map<String, Long> mappingFileId = mappingFileId(uploadedFileId);
@@ -100,12 +101,13 @@ public class LectureProcessor {
         return 0L;
     }
 
-    private void validateLectureFile(LectureRegisterCommand lectureRegisterCommand) {
+    @VisibleForTesting
+    void validateLectureFile(List<MultipartFile> lectureFileList) {
 
-        boolean duplicated = lectureRegisterCommand.lectureFileList().stream()
+        boolean duplicated = lectureFileList.stream()
             .map(MultipartFile::getOriginalFilename)
             .distinct()
-            .count() != lectureRegisterCommand.lectureFileList().size();
+            .count() != lectureFileList.size();
 
         if (duplicated) {
             throw new DuplicateLectureFileNameException();

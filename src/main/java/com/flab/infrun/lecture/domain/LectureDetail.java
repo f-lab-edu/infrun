@@ -5,7 +5,7 @@ import java.util.Objects;
 public class LectureDetail {
 
     private Long id;
-    //todo- Notnull Gradle 의존성 -> PR merge
+    //todo- validating POJO
     private final String chapter;
     private final String name;
     private final Long lectureId;
