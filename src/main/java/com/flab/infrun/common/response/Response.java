@@ -12,8 +12,7 @@ public record Response<T>(
     @JsonInclude(Include.NON_NULL)
     ErrorCode errorCode,
     @JsonInclude(Include.NON_NULL)
-    String message
-) {
+    String message) {
 
     public static <T> Response<T> success(final T data) {
         return new Response<>(true, data, null, null);
