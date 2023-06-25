@@ -61,6 +61,10 @@ public final class Member {
         return password;
     }
 
+    public Role getRole() {
+        return role;
+    }
+
     @VisibleForTesting
     void assignId(final Long id) {
         this.id = id;
