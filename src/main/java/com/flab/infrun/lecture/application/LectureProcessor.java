@@ -48,6 +48,8 @@ public class LectureProcessor {
         return lectureRepository.save(Lecture.of(
             lectureRegisterCommand.name(),
             lectureRegisterCommand.price(),
+            lectureRegisterCommand.level(),
+            lectureRegisterCommand.skill(),
             lectureRegisterCommand.introduce())).getId();
     }
 

@@ -11,8 +11,8 @@
   </select>
 
   <insert id="save" useGeneratedKeys="true" keyProperty="id">
-    INSERT INTO LECTURE (NAME, PRICE, INTRODUCE)
-    VALUES (#{name}, #{price}, #{introduce})
+    INSERT INTO LECTURE (NAME, PRICE, LECTURE_LEVEL, SKILL, INTRODUCE)
+    VALUES (#{name}, #{price}, #{lectureLevel}, #{skill}, #{introduce})
   </insert>
 
 </mapper>

@@ -1,6 +1,7 @@
 package com.flab.infrun.lecture.presentation.request;
 
 import com.flab.infrun.lecture.application.command.LectureRegisterCommand;
+import com.flab.infrun.lecture.domain.LectureLevel;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -14,6 +15,9 @@ public record LectureRegisterRequest(
     String name,
     @PositiveOrZero
     int price,
+    LectureLevel lectureLevel,
+    @NotBlank @Size(max = 30)
+    String skill,
     @NotBlank @Size(max = 200)
     String introduce,
     @NotNull @Valid
@@ -21,7 +25,8 @@ public record LectureRegisterRequest(
 ) {
 
     public LectureRegisterCommand toCommand(List<MultipartFile> multipartFile) {
-        return new LectureRegisterCommand(name, price, introduce,
+        return new LectureRegisterCommand(name, price, lectureLevel, skill,
+            introduce,
             lectureDetailRequest.stream().map(LectureDetailRequest::toCommand).toList(),
             multipartFile
         );

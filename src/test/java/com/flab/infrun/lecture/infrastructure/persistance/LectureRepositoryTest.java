@@ -3,6 +3,7 @@ package com.flab.infrun.lecture.infrastructure.persistance;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.flab.infrun.lecture.domain.Lecture;
+import com.flab.infrun.lecture.domain.LectureLevel;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,7 +20,7 @@ class LectureRepositoryTest {
     @Test
     @DisplayName("강의 저장 테스트")
     void save() {
-        Lecture lecture = Lecture.of("lectureA", 20000, "이것은 강의 A");
+        Lecture lecture = Lecture.of("lectureA", 20000, LectureLevel.HARD, "JAVA", "이것은 강의 A");
 
         Lecture savedId = adapter.save(lecture);
         Optional<Lecture> lecture1 = adapter.findById(savedId.getId());
