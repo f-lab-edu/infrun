@@ -36,13 +36,13 @@ public class CommonExceptionHandler {
 
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(AccessDeniedException.class)
-    public Response<ErrorCode> handleAccessDeniedException(AccessDeniedException e) {
+    public Response<ErrorCode> handleAccessDeniedException() {
         return Response.fail(ErrorCode.ACCESS_DENIED);
     }
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(AuthenticationException.class)
-    public Response<ErrorCode> handleAuthenticationException(AuthenticationException e) {
+    public Response<ErrorCode> handleAuthenticationException() {
         return Response.fail(ErrorCode.UN_AUTHORIZATION);
     }
 }
