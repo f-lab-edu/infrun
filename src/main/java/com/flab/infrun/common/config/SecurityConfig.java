@@ -1,10 +1,8 @@
 package com.flab.infrun.common.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.flab.infrun.common.config.jwt.JwtAccessDeniedHandler;
-import com.flab.infrun.common.config.jwt.JwtAuthenticationEntryPoint;
 import com.flab.infrun.common.config.jwt.JwtSecurityConfig;
 import com.flab.infrun.member.infrastructure.jwt.TokenProvider;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,15 +18,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
+@RequiredArgsConstructor
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
 
     private final TokenProvider tokenProvider;
-
-    public SecurityConfig(final TokenProvider tokenProvider) {
-        this.tokenProvider = tokenProvider;
-    }
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
@@ -43,9 +40,9 @@ public class SecurityConfig {
         http
             .csrf(AbstractHttpConfigurer::disable)
 
-            .exceptionHandling(exception -> exception
-                .authenticationEntryPoint(jwtAuthenticationEntryPoint())
-                .accessDeniedHandler(jwtAccessDeniedHandler()))
+            .exceptionHandling(handler -> handler
+                .authenticationEntryPoint(customAuthenticationEntryPoint)
+                .accessDeniedHandler(customAccessDeniedHandler))
 
             .headers(headers -> headers.frameOptions(FrameOptionsConfig::sameOrigin))
 
@@ -70,15 +67,5 @@ public class SecurityConfig {
     @Bean
     public JwtSecurityConfig jwtSecurityConfig() {
         return new JwtSecurityConfig(tokenProvider);
-    }
-
-    @Bean
-    public JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint() {
-        return new JwtAuthenticationEntryPoint(new ObjectMapper());
-    }
-
-    @Bean
-    public JwtAccessDeniedHandler jwtAccessDeniedHandler() {
-        return new JwtAccessDeniedHandler(new ObjectMapper());
     }
 }
