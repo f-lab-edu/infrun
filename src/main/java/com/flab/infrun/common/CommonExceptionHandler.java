@@ -5,6 +5,8 @@ import com.flab.infrun.common.response.Response;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -30,5 +32,17 @@ public class CommonExceptionHandler {
             + " " + fieldError.getDefaultMessage();
 
         return Response.fail(ErrorCode.INVALID_PARAMETER, sb);
+    }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(AccessDeniedException.class)
+    public Response<ErrorCode> handleAccessDeniedException(AccessDeniedException e) {
+        return Response.fail(ErrorCode.ACCESS_DENIED);
+    }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(AuthenticationException.class)
+    public Response<ErrorCode> handleAuthenticationException(AuthenticationException e) {
+        return Response.fail(ErrorCode.UN_AUTHORIZATION);
     }
 }
