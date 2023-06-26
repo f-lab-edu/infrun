@@ -1,4 +1,4 @@
-package com.flab.infrun.common.config;
+package com.flab.infrun.common.config.security;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

@@ -1,4 +1,4 @@
-package com.flab.infrun.common.config;
+package com.flab.infrun.common.config.security;
 
 import com.flab.infrun.member.domain.Member;
 import com.flab.infrun.member.domain.MemberRepository;

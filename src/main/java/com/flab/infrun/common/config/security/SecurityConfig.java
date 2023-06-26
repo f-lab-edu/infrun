@@ -1,4 +1,4 @@
-package com.flab.infrun.common.config;
+package com.flab.infrun.common.config.security;
 
 import com.flab.infrun.common.config.jwt.JwtSecurityConfig;
 import com.flab.infrun.member.infrastructure.jwt.TokenProvider;
