@@ -21,7 +21,7 @@ class LectureVideoFileRepositoryTest {
     void save() {
         LectureVideoFile lectureVideoFile = LectureVideoFile.of("/lecture", "파일명1.pdf");
 
-        int saved = mapper.save(lectureVideoFile);
+        long saved = mapper.save(lectureVideoFile);
 
         Optional<LectureVideoFile> lecture1 = mapper.findById((long) saved);
         assertThat(lecture1.get()).isEqualTo(lectureVideoFile);

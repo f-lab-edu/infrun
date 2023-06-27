@@ -9,7 +9,7 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface LectureMyBatisMapper {
 
-    int save(Lecture entity);
+    long save(Lecture entity);
 
     Optional<Lecture> findById(Long id);
 
