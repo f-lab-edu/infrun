@@ -1,7 +1,6 @@
 package com.flab.infrun.lecture.infrastructure.persistance.jdbcTemplate;
 
 import com.flab.infrun.lecture.domain.Lecture;
-import com.flab.infrun.lecture.domain.LectureLevel;
 import java.util.Map;
 import java.util.Optional;
 import javax.sql.DataSource;
@@ -35,9 +34,10 @@ public class LectureJdbcTemplateRepository {
             Lecture lecture = Lecture.of(
                 rs.getString("name"),
                 rs.getInt("price"),
-                LectureLevel.valueOf(rs.getString("level")),
+                rs.getInt("level"),
                 rs.getString("skill"),
-                rs.getString("introduce")
+                rs.getString("introduce"),
+                rs.getLong("userId")
             );
             lecture.setId(rs.getLong("id"));
             return lecture;

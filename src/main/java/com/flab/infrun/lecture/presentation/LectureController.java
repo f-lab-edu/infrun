@@ -3,6 +3,8 @@ package com.flab.infrun.lecture.presentation;
 import com.flab.infrun.common.response.Response;
 import com.flab.infrun.lecture.application.LectureFacade;
 import com.flab.infrun.lecture.presentation.request.LectureRegisterRequest;
+import com.flab.infrun.lecture.presentation.request.LectureSearchForNameRequest;
+import com.flab.infrun.lecture.presentation.response.LectureSearchResponse;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -37,13 +39,13 @@ public class LectureController {
     }
 
     @GetMapping(value = "/lecture")
-    public ResponseEntity<Response<Long>> searchLecture(
-        @Valid @RequestBody LectureRegisterRequest lecture) {
-        log.debug("lecutre : {}", lecture);
+    public ResponseEntity<Response<LectureSearchResponse>> searchLecture(
+        @Valid @RequestBody LectureSearchForNameRequest lectureSearchForNameRequest) {
+        log.debug("lectureSearchForNameRequest : {}", lectureSearchForNameRequest);
 
-        var result = lectureFacade.registerLecture(lecture.toCommand(null));
+        var result = lectureFacade.searchLectureForName(lectureSearchForNameRequest.toCommand());
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(Response.success(result));
+        return ResponseEntity.status(HttpStatus.OK).body(Response.success(result));
     }
 }
 

@@ -56,7 +56,10 @@ class LectureControllerApiTest {
 
         final String name = "스프링 기본 강의";
         int price = 54000;
+        int lectureLevel = 2;
+        String skill = "JAVA";
         String introduce = "스프링 핵심 코어 강의 입니다.";
+        long userId = 1L;
         List<LectureDetailRequest> lectureDetailRequest = List.of(
             new LectureDetailRequest("1챕터", "스프링 핵심 원리", "test.txt"),
             new LectureDetailRequest("1챕터", "스프링 핵심 동작", ""),
@@ -65,7 +68,8 @@ class LectureControllerApiTest {
             new LectureDetailRequest("3챕터", "스프링 최종장", "")
         );
 
-        return new LectureRegisterRequest(name, price, introduce, lectureDetailRequest);
+        return new LectureRegisterRequest(name, price, lectureLevel, skill, introduce,
+            lectureDetailRequest, userId);
     }
 
 

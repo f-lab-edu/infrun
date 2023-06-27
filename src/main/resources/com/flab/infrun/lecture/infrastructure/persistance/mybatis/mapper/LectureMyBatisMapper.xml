@@ -5,9 +5,32 @@
   namespace="com.flab.infrun.lecture.infrastructure.persistance.mybatis.mapper.LectureMyBatisMapper">
 
   <select id="findById" resultType="com.flab.infrun.lecture.domain.Lecture">
-    SELECT ID , NAME, PRICE, INTRODUCE
+    SELECT id , name, price, lecture_level, skill, introduce, user_id
     FROM LECTURE
     WHERE ID = #{id}
+  </select>
+
+  <select id="findByDetail" resultType="com.flab.infrun.lecture.domain.Lecture">
+    SELECT id , name, price, lecture_level, skill, introduce, user_id
+    FROM LECTURE
+    <where>
+      <if test="lectureName !=null and lectureName != ''">
+        AND name = #{lectureName}
+      </if>
+      <if test="teacherName !=null and teacherName != ''">
+        AND user_name = #{teacherName}
+      </if>
+      <if test="price !=null and price != ''">
+        AND price = #{price}
+      </if>
+      <if test="lectureLevel !=null and lectureLevel != ''">
+        AND lectureLevel = #{lectureLevel}
+      </if>
+      <if test="skill !=null and skill != ''">
+        AND skill = #{skill}
+      </if>
+    </where>
+
   </select>
 
   <insert id="save" useGeneratedKeys="true" keyProperty="id">

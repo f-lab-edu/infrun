@@ -25,6 +25,7 @@ class LectureVideoFileRepositoryTest {
         LectureVideoFile saved = adapter.save(lectureVideoFile);
 
         Optional<LectureVideoFile> lecture1 = adapter.findById(saved.getId());
+        System.out.println(lecture1.get());
         assertThat(lecture1.get()).isEqualTo(lectureVideoFile);
     }
 }

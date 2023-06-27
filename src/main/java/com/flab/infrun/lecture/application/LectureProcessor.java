@@ -50,7 +50,9 @@ public class LectureProcessor {
             lectureRegisterCommand.price(),
             lectureRegisterCommand.level(),
             lectureRegisterCommand.skill(),
-            lectureRegisterCommand.introduce())).getId();
+            lectureRegisterCommand.introduce(),
+            lectureRegisterCommand.userId())).getId()
+            ;
     }
 
     private Map<String, Long> mappingFileId(List<Long> uploadedFileId) {
@@ -115,4 +117,6 @@ public class LectureProcessor {
             throw new DuplicateLectureFileNameException();
         }
     }
+
+
 }
