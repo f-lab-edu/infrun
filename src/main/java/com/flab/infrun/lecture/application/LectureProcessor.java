@@ -7,7 +7,7 @@ import com.flab.infrun.lecture.domain.LectureDetail;
 import com.flab.infrun.lecture.domain.LectureRepository;
 import com.flab.infrun.lecture.domain.LectureVideoFile;
 import com.flab.infrun.lecture.domain.LectureVideoFileRepository;
-import com.flab.infrun.lecture.infrastructure.persistance.LectureDetailRepositoryAdapter;
+import com.flab.infrun.lecture.infrastructure.persistence.LectureDetailRepositoryAdapter;
 import com.google.common.annotations.VisibleForTesting;
 import java.io.IOException;
 import java.io.OutputStream;

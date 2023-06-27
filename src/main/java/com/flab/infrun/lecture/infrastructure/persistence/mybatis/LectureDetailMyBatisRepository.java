@@ -1,7 +1,7 @@
-package com.flab.infrun.lecture.infrastructure.persistance.mybatis;
+package com.flab.infrun.lecture.infrastructure.persistence.mybatis;
 
 import com.flab.infrun.lecture.domain.LectureDetail;
-import com.flab.infrun.lecture.infrastructure.persistance.mybatis.mapper.LectureDetailMyBatisMapper;
+import com.flab.infrun.lecture.infrastructure.persistence.mybatis.mapper.LectureDetailMyBatisMapper;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 

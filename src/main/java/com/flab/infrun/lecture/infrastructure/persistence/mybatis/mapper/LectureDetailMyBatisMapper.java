@@ -1,4 +1,4 @@
-package com.flab.infrun.lecture.infrastructure.persistance.mybatis.mapper;
+package com.flab.infrun.lecture.infrastructure.persistence.mybatis.mapper;
 
 import com.flab.infrun.lecture.domain.LectureDetail;
 import java.util.Optional;
