@@ -1,6 +1,6 @@
 package com.flab.infrun.lecture.application.query;
 
-import com.flab.infrun.lecture.presentation.response.LectureSearchResponse;
+import com.flab.infrun.lecture.presentation.response.LectureSearchListResponse;
 
 public record LectureSearchResult(
     Long id,
@@ -11,7 +11,7 @@ public record LectureSearchResult(
     String introduce
 ) {
 
-    public LectureSearchResponse toResponse() {
-        return new LectureSearchResponse(id, name, price, lectureLevel, skill, introduce);
+    public LectureSearchListResponse toResponse() {
+        return new LectureSearchListResponse(id, name, price, lectureLevel, skill, introduce);
     }
 }

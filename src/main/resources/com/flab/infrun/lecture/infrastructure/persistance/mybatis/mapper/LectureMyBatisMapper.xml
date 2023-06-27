@@ -5,13 +5,13 @@
   namespace="com.flab.infrun.lecture.infrastructure.persistance.mybatis.mapper.LectureMyBatisMapper">
 
   <select id="findById" resultType="com.flab.infrun.lecture.domain.Lecture">
-    SELECT id , name, price, lecture_level, skill, introduce, user_id
+    SELECT id, name, nvl(price,0), nvl(lecture_level,0), skill, introduce, nvl(user_id,0)
     FROM LECTURE
     WHERE ID = #{id}
   </select>
 
   <select id="findByDetail" resultType="com.flab.infrun.lecture.domain.Lecture">
-    SELECT id , name, price, lecture_level, skill, introduce, user_id
+    SELECT id , name, nvl(price,0), nvl(lecture_level,0), skill, introduce, nvl(user_id,0)
     FROM LECTURE
     <where>
       <if test="lectureName !=null and lectureName != ''">
@@ -24,7 +24,7 @@
         AND price = #{price}
       </if>
       <if test="lectureLevel !=null and lectureLevel != ''">
-        AND lectureLevel = #{lectureLevel}
+        AND lecture_Level = #{lectureLevel}
       </if>
       <if test="skill !=null and skill != ''">
         AND skill = #{skill}
@@ -34,8 +34,8 @@
   </select>
 
   <insert id="save" useGeneratedKeys="true" keyProperty="id">
-    INSERT INTO LECTURE (NAME, PRICE, LECTURE_LEVEL, SKILL, INTRODUCE)
-    VALUES (#{name}, #{price}, #{lectureLevel}, #{skill}, #{introduce})
+    INSERT INTO LECTURE (NAME, PRICE, LECTURE_LEVEL, SKILL, INTRODUCE, USER_ID)
+    VALUES (#{name}, #{price}, #{lectureLevel}, #{skill}, #{introduce}, #{userId})
   </insert>
 
 </mapper>

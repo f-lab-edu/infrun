@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.flab.infrun.lecture.domain.Lecture;
 import com.flab.infrun.lecture.domain.query.LectureSearchForDetail;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,10 +24,10 @@ class LectureRepositoryTest {
         Lecture lecture = Lecture.of("Lecture1", 20000, 1, "JAVA", "이것은 강의 A",
             1L);
 
-        Lecture savedId = adapter.save(lecture);
-        Optional<Lecture> lecture1 = adapter.findById(savedId.getId());
+        Lecture saved = adapter.save(lecture);
+        Optional<Lecture> lecture1 = adapter.findById(saved.getId());
 
-        assertThat(lecture1.get()).isEqualTo(lecture);
+        assertThat(lecture1.get()).isEqualTo(saved);
     }
 
     @Test
@@ -35,13 +36,11 @@ class LectureRepositoryTest {
         Lecture lecture = Lecture.of("Lecture1", 20000, 3, "JAVA", "이것은 강의 A",
             1L);
 
-//        LectureSearchForDetail lectureSearchForDetail = new LectureSearchForDetail("Lecture1", null,
-//            null, 3, "JAVA");
-        LectureSearchForDetail lectureSearchForDetail = new LectureSearchForDetail(null, null,
-            null, null, null);
+        LectureSearchForDetail lectureSearchForDetail = new LectureSearchForDetail("Lecture1", null,
+            null, 3, "JAVA");
         Lecture savedId = adapter.save(lecture);
-        Lecture byDetail = adapter.findByDetail(lectureSearchForDetail);
+        List<Lecture> byDetail = adapter.findByDetail(lectureSearchForDetail);
 
-        assertThat(byDetail).isEqualTo(lecture);
+        assertThat(byDetail.get(0)).isEqualTo(lecture);
     }
 }

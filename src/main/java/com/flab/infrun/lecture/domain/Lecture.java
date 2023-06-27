@@ -14,7 +14,7 @@ public class Lecture {
     private final long userId;
 
 
-    private Lecture(String name, int price, int level, String skill, String introduce,
+    private Lecture(Long id, String name, int price, int level, String skill, String introduce,
         long userId) {
         this.name = name;
         this.price = price;
@@ -26,7 +26,7 @@ public class Lecture {
 
     public static Lecture of(String name, int price, int lectureLevel, String skill,
         String introduce, long userId) {
-        return new Lecture(name, price, lectureLevel, skill, introduce, userId);
+        return new Lecture(null, name, price, lectureLevel, skill, introduce, userId);
     }
 
     public void setId(long key) {
@@ -35,6 +35,30 @@ public class Lecture {
 
     public Long getId() {
         return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getPrice() {
+        return price;
+    }
+
+    public int getLectureLevel() {
+        return lectureLevel;
+    }
+
+    public String getSkill() {
+        return skill;
+    }
+
+    public String getIntroduce() {
+        return introduce;
+    }
+
+    public long getUserId() {
+        return userId;
     }
 
     @Override
@@ -77,7 +101,7 @@ public class Lecture {
         result = 31 * result + lectureLevel;
         result = 31 * result + (skill != null ? skill.hashCode() : 0);
         result = 31 * result + (introduce != null ? introduce.hashCode() : 0);
-        result = 31 * result + (int) (userId ^ (userId >>> 32));
+        result = 31 * result;
         return result;
     }
 }

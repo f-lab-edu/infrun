@@ -1,12 +1,9 @@
 package com.flab.infrun.lecture.presentation.response;
 
+import java.util.List;
+
 public record LectureSearchResponse(
-    Long id,
-    String name,
-    int price,
-    int lectureLevel,
-    String skill,
-    String introduce
+    List<LectureSearchListResponse> lectureSearchListResponses
 ) {
 
 }

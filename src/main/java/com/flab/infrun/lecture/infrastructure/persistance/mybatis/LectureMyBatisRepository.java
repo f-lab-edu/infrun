@@ -3,6 +3,7 @@ package com.flab.infrun.lecture.infrastructure.persistance.mybatis;
 import com.flab.infrun.lecture.domain.Lecture;
 import com.flab.infrun.lecture.domain.query.LectureSearchForDetail;
 import com.flab.infrun.lecture.infrastructure.persistance.mybatis.mapper.LectureMyBatisMapper;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 
@@ -20,7 +21,7 @@ public class LectureMyBatisRepository {
         return entity;
     }
 
-    public Lecture findByDetail(LectureSearchForDetail detail) {
+    public List<Lecture> findByDetail(LectureSearchForDetail detail) {
         return mapper.findByDetail(detail);
     }
 }
