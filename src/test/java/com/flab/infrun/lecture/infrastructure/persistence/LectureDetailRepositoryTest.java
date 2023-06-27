@@ -16,7 +16,6 @@ class LectureDetailRepositoryTest {
     @Autowired
     private LectureDetailMyBatisMapper mapper;
 
-    //todo-Transaction으로 처리
     @Test
     @DisplayName("강의상세 저장 테스트")
     void save() {

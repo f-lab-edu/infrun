@@ -27,8 +27,8 @@ public class LectureController {
         @RequestPart("file") List<MultipartFile> lectureVideoFile) {
         log.debug("lecutre : {}", lecture);
         lectureVideoFile.forEach(file -> log.debug("fileName :{}", file.getOriginalFilename()));
-        //todo-Role check (Teacher)
-        
+        //todo Role check (Teacher)
+
         var result = lectureFacade.registerLecture(lecture.toCommand(lectureVideoFile));
 
         return ResponseEntity.status(HttpStatus.CREATED).body(Response.success(result));

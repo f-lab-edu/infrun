@@ -16,7 +16,6 @@ class LectureVideoFileRepositoryTest {
     @Autowired
     private LectureVideoFileMyBatisMapper mapper;
 
-    //todo-Transaction으로 처리
     @Test
     @DisplayName("강의 파일 저장 테스트")
     void save() {
