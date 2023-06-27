@@ -34,7 +34,10 @@ public class LectureJdbcTemplateRepository {
             Lecture lecture = Lecture.of(
                 rs.getString("name"),
                 rs.getInt("price"),
-                rs.getString("introduce")
+                rs.getInt("level"),
+                rs.getString("skill"),
+                rs.getString("introduce"),
+                rs.getLong("userId")
             );
             lecture.setId(rs.getLong("id"));
             return lecture;

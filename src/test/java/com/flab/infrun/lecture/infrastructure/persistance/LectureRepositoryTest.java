@@ -19,10 +19,11 @@ class LectureRepositoryTest {
     @Test
     @DisplayName("강의 저장 테스트")
     void save() {
-        Lecture lecture = Lecture.of("lectureA", 20000, "이것은 강의 A");
+        Lecture lecture = Lecture.of("Lecture1", 20000, 1, "JAVA", "이것은 강의 A",
+            1L);
 
-        Lecture savedId = adapter.save(lecture);
-        Optional<Lecture> lecture1 = adapter.findById(savedId.getId());
+        Lecture saved = adapter.save(lecture);
+        Optional<Lecture> lecture1 = adapter.findById(saved.getId());
 
         assertThat(lecture1.get()).isEqualTo(lecture);
     }

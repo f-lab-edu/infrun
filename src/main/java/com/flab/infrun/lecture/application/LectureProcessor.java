@@ -48,7 +48,11 @@ public class LectureProcessor {
         return lectureRepository.save(Lecture.of(
             lectureRegisterCommand.name(),
             lectureRegisterCommand.price(),
-            lectureRegisterCommand.introduce())).getId();
+            lectureRegisterCommand.level(),
+            lectureRegisterCommand.skill(),
+            lectureRegisterCommand.introduce(),
+            lectureRegisterCommand.userId())).getId()
+            ;
     }
 
     private Map<String, Long> mappingFileId(List<Long> uploadedFileId) {
