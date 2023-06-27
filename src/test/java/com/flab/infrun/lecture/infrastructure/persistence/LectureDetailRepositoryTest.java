@@ -21,8 +21,8 @@ class LectureDetailRepositoryTest {
     void save() {
         LectureDetail lectureDetail = LectureDetail.of("1", "강의 A의 챕터1", 1L, 2L);
 
-        int saved = mapper.save(lectureDetail);
-        Optional<LectureDetail> lecture1 = mapper.findById((long) saved);
+        long saved = mapper.save(lectureDetail);
+        Optional<LectureDetail> lecture1 = mapper.findById(saved);
 
         assertThat(lecture1.get()).isEqualTo(lectureDetail);
     }

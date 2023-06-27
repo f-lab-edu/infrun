@@ -22,8 +22,8 @@ class LectureRepositoryTest {
         Lecture lecture = Lecture.of("Lecture1", 20000, 1, "JAVA", "이것은 강의 A",
             1L);
 
-        int saved = mapper.save(lecture);
-        Optional<Lecture> lecture1 = mapper.findById((long) saved);
+        long saved = mapper.save(lecture);
+        Optional<Lecture> lecture1 = mapper.findById(saved);
 
         assertThat(lecture1.get()).isEqualTo(lecture);
     }
