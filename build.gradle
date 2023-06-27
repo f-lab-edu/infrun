@@ -31,7 +31,7 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
 
     //MyBatis
-    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.3.1'
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.2'
     implementation "org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4:1.16"
 
     runtimeOnly 'com.h2database:h2'
@@ -40,6 +40,7 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.2'
     testImplementation 'io.rest-assured:rest-assured:5.1.1'
 }
 

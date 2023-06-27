@@ -1,8 +1,8 @@
-package com.flab.infrun.lecture.infrastructure.persistance;
+package com.flab.infrun.lecture.infrastructure.persistence;
 
 import com.flab.infrun.lecture.domain.LectureDetail;
 import com.flab.infrun.lecture.domain.LectureDetailRepository;
-import com.flab.infrun.lecture.infrastructure.persistance.mybatis.LectureDetailMyBatisRepository;
+import com.flab.infrun.lecture.infrastructure.persistence.mybatis.LectureDetailMyBatisRepository;
 import java.util.Optional;
 
 

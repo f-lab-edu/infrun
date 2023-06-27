@@ -1,8 +1,8 @@
-package com.flab.infrun.lecture.infrastructure.persistance;
+package com.flab.infrun.lecture.infrastructure.persistence;
 
 import com.flab.infrun.lecture.domain.LectureVideoFile;
 import com.flab.infrun.lecture.domain.LectureVideoFileRepository;
-import com.flab.infrun.lecture.infrastructure.persistance.mybatis.LectureVideoFileMyBatisRepository;
+import com.flab.infrun.lecture.infrastructure.persistence.mybatis.LectureVideoFileMyBatisRepository;
 import java.util.Optional;
 
 

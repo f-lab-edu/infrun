@@ -1,14 +1,14 @@
 package com.flab.infrun.lecture.infrastructure.config;
 
-import com.flab.infrun.lecture.infrastructure.persistance.LectureDetailRepositoryAdapter;
-import com.flab.infrun.lecture.infrastructure.persistance.LectureRepositoryAdapter;
-import com.flab.infrun.lecture.infrastructure.persistance.LectureVideoFileRepositoryAdapter;
-import com.flab.infrun.lecture.infrastructure.persistance.mybatis.LectureDetailMyBatisRepository;
-import com.flab.infrun.lecture.infrastructure.persistance.mybatis.LectureMyBatisRepository;
-import com.flab.infrun.lecture.infrastructure.persistance.mybatis.LectureVideoFileMyBatisRepository;
-import com.flab.infrun.lecture.infrastructure.persistance.mybatis.mapper.LectureDetailMyBatisMapper;
-import com.flab.infrun.lecture.infrastructure.persistance.mybatis.mapper.LectureMyBatisMapper;
-import com.flab.infrun.lecture.infrastructure.persistance.mybatis.mapper.LectureVideoFileMyBatisMapper;
+import com.flab.infrun.lecture.infrastructure.persistence.LectureDetailRepositoryAdapter;
+import com.flab.infrun.lecture.infrastructure.persistence.LectureRepositoryAdapter;
+import com.flab.infrun.lecture.infrastructure.persistence.LectureVideoFileRepositoryAdapter;
+import com.flab.infrun.lecture.infrastructure.persistence.mybatis.LectureDetailMyBatisRepository;
+import com.flab.infrun.lecture.infrastructure.persistence.mybatis.LectureMyBatisRepository;
+import com.flab.infrun.lecture.infrastructure.persistence.mybatis.LectureVideoFileMyBatisRepository;
+import com.flab.infrun.lecture.infrastructure.persistence.mybatis.mapper.LectureDetailMyBatisMapper;
+import com.flab.infrun.lecture.infrastructure.persistence.mybatis.mapper.LectureMyBatisMapper;
+import com.flab.infrun.lecture.infrastructure.persistence.mybatis.mapper.LectureVideoFileMyBatisMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
