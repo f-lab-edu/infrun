@@ -7,14 +7,14 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import org.apache.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.GenericFilterBean;
 
 public class JwtFilter extends GenericFilterBean {
-
-    public static final String AUTHORIZATION_HEADER = "Authorization";
+    
     private final TokenProvider tokenProvider;
 
     public JwtFilter(final TokenProvider tokenProvider) {
@@ -37,7 +37,7 @@ public class JwtFilter extends GenericFilterBean {
     }
 
     private String resolveToken(HttpServletRequest request) {
-        final String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
+        final String bearerToken = request.getHeader(HttpHeaders.AUTHORIZATION);
 
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
