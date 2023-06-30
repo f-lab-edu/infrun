@@ -8,10 +8,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CouponRepositoryAdapter implements CouponRepository {
 
-    private final CouponJpaRepository jpaRepository;
+    private final CouponJpaRepository couponJpaRepository;
 
     @Override
     public List<Coupon> saveAll(final List<Coupon> coupons) {
-        return jpaRepository.saveAll(coupons);
+        return couponJpaRepository.saveAll(coupons);
     }
 }
