@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -45,5 +46,11 @@ public class CouponController {
         var result = facade.enrollCoupon(request.toCommand(user), LocalDateTime.now());
 
         return Response.success(EnrolledCouponResponse.from(result));
+    }
+
+    @GetMapping
+    @PreAuthorize("hasRole('TEACHER')")
+    public String test() {
+        return "TEST";
     }
 }
