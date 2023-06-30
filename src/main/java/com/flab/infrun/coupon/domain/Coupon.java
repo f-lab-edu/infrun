@@ -55,7 +55,7 @@ public class Coupon {
     ) {
         return Coupon.builder()
             .code(code)
-            .status(CouponStatus.UNUSED)
+            .status(CouponStatus.UNREGISTERED)
             .discountInfo(discountInfo)
             .expirationAt(expirationAt)
             .build();
@@ -66,8 +66,8 @@ public class Coupon {
     }
 
     public void use() {
-        if (this.status != CouponStatus.UNUSED) {
-            throw new IllegalArgumentException("이미 사용한 쿠폰입니다.");
+        if (this.status == CouponStatus.USED || this.status == CouponStatus.EXPIRED) {
+            throw new IllegalArgumentException("이미 사용했거나, 만료된 쿠폰입니다.");
         }
         this.status = CouponStatus.USED;
     }
