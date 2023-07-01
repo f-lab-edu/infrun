@@ -61,6 +61,10 @@ public class Coupon {
             .build();
     }
 
+    public String getCode() {
+        return code;
+    }
+
     public void registerOwner(final Member owner) {
         this.owner = owner;
     }
