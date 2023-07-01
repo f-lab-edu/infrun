@@ -1,6 +1,9 @@
 package com.flab.infrun.coupon.presentation;
 
+import com.flab.infrun.common.response.Response;
 import com.flab.infrun.coupon.application.CouponFacade;
+import com.flab.infrun.coupon.presentation.request.CreateCouponRequest;
+import com.flab.infrun.coupon.presentation.response.CouponResponse;
 import jakarta.validation.Valid;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
@@ -22,9 +25,9 @@ public class CouponController {
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('ROLE_TEACHER')")
     @PostMapping
-    public void create(@Valid @RequestBody final CreateCouponRequest request) {
+    public Response<CouponResponse> create(@Valid @RequestBody final CreateCouponRequest request) {
         var result = facade.createCoupons(request.toCommand(), LocalDateTime.now());
 
-//        return Response.success(result);
+        return Response.success(CouponResponse.from(result));
     }
 }
