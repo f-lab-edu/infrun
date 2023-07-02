@@ -1,25 +1,38 @@
 package com.flab.infrun.lecture.domain;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import java.util.Objects;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
+@Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class LectureDetail {
 
+    @Id
+    @GeneratedValue
     private Long id;
-    //todo- validating POJO
-    private final String chapter;
-    private final String name;
-    private final Long lectureId;
-    private final Long fileId;
+    private String chapter;
+    private String name;
+    private Long lectureId;
+    @ManyToOne
+    @JoinColumn(name = "lecture_file_id")
+    private LectureFile lectureFile;
 
-    private LectureDetail(Long id, String chapter, String name, Long lectureId, Long fileId) {
+    private LectureDetail(String chapter, String name, Long lectureId, LectureFile lectureFile) {
         this.chapter = chapter;
         this.name = name;
         this.lectureId = lectureId;
-        this.fileId = fileId;
+        this.lectureFile = lectureFile;
     }
 
-    public static LectureDetail of(String chapter, String name, Long lectureId, Long fileId) {
-        return new LectureDetail(null, chapter, name, lectureId, fileId);
+    public static LectureDetail of(String chapter, String name, Long lectureId,
+        LectureFile lectureFile) {
+        return new LectureDetail(chapter, name, lectureId, lectureFile);
     }
 
     public void setId(long key) {
@@ -53,7 +66,7 @@ public class LectureDetail {
         if (!Objects.equals(lectureId, that.lectureId)) {
             return false;
         }
-        return Objects.equals(fileId, that.fileId);
+        return Objects.equals(lectureFile, that.lectureFile);
     }
 
     @Override
@@ -62,7 +75,7 @@ public class LectureDetail {
         result = 31 * result + (chapter != null ? chapter.hashCode() : 0);
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (lectureId != null ? lectureId.hashCode() : 0);
-        result = 31 * result + (fileId != null ? fileId.hashCode() : 0);
+        result = 31 * result + (lectureFile != null ? lectureFile.hashCode() : 0);
         return result;
     }
 }

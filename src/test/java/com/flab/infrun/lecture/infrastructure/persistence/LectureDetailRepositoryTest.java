@@ -3,26 +3,28 @@ package com.flab.infrun.lecture.infrastructure.persistence;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.flab.infrun.lecture.domain.LectureDetail;
-import com.flab.infrun.lecture.infrastructure.persistence.mybatis.mapper.LectureDetailMyBatisMapper;
+import com.flab.infrun.lecture.domain.LectureFile;
+import com.flab.infrun.lecture.infrastructure.persistence.jpa.LectureDetailJpaRepository;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-@MybatisTest
+@DataJpaTest
 class LectureDetailRepositoryTest {
 
     @Autowired
-    private LectureDetailMyBatisMapper mapper;
+    private LectureDetailJpaRepository repository;
 
     @Test
     @DisplayName("강의상세 저장 테스트")
     void save() {
-        LectureDetail lectureDetail = LectureDetail.of("1", "강의 A의 챕터1", 1L, 2L);
+        LectureDetail lectureDetail = LectureDetail.of("1", "강의 A의 챕터1", 1L,
+            LectureFile.of("", "spring기초"));
 
-        long saved = mapper.save(lectureDetail);
-        Optional<LectureDetail> lecture1 = mapper.findById(saved);
+        LectureDetail saved = repository.save(lectureDetail);
+        Optional<LectureDetail> lecture1 = repository.findById(saved.getId());
 
         assertThat(lecture1.get()).isEqualTo(lectureDetail);
     }

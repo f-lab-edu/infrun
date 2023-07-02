@@ -1,20 +1,27 @@
 package com.flab.infrun.lecture.domain;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
 import java.util.Objects;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
+@Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Lecture {
 
-    //todo- validating POJO
+    @Id
+    @GeneratedValue
     private Long id;
-    private final String name;
-    private final int price;
-    private final int lectureLevel;
-    private final String skill;
-    private final String introduce;
-    private final long userId;
+    private String name;
+    private int price;
+    private int lectureLevel;
+    private String skill;
+    private String introduce;
+    private long userId;
 
-
-    private Lecture(Long id, String name, int price, int level, String skill, String introduce,
+    private Lecture(String name, int price, int level, String skill, String introduce,
         long userId) {
         this.name = name;
         this.price = price;
@@ -26,7 +33,7 @@ public class Lecture {
 
     public static Lecture of(String name, int price, int lectureLevel, String skill,
         String introduce, long userId) {
-        return new Lecture(null, name, price, lectureLevel, skill, introduce, userId);
+        return new Lecture(name, price, lectureLevel, skill, introduce, userId);
     }
 
     public void setId(long key) {

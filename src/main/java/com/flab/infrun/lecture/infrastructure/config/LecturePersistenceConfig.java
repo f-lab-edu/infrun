@@ -1,14 +1,11 @@
 package com.flab.infrun.lecture.infrastructure.config;
 
 import com.flab.infrun.lecture.infrastructure.persistence.LectureDetailRepositoryAdapter;
+import com.flab.infrun.lecture.infrastructure.persistence.LectureFileRepositoryAdapter;
 import com.flab.infrun.lecture.infrastructure.persistence.LectureRepositoryAdapter;
-import com.flab.infrun.lecture.infrastructure.persistence.LectureVideoFileRepositoryAdapter;
-import com.flab.infrun.lecture.infrastructure.persistence.mybatis.LectureDetailMyBatisRepository;
-import com.flab.infrun.lecture.infrastructure.persistence.mybatis.LectureMyBatisRepository;
-import com.flab.infrun.lecture.infrastructure.persistence.mybatis.LectureVideoFileMyBatisRepository;
-import com.flab.infrun.lecture.infrastructure.persistence.mybatis.mapper.LectureDetailMyBatisMapper;
-import com.flab.infrun.lecture.infrastructure.persistence.mybatis.mapper.LectureMyBatisMapper;
-import com.flab.infrun.lecture.infrastructure.persistence.mybatis.mapper.LectureVideoFileMyBatisMapper;
+import com.flab.infrun.lecture.infrastructure.persistence.jpa.LectureDetailJpaRepository;
+import com.flab.infrun.lecture.infrastructure.persistence.jpa.LectureFileJpaRepository;
+import com.flab.infrun.lecture.infrastructure.persistence.jpa.LectureJpaRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -16,21 +13,19 @@ import org.springframework.context.annotation.Configuration;
 public class LecturePersistenceConfig {
 
     @Bean
-    public LectureRepositoryAdapter lectureRepository(LectureMyBatisMapper mapper) {
-        return new LectureRepositoryAdapter(new LectureMyBatisRepository(mapper));
+    public LectureRepositoryAdapter lectureRepository(final LectureJpaRepository jpaRepository) {
+        return new LectureRepositoryAdapter(jpaRepository);
     }
 
     @Bean
     public LectureDetailRepositoryAdapter lectureDetailRepository(
-        LectureDetailMyBatisMapper mapper) {
-        return new LectureDetailRepositoryAdapter(
-            new LectureDetailMyBatisRepository(mapper));
+        final LectureDetailJpaRepository jpaRepository) {
+        return new LectureDetailRepositoryAdapter(jpaRepository);
     }
 
     @Bean
-    public LectureVideoFileRepositoryAdapter lectureVideoFileRepository(
-        LectureVideoFileMyBatisMapper mapper) {
-        return new LectureVideoFileRepositoryAdapter(
-            new LectureVideoFileMyBatisRepository(mapper));
+    public LectureFileRepositoryAdapter lectureVideoFileRepository(
+        final LectureFileJpaRepository jpaRepository) {
+        return new LectureFileRepositoryAdapter(jpaRepository);
     }
 }

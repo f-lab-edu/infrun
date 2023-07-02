@@ -1,21 +1,29 @@
 package com.flab.infrun.lecture.domain;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
 import java.util.Objects;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
-public class LectureVideoFile {
+@Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class LectureFile {
 
+    @Id
+    @GeneratedValue
     private Long id;
-    //todo- validating POJO
-    private final String url;
-    private final String name;
+    private String url;
+    private String name;
 
-    private LectureVideoFile(String url, String name) {
+    private LectureFile(String url, String name) {
         this.url = url;
         this.name = name;
     }
 
-    public static LectureVideoFile of(String url, String name) {
-        return new LectureVideoFile(url, name);
+    public static LectureFile of(String url, String name) {
+        return new LectureFile(url, name);
     }
 
     public void setId(long key) {
@@ -39,7 +47,7 @@ public class LectureVideoFile {
             return false;
         }
 
-        LectureVideoFile that = (LectureVideoFile) o;
+        LectureFile that = (LectureFile) o;
 
         if (!Objects.equals(id, that.id)) {
             return false;
