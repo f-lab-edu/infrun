@@ -50,7 +50,7 @@ final class CouponProcessorTest {
 
         assertThat(result.couponCodes()).hasSize(3);
         assertThat(result.quantity()).isEqualTo(3);
-        assertThat(result.expirationDate()).isEqualTo(expirationAt);
+        assertThat(result.expirationAt()).isEqualTo(expirationAt);
     }
 
     @Test
@@ -81,9 +81,9 @@ final class CouponProcessorTest {
 
     @Test
     @DisplayName("쿠폰 생성 시 만료일이 현재 시간보다 이전이면 예외가 발생한다")
-    void createCouponWithExpirationDateBefore() {
+    void createCouponWithexpirationAtBefore() {
         final CreateCouponCommand command = new CreateCouponCommand(
-            "AMOUNT",
+            "FIX",
             1000,
             LocalDateTime.of(1995, 6, 30, 0, 0, 0),
             3);
@@ -96,7 +96,7 @@ final class CouponProcessorTest {
     @DisplayName("생성할 쿠폰 개수가 0보다 적으면 예외가 발생한다")
     void createCouponWithQuantityLessThanZero() {
         final CreateCouponCommand command = new CreateCouponCommand(
-            "AMOUNT",
+            "FIX",
             1000,
             expirationAt,
             0);
