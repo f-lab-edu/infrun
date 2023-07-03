@@ -10,10 +10,10 @@ import com.flab.infrun.lecture.domain.LectureFileRepository;
 import com.flab.infrun.lecture.domain.LectureRepository;
 import com.flab.infrun.lecture.infrastructure.persistence.LectureDetailRepositoryAdapter;
 import com.google.common.annotations.VisibleForTesting;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,16 +28,11 @@ public class LectureProcessor {
     private final StorageUpload storageUpload;
 
     public long registerLecture(LectureRegisterCommand lectureRegisterCommand) {
-
         validateLectureFile(lectureRegisterCommand.lectureFileList());
-
         List<LectureFile> uploadedFileId = uploadFile(lectureRegisterCommand);
         Map<String, LectureFile> mappingFileId = mappingFileId(uploadedFileId);
-
         long savedLectureId = getSavedLecture(lectureRegisterCommand);
-
         savedDetail(lectureRegisterCommand, savedLectureId, mappingFileId);
-
         return savedLectureId;
     }
 
@@ -53,10 +48,8 @@ public class LectureProcessor {
     }
 
     private Map<String, LectureFile> mappingFileId(List<LectureFile> uploadedFile) {
-        Map<String, LectureFile> result = new HashMap<>();
-        uploadedFile.forEach(
-            file -> result.put(file.getName(), file));
-        return result;
+        return uploadedFile.stream()
+            .collect(Collectors.toMap(LectureFile::getName, Function.identity()));
     }
 
     private void savedDetail(LectureRegisterCommand lectureRegisterCommand, long savedLectureId,
@@ -68,21 +61,17 @@ public class LectureProcessor {
     }
 
     public List<LectureFile> uploadFile(LectureRegisterCommand lectureRegisterCommand) {
-        List<LectureFile> lectureVideoFileIdList = new ArrayList<>();
-        lectureRegisterCommand.lectureFileList()
-            .forEach(file -> lectureVideoFileIdList.add(
-                lectureFileRepository.save(storageUpload.upload(file))));
-        return lectureVideoFileIdList;
+        return lectureRegisterCommand.lectureFileList().stream()
+            .map(file -> lectureFileRepository.save(storageUpload.upload(file)))
+            .collect(Collectors.toList());
     }
 
     @VisibleForTesting
     void validateLectureFile(List<MultipartFile> lectureFileList) {
-
         boolean duplicated = lectureFileList.stream()
             .map(MultipartFile::getOriginalFilename)
             .distinct()
             .count() != lectureFileList.size();
-
         if (duplicated) {
             throw new DuplicateLectureFileNameException();
         }
