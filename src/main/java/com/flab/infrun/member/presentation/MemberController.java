@@ -26,4 +26,11 @@ public class MemberController {
 
         return Response.success(result);
     }
+
+    @PostMapping("/login")
+    public Response<String> login(@RequestBody @Valid final LoginRequest request) {
+        var result = facade.login(request.toCommand());
+
+        return Response.success(result);
+    }
 }

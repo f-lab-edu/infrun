@@ -2,7 +2,8 @@ package com.flab.infrun.member.domain;
 
 public enum Role {
 
-    USER("ROLE_USER");
+    USER("ROLE_USER"),
+    TEACHER("ROLE_TEACHER");
 
     private final String value;
 
