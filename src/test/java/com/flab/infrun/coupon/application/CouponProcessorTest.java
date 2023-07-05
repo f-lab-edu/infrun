@@ -55,7 +55,7 @@ final class CouponProcessorTest {
 
     @Test
     @DisplayName("쿠폰 생성 시 할인 타입이 없으면 예외가 발생한다")
-    void createCouponWithoutDiscountType() {
+    void createCoupon_without_discountType() {
         final CreateCouponCommand command = new CreateCouponCommand(
             null,
             1000,
@@ -68,7 +68,7 @@ final class CouponProcessorTest {
 
     @Test
     @DisplayName("쿠폰 생성 시 할인 금액이 0보다 적으면 예외가 발생한다")
-    void createCouponWithDiscountInfo() {
+    void createCoupon_withDiscountAmount_lessThanZero() {
         final CreateCouponCommand command = new CreateCouponCommand(
             "FIX",
             0,
@@ -81,7 +81,7 @@ final class CouponProcessorTest {
 
     @Test
     @DisplayName("쿠폰 생성 시 만료일이 현재 시간보다 이전이면 예외가 발생한다")
-    void createCouponWithexpirationAtBefore() {
+    void createCoupon_withExpirationAt_beforeThanNow() {
         final CreateCouponCommand command = new CreateCouponCommand(
             "FIX",
             1000,
@@ -94,7 +94,7 @@ final class CouponProcessorTest {
 
     @Test
     @DisplayName("생성할 쿠폰 개수가 0보다 적으면 예외가 발생한다")
-    void createCouponWithQuantityLessThanZero() {
+    void createCoupon_withQuantity_LessThanZero() {
         final CreateCouponCommand command = new CreateCouponCommand(
             "FIX",
             1000,
