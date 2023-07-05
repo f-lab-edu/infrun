@@ -9,11 +9,11 @@ import lombok.NoArgsConstructor;
 public class DiscountInfo {
 
     private DiscountType discountType;
-    private int discountAmount;
+    private int discountValue;
 
-    private DiscountInfo(final DiscountType discountType, final int discountAmount) {
+    private DiscountInfo(final DiscountType discountType, final int discountValue) {
         this.discountType = discountType;
-        this.discountAmount = discountAmount;
+        this.discountValue = discountValue;
     }
 
     public static DiscountInfo of(final DiscountType discountType, final int discountAmount) {
@@ -24,7 +24,7 @@ public class DiscountInfo {
         return discountType;
     }
 
-    public int getDiscountAmount() {
-        return discountAmount;
+    public int getDiscountValue() {
+        return discountValue;
     }
 }

@@ -41,7 +41,7 @@ final class CouponProcessorTest {
     @DisplayName("쿠폰을 생성한다")
     void createCoupon() {
         final CreateCouponCommand command = new CreateCouponCommand(
-            "AMOUNT",
+            "FIX",
             1000,
             expirationAt,
             3);
@@ -70,7 +70,7 @@ final class CouponProcessorTest {
     @DisplayName("쿠폰 생성 시 할인 금액이 0보다 적으면 예외가 발생한다")
     void createCouponWithDiscountInfo() {
         final CreateCouponCommand command = new CreateCouponCommand(
-            "AMOUNT",
+            "FIX",
             0,
             expirationAt,
             3);
