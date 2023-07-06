@@ -16,6 +16,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
@@ -27,6 +28,7 @@ public class LectureProcessor {
     private final LectureFileRepository lectureFileRepository;
     private final StorageUpload storageUpload;
 
+    @Transactional
     public long registerLecture(LectureRegisterCommand lectureRegisterCommand) {
         validateLectureFile(lectureRegisterCommand.lectureFileList());
         List<LectureFile> uploadedFileId = uploadFile(lectureRegisterCommand);
