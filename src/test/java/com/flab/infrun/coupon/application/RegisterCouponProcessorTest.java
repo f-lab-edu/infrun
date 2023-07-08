@@ -19,8 +19,8 @@ import org.junit.jupiter.api.Test;
 
 final class RegisterCouponProcessorTest {
 
-    private final LocalDateTime expirationAt = LocalDateTime.of(2088, 1, 1, 0, 0, 0);
-    private final LocalDateTime currentTime = LocalDateTime.of(2023, 6, 30, 0, 0, 0);
+    private final LocalDateTime expirationAt = LocalDateTime.of(2088, 1, 1, 0, 0);
+    private final LocalDateTime currentTime = LocalDateTime.of(2023, 6, 30, 0, 0);
     private final String couponCode = "coupon-code";
     private RegisterCouponProcessor sut;
 
@@ -39,7 +39,7 @@ final class RegisterCouponProcessorTest {
         final Member member = Member.of("tester", "test@test.com", "1234");
         final CouponRegisterCommand command = new CouponRegisterCommand(member, couponCode);
 
-        final var result = sut.registerCoupon(command, currentTime);
+        final var result = sut.execute(command, currentTime);
 
         assertThat(result.ownerEmail()).isEqualTo(member.getEmail());
         assertThat(result.discountInfo().getDiscountType()).isEqualTo(DiscountType.FIX);
@@ -53,7 +53,7 @@ final class RegisterCouponProcessorTest {
         final Member member = Member.of("tester", "test@test.com", "1234");
         final CouponRegisterCommand command = new CouponRegisterCommand(member, "not-found-code");
 
-        assertThatThrownBy(() -> sut.registerCoupon(command, currentTime))
+        assertThatThrownBy(() -> sut.execute(command, currentTime))
             .isInstanceOf(NotFoundCouponException.class);
     }
 
@@ -63,7 +63,7 @@ final class RegisterCouponProcessorTest {
         final Member member = Member.of("tester", "test@test.com", "1234");
         final CouponRegisterCommand command = new CouponRegisterCommand(member, couponCode);
 
-        assertThatThrownBy(() -> sut.registerCoupon(command, expirationAt.plusDays(1)))
+        assertThatThrownBy(() -> sut.execute(command, expirationAt.plusDays(1)))
             .isInstanceOf(ExpiredCouponException.class);
     }
 
@@ -74,8 +74,8 @@ final class RegisterCouponProcessorTest {
         final CouponRegisterCommand command = new CouponRegisterCommand(member, couponCode);
 
         assertThatThrownBy(() -> {
-            sut.registerCoupon(command, currentTime);
-            sut.registerCoupon(command, currentTime);
+            sut.execute(command, currentTime);
+            sut.execute(command, currentTime);
         })
             .isInstanceOf(AlreadyRegisteredCouponException.class);
     }

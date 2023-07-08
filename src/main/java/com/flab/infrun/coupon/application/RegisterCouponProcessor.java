@@ -18,11 +18,11 @@ public class RegisterCouponProcessor {
     private final CouponRepository couponRepository;
 
     @Transactional
-    public CouponRegisteredResult registerCoupon(
+    public CouponRegisteredResult execute(
         final CouponRegisterCommand command,
         final LocalDateTime currentTime
     ) {
-        final Coupon coupon = couponRepository.findByCouponCode(command.couponCode())
+        final Coupon coupon = couponRepository.findByCouponCodeWithLock(command.couponCode())
             .orElseThrow(() -> new NotFoundCouponException(ErrorCode.NOT_FOUND_COUPON));
 
         coupon.register(command.member(), currentTime);

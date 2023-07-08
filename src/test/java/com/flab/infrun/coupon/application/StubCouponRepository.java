@@ -40,6 +40,8 @@ class StubCouponRepository implements CouponRepository {
 
     @Override
     public Optional<Coupon> findByCouponCodeWithLock(final String couponCode) {
-        return Optional.empty();
+        return persistence.values().stream()
+            .filter(coupon -> Objects.equals(coupon.getCode(), couponCode))
+            .findFirst();
     }
 }
