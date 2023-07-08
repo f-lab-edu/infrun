@@ -25,4 +25,9 @@ public class CouponRepositoryAdapter implements CouponRepository {
     public Optional<Coupon> findByCouponCode(final String couponCode) {
         return couponJpaRepository.findByCode(couponCode);
     }
+
+    @Override
+    public Optional<Coupon> findByCouponCodeWithLock(final String couponCode) {
+        return couponJpaRepository.findByCodeWithLock(couponCode);
+    }
 }

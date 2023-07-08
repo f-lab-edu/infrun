@@ -37,4 +37,9 @@ class StubCouponRepository implements CouponRepository {
             .filter(coupon -> Objects.equals(coupon.getCode(), couponCode))
             .findFirst();
     }
+
+    @Override
+    public Optional<Coupon> findByCouponCodeWithLock(final String couponCode) {
+        return Optional.empty();
+    }
 }

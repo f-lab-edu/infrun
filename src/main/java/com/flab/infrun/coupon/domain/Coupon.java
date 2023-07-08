@@ -15,6 +15,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Version;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -27,6 +28,9 @@ public class Coupon {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Version
+    private Long version;
 
     private String code;
 
@@ -63,6 +67,10 @@ public class Coupon {
             .discountInfo(discountInfo)
             .expirationAt(expirationAt)
             .build();
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getCode() {
