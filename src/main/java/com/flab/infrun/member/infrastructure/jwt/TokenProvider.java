@@ -16,22 +16,25 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
 @Component
 public class TokenProvider implements InitializingBean {
 
     private static final String AUTHORITIES_KEY = "auth";
+    private final UserDetailsService userDetailsService;
     private final String secret;
     private final long tokenValidityInMilliseconds;
     private Key key;
 
     public TokenProvider(
-        @Value("${jwt.secret}")
-        String secret,
-        @Value("${jwt.token-validity-in-seconds}")
-        long tokenValidityInMilliseconds) {
+        final UserDetailsService userDetailsService,
+        @Value("${jwt.secret}") final String secret,
+        @Value("${jwt.token-validity-in-seconds}") long tokenValidityInMilliseconds
+    ) {
+        this.userDetailsService = userDetailsService;
         this.secret = secret;
         this.tokenValidityInMilliseconds = tokenValidityInMilliseconds * 1000;
     }
@@ -73,14 +76,14 @@ public class TokenProvider implements InitializingBean {
             .parseClaimsJws(token)
             .getBody();
 
+        final UserDetails userDetails = userDetailsService.loadUserByUsername(claims.getSubject());
+
         final List<SimpleGrantedAuthority> authorities = Arrays.stream(
                 claims.get(AUTHORITIES_KEY).toString().split(","))
             .map(SimpleGrantedAuthority::new)
             .toList();
 
-        final User principal = new User(claims.getSubject(), "", authorities);
-
-        return new UsernamePasswordAuthenticationToken(principal, token, authorities);
+        return new UsernamePasswordAuthenticationToken(userDetails, token, authorities);
     }
 
     public boolean validateToken(String token) {
