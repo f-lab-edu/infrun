@@ -3,7 +3,7 @@ package com.flab.infrun.coupon.application;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.flab.infrun.coupon.application.command.CouponRegisterCommand;
-import com.flab.infrun.coupon.application.result.CouponRegisteredResult;
+import com.flab.infrun.coupon.application.result.EnrolledCouponResult;
 import com.flab.infrun.coupon.domain.Coupon;
 import com.flab.infrun.coupon.domain.DiscountInfo;
 import com.flab.infrun.coupon.domain.DiscountType;
@@ -28,7 +28,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 class ConcurrencyRegisterCouponTest {
 
     @Autowired
-    private RegisterCouponProcessor sut;
+    private EnrollCouponProcessor sut;
     @Autowired
     private CouponJpaRepository couponRepository;
     @Autowired
@@ -52,7 +52,7 @@ class ConcurrencyRegisterCouponTest {
         final var result = getConcurrencyResult(threadCount, couponCode);
 
         assertThat(result)
-            .filteredOn(o -> o instanceof CouponRegisteredResult)
+            .filteredOn(o -> o instanceof EnrolledCouponResult)
             .hasSize(1);
     }
 

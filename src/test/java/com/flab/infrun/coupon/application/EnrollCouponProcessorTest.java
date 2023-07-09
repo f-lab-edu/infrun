@@ -17,17 +17,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-final class RegisterCouponProcessorTest {
+final class EnrollCouponProcessorTest {
 
     private final LocalDateTime expirationAt = LocalDateTime.of(2088, 1, 1, 0, 0);
     private final LocalDateTime currentTime = LocalDateTime.of(2023, 6, 30, 0, 0);
     private final String couponCode = "coupon-code";
-    private RegisterCouponProcessor sut;
+    private EnrollCouponProcessor sut;
 
     @BeforeEach
     void setUp() {
         final CouponRepository couponRepository = new StubCouponRepository();
-        sut = new RegisterCouponProcessor(couponRepository);
+        sut = new EnrollCouponProcessor(couponRepository);
 
         couponRepository.save(
             Coupon.create(couponCode, DiscountInfo.of(DiscountType.FIX, 1000), expirationAt));

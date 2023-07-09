@@ -93,7 +93,7 @@ public class Coupon {
         return expirationAt;
     }
 
-    public void register(final Member owner, final LocalDateTime currentTime) {
+    public void enroll(final Member owner, final LocalDateTime currentTime) {
         verifyIsRegistrable(currentTime);
         this.owner = owner;
         this.status = CouponStatus.REGISTERED;

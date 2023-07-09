@@ -46,7 +46,7 @@ final class CreateCouponProcessorTest {
             expirationAt,
             3);
 
-        final CreatedCouponResult result = sut.createCoupons(command, currentTime);
+        final CreatedCouponResult result = sut.execute(command, currentTime);
 
         assertThat(result.couponCodes()).hasSize(3);
         assertThat(result.quantity()).isEqualTo(3);
@@ -62,7 +62,7 @@ final class CreateCouponProcessorTest {
             expirationAt,
             3);
 
-        assertThatThrownBy(() -> sut.createCoupons(command, currentTime))
+        assertThatThrownBy(() -> sut.execute(command, currentTime))
             .isInstanceOf(InvalidCouponDiscountTypeException.class);
     }
 
@@ -75,7 +75,7 @@ final class CreateCouponProcessorTest {
             expirationAt,
             3);
 
-        assertThatThrownBy(() -> sut.createCoupons(command, currentTime))
+        assertThatThrownBy(() -> sut.execute(command, currentTime))
             .isInstanceOf(InvalidCouponDiscountAmountException.class);
     }
 
@@ -88,7 +88,7 @@ final class CreateCouponProcessorTest {
             LocalDateTime.of(1995, 6, 30, 0, 0, 0),
             3);
 
-        assertThatThrownBy(() -> sut.createCoupons(command, currentTime))
+        assertThatThrownBy(() -> sut.execute(command, currentTime))
             .isInstanceOf(InvalidCouponExpirationAtException.class);
     }
 
@@ -101,7 +101,7 @@ final class CreateCouponProcessorTest {
             expirationAt,
             0);
 
-        assertThatThrownBy(() -> sut.createCoupons(command, currentTime))
+        assertThatThrownBy(() -> sut.execute(command, currentTime))
             .isInstanceOf(InvalidCouponQuantityException.class);
     }
 }

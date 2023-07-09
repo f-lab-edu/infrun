@@ -22,7 +22,7 @@ public class CreateCouponProcessor {
     private final CouponValidator couponValidator;
 
     @Transactional
-    public CreatedCouponResult createCoupons(
+    public CreatedCouponResult execute(
         final CreateCouponCommand command,
         final LocalDateTime currentTime
     ) {

@@ -2,7 +2,7 @@ package com.flab.infrun.coupon.application;
 
 import com.flab.infrun.common.exception.ErrorCode;
 import com.flab.infrun.coupon.application.command.CouponRegisterCommand;
-import com.flab.infrun.coupon.application.result.CouponRegisteredResult;
+import com.flab.infrun.coupon.application.result.EnrolledCouponResult;
 import com.flab.infrun.coupon.domain.Coupon;
 import com.flab.infrun.coupon.domain.CouponRepository;
 import com.flab.infrun.coupon.domain.exception.NotFoundCouponException;
@@ -13,20 +13,20 @@ import org.springframework.transaction.annotation.Transactional;
 
 @AllArgsConstructor
 @Component
-public class RegisterCouponProcessor {
+public class EnrollCouponProcessor {
 
     private final CouponRepository couponRepository;
 
     @Transactional
-    public CouponRegisteredResult execute(
+    public EnrolledCouponResult execute(
         final CouponRegisterCommand command,
         final LocalDateTime currentTime
     ) {
         final Coupon coupon = couponRepository.findByCouponCodeWithLock(command.couponCode())
             .orElseThrow(() -> new NotFoundCouponException(ErrorCode.NOT_FOUND_COUPON));
 
-        coupon.register(command.member(), currentTime);
+        coupon.enroll(command.member(), currentTime);
 
-        return CouponRegisteredResult.from(command.member().getEmail(), coupon);
+        return EnrolledCouponResult.from(command.member().getEmail(), coupon);
     }
 }
