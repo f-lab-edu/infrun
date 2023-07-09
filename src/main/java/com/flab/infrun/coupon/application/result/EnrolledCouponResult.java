@@ -4,17 +4,17 @@ import com.flab.infrun.coupon.domain.Coupon;
 import com.flab.infrun.coupon.domain.DiscountInfo;
 import java.time.LocalDateTime;
 
-public record CouponRegisteredResult(
+public record EnrolledCouponResult(
     String ownerEmail,
     DiscountInfo discountInfo,
     LocalDateTime expirationAt
 ) {
 
-    public static CouponRegisteredResult from(
+    public static EnrolledCouponResult from(
         final String ownerEmail,
         final Coupon coupon
     ) {
-        return new CouponRegisteredResult(
+        return new EnrolledCouponResult(
             ownerEmail,
             coupon.getDiscountInfo(),
             coupon.getExpirationAt()
