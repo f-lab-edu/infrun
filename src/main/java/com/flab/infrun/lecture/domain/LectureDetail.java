@@ -1,6 +1,7 @@
 package com.flab.infrun.lecture.domain;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -20,7 +21,7 @@ public class LectureDetail {
     private String chapter;
     private String name;
     private Long lectureId;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lecture_file_id")
     private LectureFile lectureFile;
 
