@@ -62,14 +62,11 @@ class ConcurrencyRegisterCouponTest {
     ) throws InterruptedException, ExecutionException {
         final ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
         final CountDownLatch latch = new CountDownLatch(threadCount);
-        List<Future<Object>> futures = new ArrayList<>();
+        final List<Member> members = createMembers(threadCount);
+        final List<Future<Object>> futures = new ArrayList<>();
 
         for (int i = 0; i < threadCount; i++) {
-            final Member member = memberRepository.save(
-                Member.of(
-                    "user" + i,
-                    "user" + i + "@test.com",
-                    "1234"));
+            final Member member = members.get(i);
             final LocalDateTime currentTime = LocalDateTime.of(2023, 6, 30, 0, 0);
             final Future<Object> future = executorService.submit(() -> {
                 try {
@@ -94,5 +91,19 @@ class ConcurrencyRegisterCouponTest {
         }
 
         return results;
+    }
+
+    private List<Member> createMembers(final int count) {
+        final List<Member> members = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            final Member member = memberRepository.save(
+                Member.of(
+                    "user" + i,
+                    "user" + i + "@test.com",
+                    "1234"));
+            members.add(member);
+        }
+
+        return members;
     }
 }
