@@ -66,8 +66,8 @@ class ConcurrencyRegisterCouponTest {
         final List<Future<Object>> futures = new ArrayList<>();
 
         for (int i = 0; i < threadCount; i++) {
-            final Member member = members.get(i);
             final LocalDateTime currentTime = LocalDateTime.of(2023, 6, 30, 0, 0);
+            final Member member = members.get(i);
             final Future<Object> future = executorService.submit(() -> {
                 try {
                     return sut.execute(

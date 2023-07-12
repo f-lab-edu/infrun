@@ -1,4 +1,4 @@
-package com.flab.infrun.coupon.presentation;
+package com.flab.infrun.coupon.presentation.request;
 
 import com.flab.infrun.common.config.security.UserAdapter;
 import com.flab.infrun.coupon.application.command.CouponRegisterCommand;
