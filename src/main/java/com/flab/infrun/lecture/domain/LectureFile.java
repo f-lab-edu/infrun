@@ -4,7 +4,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -37,34 +36,6 @@ public class LectureFile {
 
     public String getName() {
         return name;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        LectureFile that = (LectureFile) o;
-
-        if (!Objects.equals(id, that.id)) {
-            return false;
-        }
-        if (!Objects.equals(url, that.url)) {
-            return false;
-        }
-        return Objects.equals(name, that.name);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (url != null ? url.hashCode() : 0);
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        return result;
     }
 
     @Override
