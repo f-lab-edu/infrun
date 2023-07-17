@@ -1,5 +1,6 @@
 package com.flab.infrun.common;
 
+import com.flab.infrun.cart.domain.exception.CartException;
 import com.flab.infrun.common.exception.ErrorCode;
 import com.flab.infrun.common.response.Response;
 import java.util.Objects;
@@ -44,5 +45,11 @@ public class CommonExceptionHandler {
     @ExceptionHandler(AuthenticationException.class)
     public Response<ErrorCode> handleAuthenticationException() {
         return Response.fail(ErrorCode.UN_AUTHORIZATION);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(CartException.class)
+    public Response<ErrorCode> handleCartException(final CartException e) {
+        return Response.fail(e.getErrorCode());
     }
 }
