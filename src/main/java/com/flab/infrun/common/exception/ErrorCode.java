@@ -13,10 +13,10 @@ public enum ErrorCode {
     // MEMBER
     DUPLICATED_NICKNAME("이미 존재하는 닉네임입니다."),
     DUPLICATED_EMAIL("이미 존재하는 이메일입니다."),
+    NOT_FOUND_MEMBER("존재하지 않는 회원입니다."),
 
     // LECTURE
     DUPLICATED_FILE_NAME("중복되는 파일명이 존재합니다."),
-    NOT_FOUND_MEMBER("존재하지 않는 회원입니다."),
 
     // COUPON
     INVALID_COUPON_EXPIRATION_AT("쿠폰 만료일이 유효하지 않습니다."),
@@ -25,7 +25,9 @@ public enum ErrorCode {
     INVALID_COUPON_DISCOUNT_AMOUNT("쿠폰 할인 금액 또는 할인율이 유효하지 않습니다."),
 
     // CART
-    NO_CART_ITEMS("수강바구니에 담을 상품이 없습니다.");
+    NO_CART_ITEMS("수강바구니에 담을 상품이 없습니다."),
+    NOT_FOUND_CART("수강바구니를 찾을 수 없습니다."),
+    ;
 
     private final String message;
 

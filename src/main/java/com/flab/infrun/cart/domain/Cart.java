@@ -12,6 +12,7 @@ import jakarta.persistence.JoinColumn;
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.AccessLevel;
@@ -46,6 +47,11 @@ public class Cart {
 
     public void addCartItem(final CartItem cartItem) {
         cartItems.add(cartItem);
+        totalPrice = calculateTotalPrice();
+    }
+
+    public void deleteCartItem(final Long lectureId) {
+        cartItems.removeIf(cartItem -> Objects.equals(cartItem.getLectureId(), lectureId));
         totalPrice = calculateTotalPrice();
     }
 
