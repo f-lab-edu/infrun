@@ -1,6 +1,6 @@
 package com.flab.infrun.cart.application.command;
 
-public record DeleteCartCommand(
+public record DeleteCartItemCommand(
     Long ownerId,
     Long lectureId
 ) {
