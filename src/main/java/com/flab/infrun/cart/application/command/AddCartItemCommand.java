@@ -1,6 +1,6 @@
 package com.flab.infrun.cart.application.command;
 
-public record AddCartCommand(
+public record AddCartItemCommand(
     Long ownerId,
     Long lectureId
 ) {

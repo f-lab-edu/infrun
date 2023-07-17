@@ -1,5 +1,6 @@
 package com.flab.infrun.lecture.domain;
 
+import com.google.common.annotations.VisibleForTesting;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -37,12 +38,12 @@ public class Lecture {
         return new Lecture(name, price, lectureLevel, skill, introduce, userId);
     }
 
-    public void setId(long key) {
-        this.id = key;
-    }
-
     public Long getId() {
         return id;
+    }
+
+    public void setId(long key) {
+        this.id = key;
     }
 
     public String getName() {
@@ -67,6 +68,11 @@ public class Lecture {
 
     public long getUserId() {
         return userId;
+    }
+
+    @VisibleForTesting
+    public void assignId(Long id) {
+        this.id = id;
     }
 
     @Override
