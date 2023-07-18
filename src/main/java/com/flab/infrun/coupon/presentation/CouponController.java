@@ -37,7 +37,7 @@ public class CouponController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasRole('TEACHER')")
+    @PreAuthorize("hasAnyRole('USER', 'TEACHER')")
     @PostMapping("/enroll")
     public Response<EnrolledCouponResponse> enroll(
         @CurrentUser final UserAdapter user,
