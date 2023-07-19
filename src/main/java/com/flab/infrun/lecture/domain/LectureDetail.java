@@ -41,10 +41,6 @@ public class LectureDetail {
         this.lecture = lecture;
     }
 
-    public void setId(long key) {
-        this.id = key;
-    }
-
     public Long getId() {
         return id;
     }

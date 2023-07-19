@@ -2,9 +2,9 @@ package com.flab.infrun.lecture.presentation;
 
 import com.flab.infrun.common.response.Response;
 import com.flab.infrun.lecture.application.LectureFacade;
-import com.flab.infrun.lecture.infrastructure.data.LectureDTO;
 import com.flab.infrun.lecture.presentation.request.LectureRegisterRequest;
 import com.flab.infrun.lecture.presentation.request.LectureSearchRequest;
+import com.flab.infrun.lecture.presentation.response.LectureQueryResponse;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -36,10 +36,9 @@ public class LectureController {
     }
 
     @GetMapping
-    public ResponseEntity<Response<List<LectureDTO>>> searchLecture(
+    public ResponseEntity<Response<List<LectureQueryResponse>>> searchLecture(
         @Valid LectureSearchRequest lectureSearch
     ) {
-        System.out.println(lectureSearch);
         var result = lectureFacade.searchLecture(lectureSearch.toQuery());
         return ResponseEntity.status(HttpStatus.OK).body(Response.success(result));
     }

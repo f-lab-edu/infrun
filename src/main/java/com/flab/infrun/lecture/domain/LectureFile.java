@@ -26,10 +26,6 @@ public class LectureFile {
         return new LectureFile(url, name);
     }
 
-    public void setId(long key) {
-        this.id = key;
-    }
-
     public Long getId() {
         return id;
     }

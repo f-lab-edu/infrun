@@ -2,7 +2,7 @@ package com.flab.infrun.lecture.application;
 
 import com.flab.infrun.lecture.application.command.LectureRegisterCommand;
 import com.flab.infrun.lecture.application.query.LectureSearchQuery;
-import com.flab.infrun.lecture.infrastructure.data.LectureDTO;
+import com.flab.infrun.lecture.presentation.response.LectureQueryResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,7 @@ public class LectureFacade {
         return lectureCommandProcessor.registerLecture(command);
     }
 
-    public List<LectureDTO> searchLecture(LectureSearchQuery query) {
+    public List<LectureQueryResponse> searchLecture(LectureSearchQuery query) {
         return lectureQueryProcessor.searchLecture(query);
     }
 }

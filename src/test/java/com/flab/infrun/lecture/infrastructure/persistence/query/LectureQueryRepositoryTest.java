@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.flab.infrun.lecture.domain.Lecture;
 import com.flab.infrun.lecture.domain.LectureDetail;
-import com.flab.infrun.lecture.domain.LectureFile;
 import com.flab.infrun.lecture.infrastructure.data.LectureDTO;
 import com.flab.infrun.lecture.infrastructure.persistence.query.condition.LectureSearchCondition;
 import com.flab.infrun.member.domain.Member;
@@ -41,19 +40,10 @@ class LectureQueryRepositoryTest {
 
         assertThat(searched1.size()).isEqualTo(1);
         assertThat(searched2.size()).isEqualTo(2);
-
-        for (LectureDTO lectureDTO : searched1) {
-            System.out.println(lectureDTO);
-        }
-        System.out.println("+++++++++++++++++++");
-
-        for (LectureDTO lectureDTO : searched2) {
-            System.out.println(lectureDTO);
-        }
     }
 
     @BeforeEach
-    void dataPush() {
+    void setup() {
         repository = new LectureQueryRepository(new JPAQueryFactory(em));
 
         member1 = Member.of("LDK", "ledk123@naver.com", "123");
@@ -63,11 +53,11 @@ class LectureQueryRepositoryTest {
             member1);
         List<LectureDetail> lectureDetailList1 = List.of(
             LectureDetail.of("1", "강의 A의 챕터1",
-                LectureFile.of("", "JAVA 설정")),
+                null),
             LectureDetail.of("1", "강의 A의 챕터1",
-                LectureFile.of("", "JAVA 기초")),
+                null),
             LectureDetail.of("2", "강의 A의 챕터2",
-                LectureFile.of("", "JAVA 기본"))
+                null)
         );
         lecture1.addLectureDetail(lectureDetailList1);
 
@@ -75,11 +65,11 @@ class LectureQueryRepositoryTest {
             member2);
         List<LectureDetail> lectureDetailList2 = List.of(
             LectureDetail.of("1", "스프링 강의의 챕터1-1",
-                LectureFile.of("", "spring 이란?")),
+                null),
             LectureDetail.of("1", "스프링 강의의 챕터1-2",
-                LectureFile.of("", "spring 5대 원칙")),
+                null),
             LectureDetail.of("2", "스프링 강의의 챕터2-1",
-                LectureFile.of("", "spring 기본"))
+                null)
         );
         lecture2.addLectureDetail(lectureDetailList2);
 

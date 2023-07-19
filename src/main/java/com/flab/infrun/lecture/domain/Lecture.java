@@ -50,10 +50,6 @@ public class Lecture {
         lectureDetailList.forEach(detail -> detail.setLecture(this));
     }
 
-    public void setId(long key) {
-        this.id = key;
-    }
-
     public Long getId() {
         return id;
     }
