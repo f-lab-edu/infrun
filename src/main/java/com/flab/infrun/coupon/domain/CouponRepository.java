@@ -1,8 +1,13 @@
 package com.flab.infrun.coupon.domain;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CouponRepository {
 
-    List<Coupon> saveAll(List<Coupon> coupons);
+    Coupon save(final Coupon coupon);
+
+    List<Coupon> saveAll(final List<Coupon> coupons);
+
+    Optional<Coupon> findByCouponCodeWithLock(final String couponCode);
 }
