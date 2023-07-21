@@ -21,7 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
 @Component
-public class LectureProcessor {
+public class LectureCommandProcessor {
 
     private final LectureRepository lectureRepository;
     private final LectureDetailRepositoryAdapter lectureDetailRepository;
@@ -31,35 +31,34 @@ public class LectureProcessor {
     @Transactional
     public long registerLecture(LectureRegisterCommand lectureRegisterCommand) {
         validateLectureFile(lectureRegisterCommand.lectureFileList());
-        List<LectureFile> uploadedFileId = uploadFile(lectureRegisterCommand);
-        Map<String, LectureFile> mappingFileId = mappingFileId(uploadedFileId);
-        long savedLectureId = getSavedLecture(lectureRegisterCommand);
-        savedDetail(lectureRegisterCommand, savedLectureId, mappingFileId);
-        return savedLectureId;
+        List<LectureFile> uploadedFile = uploadFile(lectureRegisterCommand);
+        Map<String, LectureFile> mappingFileWithName = mappingFileId(uploadedFile);
+        return getSavedLecture(lectureRegisterCommand, mappingFileWithName);
     }
 
-    private long getSavedLecture(LectureRegisterCommand lectureRegisterCommand) {
-        return lectureRepository.save(Lecture.of(
+    private long getSavedLecture(LectureRegisterCommand lectureRegisterCommand,
+        Map<String, LectureFile> mappingFileWithName) {
+        Lecture lecture = Lecture.of(
             lectureRegisterCommand.name(),
             lectureRegisterCommand.price(),
             lectureRegisterCommand.level(),
             lectureRegisterCommand.skill(),
             lectureRegisterCommand.introduce(),
-            lectureRegisterCommand.userId())).getId()
-            ;
+            //todo-member getReferenceById or Make Temp Member
+            null);
+
+        List<LectureDetail> lectureDetails = lectureRegisterCommand.lectureDetailCommandList()
+            .stream()
+            .map(
+                d -> LectureDetail.of(d.chapter(), d.name(), mappingFileWithName.get(d.fileName())))
+            .toList();
+        lecture.addLectureDetail(lectureDetails);
+        return lectureRepository.save(lecture).getId();
     }
 
     private Map<String, LectureFile> mappingFileId(List<LectureFile> uploadedFile) {
         return uploadedFile.stream()
             .collect(Collectors.toMap(LectureFile::getName, Function.identity()));
-    }
-
-    private void savedDetail(LectureRegisterCommand lectureRegisterCommand, long savedLectureId,
-        Map<String, LectureFile> mappingFileId) {
-        lectureRegisterCommand.lectureDetailCommandList().forEach(
-            detail -> lectureDetailRepository.save(
-                LectureDetail.of(detail.chapter(), detail.name(),
-                    savedLectureId, mappingFileId.get(detail.fileName()))));
     }
 
     public List<LectureFile> uploadFile(LectureRegisterCommand lectureRegisterCommand) {

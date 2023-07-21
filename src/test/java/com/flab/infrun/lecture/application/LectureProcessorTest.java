@@ -12,7 +12,8 @@ import org.springframework.mock.web.MockMultipartFile;
 
 class LectureProcessorTest {
 
-    private final LectureProcessor lectureProcessor = new LectureProcessor(null, null, null, null);
+    private final LectureCommandProcessor lectureProcessor = new LectureCommandProcessor(null, null,
+        null, null);
 
     @Test
     @DisplayName("강의 파일 이름 중복 불가능 exception 테스트")

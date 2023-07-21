@@ -20,7 +20,7 @@ class LectureRepositoryTest {
     @DisplayName("강의 저장 테스트")
     void save() {
         Lecture lecture = Lecture.of("Lecture1", 20000, 1, "JAVA", "이것은 강의 A",
-            1L);
+            null);
 
         Lecture saved = lectureJpaRepository.save(lecture);
         Optional<Lecture> lecture1 = lectureJpaRepository.findById(saved.getId());
