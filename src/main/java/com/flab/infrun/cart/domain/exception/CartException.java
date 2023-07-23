@@ -3,9 +3,9 @@ package com.flab.infrun.cart.domain.exception;
 import com.flab.infrun.common.exception.ErrorCode;
 import com.flab.infrun.common.exception.SystemException;
 
-public class NoCartItemsException extends SystemException {
+public class CartException extends SystemException {
 
-    public NoCartItemsException() {
-        super(ErrorCode.NO_CART_ITEMS);
+    public CartException(final ErrorCode errorCode) {
+        super(errorCode);
     }
 }

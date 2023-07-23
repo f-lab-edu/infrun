@@ -44,7 +44,7 @@ final class AddCartItemProcessorTest {
     @Test
     @DisplayName("수강바구니가 이미 있다면, 강의를 추가한다")
     void addCartItem_cartExist() {
-        final var cartItem = createCartItem();
+        createCartItem();
         final var command = CreteAddCartCommand();
 
         final var result = sut.execute(command);

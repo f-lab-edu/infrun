@@ -25,7 +25,6 @@ public enum ErrorCode {
     INVALID_COUPON_DISCOUNT_AMOUNT("쿠폰 할인 금액 또는 할인율이 유효하지 않습니다."),
 
     // CART
-    NO_CART_ITEMS("수강바구니에 담을 상품이 없습니다."),
     NOT_FOUND_CART("수강바구니를 찾을 수 없습니다."),
     ;
 
