@@ -32,4 +32,9 @@ public class FakeLectureRepository implements LectureRepository {
             .filter(lecture -> lecture.getId().equals(id))
             .findFirst();
     }
+
+    @Override
+    public List<Lecture> findAllByIdIn(final List<Long> lectureIds) {
+        return null;
+    }
 }
