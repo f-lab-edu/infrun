@@ -72,7 +72,7 @@ final class CartsControllerTest {
     void addCartItem_success() throws Exception {
         final var request = createCorrectAddCartItemRequest();
         when(cartsFacade.addCartItem(any()))
-            .thenReturn(AddedCartItemResult.from(BigDecimal.valueOf(10000), List.of(1L, 2L, 3L)));
+            .thenReturn(AddedCartItemResult.from(List.of(1L, 2L, 3L)));
 
         final var result = mockMvc.perform(post(CART_URI)
             .contentType(MediaType.APPLICATION_JSON)
@@ -82,7 +82,6 @@ final class CartsControllerTest {
         ).andDo(print());
 
         result.andExpect(status().isOk())
-            .andExpect(jsonPath("$.data.totalPrice").value(10000))
             .andExpect(jsonPath("$.data.lectureIds").isNotEmpty())
             .andExpect(jsonPath("$.data.lectureIds").value(containsInAnyOrder(1, 2, 3)));
     }
@@ -108,7 +107,7 @@ final class CartsControllerTest {
     void deleteCartItem_success() throws Exception {
         final var request = createCorrectDeleteCartItemRequest();
         when(cartsFacade.deleteCartItem(any()))
-            .thenReturn(DeletedCartItemResult.from(BigDecimal.valueOf(5000), List.of(2L, 3L)));
+            .thenReturn(DeletedCartItemResult.from(List.of(2L, 3L)));
 
         final var result = mockMvc.perform(delete(CART_URI + "/" + request.lectureId())
             .with(user(createUser()))
@@ -116,7 +115,6 @@ final class CartsControllerTest {
         ).andDo(print());
 
         result.andExpect(status().isOk())
-            .andExpect(jsonPath("$.data.totalPrice").value(5000))
             .andExpect(jsonPath("$.data.lectureIds").isNotEmpty())
             .andExpect(jsonPath("$.data.lectureIds").value(containsInAnyOrder(2, 3)));
     }

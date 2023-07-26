@@ -28,6 +28,6 @@ public class AddCartItemProcessor {
 
         cart.addCartItem(CartItem.of(lecture.getId(), BigDecimal.valueOf(lecture.getPrice())));
 
-        return AddedCartItemResult.from(cart.getTotalPrice(), cart.getLectureIds());
+        return AddedCartItemResult.from(cart.getLectureIds());
     }
 }

@@ -3,7 +3,6 @@ package com.flab.infrun.cart.application;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.flab.infrun.cart.application.command.AddCartItemCommand;
-import com.flab.infrun.cart.application.result.AddedCartItemResult;
 import com.flab.infrun.cart.domain.Cart;
 import com.flab.infrun.cart.domain.CartItem;
 import com.flab.infrun.cart.domain.CartRepository;
@@ -38,7 +37,6 @@ final class AddCartItemProcessorTest {
 
         assertThat(result).isNotNull();
         assertThat(result.lectureIds()).hasSize(1);
-        assertThat(result.totalPrice()).isEqualTo(BigDecimal.valueOf(79_000));
     }
 
     @Test
@@ -49,9 +47,6 @@ final class AddCartItemProcessorTest {
 
         final var result = sut.execute(command);
 
-        assertThat(result)
-            .extracting(AddedCartItemResult::totalPrice)
-            .isEqualTo(BigDecimal.valueOf(63_000 + 79_000));
         assertThat(result.lectureIds()).hasSize(2);
     }
 

@@ -22,6 +22,6 @@ public class DeleteCartItemProcessor {
 
         cart.deleteCartItem(command.lectureId());
 
-        return DeletedCartItemResult.from(cart.getTotalPrice(), cart.getLectureIds());
+        return DeletedCartItemResult.from(cart.getLectureIds());
     }
 }

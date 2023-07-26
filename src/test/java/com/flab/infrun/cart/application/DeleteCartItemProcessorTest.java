@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.flab.infrun.cart.application.command.DeleteCartItemCommand;
-import com.flab.infrun.cart.application.result.DeletedCartItemResult;
 import com.flab.infrun.cart.domain.Cart;
 import com.flab.infrun.cart.domain.CartItem;
 import com.flab.infrun.cart.domain.CartRepository;
@@ -33,9 +32,6 @@ final class DeleteCartItemProcessorTest {
 
         final var result = sut.execute(command);
 
-        assertThat(result)
-            .extracting(DeletedCartItemResult::totalPrice)
-            .isEqualTo(BigDecimal.ZERO);
         assertThat(result.lectureIds()).hasSize(0);
     }
 

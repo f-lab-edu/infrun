@@ -3,7 +3,9 @@ package com.flab.infrun.cart.presentation;
 import com.flab.infrun.cart.application.CartsFacade;
 import com.flab.infrun.cart.presentation.request.AddCartItemRequest;
 import com.flab.infrun.cart.presentation.request.DeleteCartItemRequest;
+import com.flab.infrun.cart.presentation.response.AddedCartItemResponse;
 import com.flab.infrun.cart.presentation.response.CartsResponse;
+import com.flab.infrun.cart.presentation.response.DeletedCartItemResponse;
 import com.flab.infrun.common.config.security.CurrentUser;
 import com.flab.infrun.common.response.Response;
 import com.flab.infrun.member.domain.Member;
@@ -45,7 +47,7 @@ public class CartsController {
     ) {
         var result = facade.addCartItem(request.toCommand(member.getId()));
 
-        return Response.success(result);
+        return Response.success(AddedCartItemResponse.from(result));
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -59,6 +61,6 @@ public class CartsController {
             new DeleteCartItemRequest(lectureId)
                 .toCommand(member.getId()));
 
-        return Response.success(result);
+        return Response.success(DeletedCartItemResponse.from(result));
     }
 }
