@@ -1,13 +1,13 @@
 package com.flab.infrun.coupon.presentation;
 
 import com.flab.infrun.common.config.security.CurrentUser;
-import com.flab.infrun.common.config.security.UserAdapter;
 import com.flab.infrun.common.response.Response;
 import com.flab.infrun.coupon.application.CouponFacade;
 import com.flab.infrun.coupon.presentation.request.CreateCouponRequest;
 import com.flab.infrun.coupon.presentation.request.EnrollCouponRequest;
 import com.flab.infrun.coupon.presentation.response.CreatedCouponResponse;
 import com.flab.infrun.coupon.presentation.response.EnrolledCouponResponse;
+import com.flab.infrun.member.domain.Member;
 import jakarta.validation.Valid;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
@@ -40,10 +40,10 @@ public class CouponController {
     @PreAuthorize("hasAnyRole('USER', 'TEACHER')")
     @PostMapping("/enroll")
     public Response<EnrolledCouponResponse> enroll(
-        @CurrentUser final UserAdapter user,
+        @CurrentUser final Member member,
         @Valid @RequestBody final EnrollCouponRequest request
     ) {
-        var result = facade.enrollCoupon(request.toCommand(user), LocalDateTime.now());
+        var result = facade.enrollCoupon(request.toCommand(member), LocalDateTime.now());
 
         return Response.success(EnrolledCouponResponse.from(result));
     }

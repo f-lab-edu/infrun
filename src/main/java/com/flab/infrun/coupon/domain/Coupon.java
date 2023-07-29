@@ -3,18 +3,14 @@ package com.flab.infrun.coupon.domain;
 import com.flab.infrun.common.exception.ErrorCode;
 import com.flab.infrun.coupon.domain.exception.AlreadyRegisteredCouponException;
 import com.flab.infrun.coupon.domain.exception.ExpiredCouponException;
-import com.flab.infrun.member.domain.Member;
 import com.google.common.annotations.VisibleForTesting;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -38,18 +34,16 @@ public class Coupon {
 
     private LocalDateTime expirationAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "owner_id")
-    private Member owner;
+    private Long ownerId;
 
     @Builder
     private Coupon(final String code, final CouponStatus status, final DiscountInfo discountInfo,
-        final LocalDateTime expirationAt, final Member owner) {
+        final LocalDateTime expirationAt, final Long ownerId) {
         this.code = code;
         this.status = status;
         this.discountInfo = discountInfo;
         this.expirationAt = expirationAt;
-        this.owner = owner;
+        this.ownerId = ownerId;
     }
 
     public static Coupon create(
@@ -77,8 +71,8 @@ public class Coupon {
         return status;
     }
 
-    public Member getOwner() {
-        return owner;
+    public Long getOwnerId() {
+        return ownerId;
     }
 
     public DiscountInfo getDiscountInfo() {
@@ -89,9 +83,9 @@ public class Coupon {
         return expirationAt;
     }
 
-    public void enroll(final Member owner, final LocalDateTime currentTime) {
+    public void enroll(final Long ownerId, final LocalDateTime currentTime) {
         verifyIsRegistrable(currentTime);
-        this.owner = owner;
+        this.ownerId = ownerId;
         this.status = CouponStatus.REGISTERED;
     }
 

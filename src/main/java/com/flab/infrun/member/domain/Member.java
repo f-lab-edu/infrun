@@ -66,7 +66,7 @@ public final class Member {
     }
 
     @VisibleForTesting
-    void assignId(final Long id) {
+    public void assignId(final Long id) {
         this.id = id;
     }
 }
