@@ -1,6 +1,5 @@
 package com.flab.infrun.coupon.domain;
 
-import com.flab.infrun.common.exception.ErrorCode;
 import com.flab.infrun.coupon.domain.exception.AlreadyRegisteredCouponException;
 import com.flab.infrun.coupon.domain.exception.ExpiredCouponException;
 import com.google.common.annotations.VisibleForTesting;
@@ -91,19 +90,26 @@ public class Coupon {
 
     private void verifyIsRegistrable(final LocalDateTime currentTime) {
         if (this.status != CouponStatus.UNREGISTERED) {
-            throw new AlreadyRegisteredCouponException(ErrorCode.ALREADY_REGISTERED_COUPON);
+            throw new AlreadyRegisteredCouponException();
         }
         if (this.expirationAt.isBefore(currentTime)) {
-            throw new ExpiredCouponException(ErrorCode.EXPIRED_COUPON);
+            throw new ExpiredCouponException();
         }
     }
 
     // TODO: 쿠폰 사용 로직 작성하기
     public void use() {
-        if (this.status == CouponStatus.USED || this.status == CouponStatus.EXPIRED) {
-            throw new IllegalArgumentException("이미 사용했거나, 만료된 쿠폰입니다.");
-        }
+        verifyIsUsable();
         this.status = CouponStatus.USED;
+    }
+
+    private void verifyIsUsable() {
+        if (this.status == CouponStatus.USED) {
+            throw new AlreadyRegisteredCouponException();
+        }
+        if (this.status == CouponStatus.EXPIRED) {
+            throw new ExpiredCouponException();
+        }
     }
 
     @VisibleForTesting

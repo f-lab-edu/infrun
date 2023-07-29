@@ -5,7 +5,7 @@ import com.flab.infrun.common.exception.SystemException;
 
 public final class ExpiredCouponException extends SystemException {
 
-    public ExpiredCouponException(final ErrorCode errorCode) {
-        super(errorCode);
+    public ExpiredCouponException() {
+        super(ErrorCode.EXPIRED_COUPON);
     }
 }
