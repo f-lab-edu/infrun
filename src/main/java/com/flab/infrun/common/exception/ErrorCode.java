@@ -17,13 +17,12 @@ public enum ErrorCode {
 
     //LECTURE
     DUPLICATED_FILE_NAME("중복되는 파일명이 존재합니다."),
-    NOT_FOUND_MEMBER("존재하지 않는 회원입니다."),
 
     // COUPON
     INVALID_COUPON_EXPIRATION_AT("쿠폰 만료일이 유효하지 않습니다."),
     INVALID_COUPON_QUANTITY("쿠폰 수량이 유효하지 않습니다."),
     INVALID_COUPON_DISCOUNT_TYPE("쿠폰 할인 타입이 유효하지 않습니다."),
-    INVALID_COUPON_DISCOUNT_AMOUNT("쿠폰 할인 금액 또는 할인율이 유효하지 않습니다.")
+    INVALID_COUPON_DISCOUNT_AMOUNT("쿠폰 할인 금액 또는 할인율이 유효하지 않습니다."),
     NOT_FOUND_COUPON("존재하지 않는 쿠폰입니다."),
     ALREADY_REGISTERED_COUPON("이미 등록된 쿠폰입니다."),
     EXPIRED_COUPON("만료된 쿠폰입니다."),

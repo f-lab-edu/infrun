@@ -1,59 +1,129 @@
 package com.flab.infrun.lecture.presentation;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.flab.infrun.common.exception.ErrorCode;
 import com.flab.infrun.lecture.presentation.request.LectureDetailRequest;
 import com.flab.infrun.lecture.presentation.request.LectureRegisterRequest;
+import com.flab.infrun.member.presentation.LoginRequest;
+import io.restassured.RestAssured;
 import java.nio.charset.StandardCharsets;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import javax.sql.DataSource;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.MediaType;
+import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
 
-@SpringBootTest(webEnvironment = WebEnvironment.MOCK)
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 class LectureControllerApiTest {
 
     @Autowired
     private MockMvc mockMvc;
-    private ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = new ObjectMapper();
+
+    private static final String MEMBER_URI = "/members";
+
+    @LocalServerPort
+    private int port;
+
+
+    @BeforeAll
+    static void setupData(@Autowired DataSource dataSource) {
+        try (Connection conn = dataSource.getConnection()) {
+            ScriptUtils.executeSqlScript(conn, new ClassPathResource("/db/h2/data.sql"));
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @BeforeEach
+    void setup() {
+        if (RestAssured.port == RestAssured.UNDEFINED_PORT) {
+            RestAssured.port = port;
+        }
+    }
 
     @Test
-    @DisplayName("Multipart 요청 파일과 request 객체가 함께 들어 온 경우 정상적인 처리 확인")
-    void lectureRegisterTest() throws Exception {
+    @DisplayName("강의 등록 시 Role check - 토큰 오류 (UN_AUTHORIZATION)")
+    void lectureRegisterRoleCheckFailAuth() throws Exception {
 
-        MockMultipartFile multipartFile1 = new MockMultipartFile("file", "test.txt",
-            "text/plain", "test file".getBytes(
-            StandardCharsets.UTF_8));
-        MockMultipartFile multipartFile2 = new MockMultipartFile("file", "test1.txt",
-            "text/plain", "test file2".getBytes(
-            StandardCharsets.UTF_8));
-        LectureRegisterRequest lecture = lectureRequestCreate();
-        String lectureJson = mapper.writeValueAsString(lecture);
-        MockMultipartFile mockLecture = new MockMultipartFile("lecture", "lecture",
-            "application/json", lectureJson.getBytes(StandardCharsets.UTF_8));
+        mockMvc.perform(post("/lecture")
+                .header("Authorization", "Bearer " + "wrong token"))
+            .andExpect(content().json(getJsonValue("UN_AUTHORIZATION")))
+            .andDo(print());
+    }
 
-        mockMvc.perform(multipart("/lecture")
-                .file(multipartFile1)
-                .file(multipartFile2)
-                .file(mockLecture)
-            )
+    @Test
+    @DisplayName("강의 등록 시 Role check - 권한 오류 (ACCESS_DENIED)")
+    void lectureRegisterRoleCheckFailAcc() throws Exception {
+
+        String token = loginSuccess_returnToken(createMemberLoginRequest());
+
+        mockMvc.perform(createMultiPartRequest()
+                .header("Authorization", "Bearer " + token))
+            .andExpect(content().json(getJsonValue("ACCESS_DENIED")))
             .andDo(print())
-            .andExpect(status().is2xxSuccessful())
             .andReturn();
     }
 
+    @Test
+    @DisplayName("강의 등록 시 Role check - 성공")
+    void lectureRegisterRoleCheckSuccess() throws Exception {
 
-    private static LectureRegisterRequest lectureRequestCreate() {
+        String token = loginSuccess_returnToken(createTeacherLoginRequest());
 
+        mockMvc.perform(createMultiPartRequest()
+                .header("Authorization", "Bearer " + token))
+            .andExpect(status().is2xxSuccessful())
+            .andDo(print());
+    }
+
+    private String getJsonValue(String errVal) throws JsonProcessingException {
+        ErrorCode errorCode = ErrorCode.valueOf(errVal);
+        Map<String, String> map = new HashMap<>();
+        map.put("errorCode", errVal);
+        map.put("message", errorCode.getMessage());
+        return mapper.writeValueAsString(map);
+    }
+
+    private String loginSuccess_returnToken(LoginRequest loginRequest) {
+        var response = RestAssured.given()
+            .log()
+            .all()
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .body(loginRequest)
+            .post(MEMBER_URI + "/login")
+            .then()
+            .log()
+            .all()
+            .extract();
+        return response.body().jsonPath().getString("data");
+    }
+
+    private LectureRegisterRequest lectureRequestCreate() {
         final String name = "스프링 기본 강의";
         int price = 54000;
         int lectureLevel = 2;
@@ -72,7 +142,32 @@ class LectureControllerApiTest {
             lectureDetailRequest, userId);
     }
 
+    private MockMultipartHttpServletRequestBuilder createMultiPartRequest()
+        throws JsonProcessingException {
+        MockMultipartFile multipartFile1 = new MockMultipartFile("file", "test.txt",
+            "text/plain", "test file".getBytes(
+            StandardCharsets.UTF_8));
+        MockMultipartFile multipartFile2 = new MockMultipartFile("file", "test1.txt",
+            "text/plain", "test file2".getBytes(
+            StandardCharsets.UTF_8));
+        LectureRegisterRequest lecture = lectureRequestCreate();
+        String lectureJson = mapper.writeValueAsString(lecture);
+        MockMultipartFile mockLecture = new MockMultipartFile("lecture", "lecture",
+            "application/json", lectureJson.getBytes(StandardCharsets.UTF_8));
 
+        return multipart("/lecture")
+            .file(multipartFile1)
+            .file(multipartFile2)
+            .file(mockLecture);
+    }
+
+    private LoginRequest createTeacherLoginRequest() {
+        return new LoginRequest("teacher1@test.com", "1234Qwer!");
+    }
+
+    private LoginRequest createMemberLoginRequest() {
+        return new LoginRequest("member1@test.com", "1234Qwer!");
+    }
 }
 
 
