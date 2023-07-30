@@ -5,6 +5,7 @@ import com.flab.infrun.common.response.Response;
 import com.flab.infrun.coupon.application.CouponFacade;
 import com.flab.infrun.coupon.presentation.request.CreateCouponRequest;
 import com.flab.infrun.coupon.presentation.request.EnrollCouponRequest;
+import com.flab.infrun.coupon.presentation.response.CouponViewResponse;
 import com.flab.infrun.coupon.presentation.response.CreatedCouponResponse;
 import com.flab.infrun.coupon.presentation.response.EnrolledCouponResponse;
 import com.flab.infrun.member.domain.Member;
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +27,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class CouponController {
 
     private final CouponFacade facade;
+
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAnyRole('USER', 'TEACHER')")
+    @GetMapping
+    public Response<CouponViewResponse> read(@CurrentUser final Member member) {
+        final var result = facade.getCoupons(member.getId(), LocalDateTime.now());
+
+        return Response.success(CouponViewResponse.from(result));
+    }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('TEACHER')")

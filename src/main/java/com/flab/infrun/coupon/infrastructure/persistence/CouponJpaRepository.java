@@ -2,6 +2,7 @@ package com.flab.infrun.coupon.infrastructure.persistence;
 
 import com.flab.infrun.coupon.domain.Coupon;
 import jakarta.persistence.LockModeType;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
@@ -15,4 +16,6 @@ public interface CouponJpaRepository extends JpaRepository<Coupon, Long> {
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select c from Coupon c where c.code = :couponCode")
     Optional<Coupon> findByCodeWithLock(@Param("couponCode") final String couponCode);
+
+    List<Coupon> findAllByOwnerId(final Long ownerId);
 }
