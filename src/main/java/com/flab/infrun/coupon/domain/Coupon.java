@@ -2,6 +2,7 @@ package com.flab.infrun.coupon.domain;
 
 import com.flab.infrun.coupon.domain.exception.AlreadyRegisteredCouponException;
 import com.flab.infrun.coupon.domain.exception.ExpiredCouponException;
+import com.flab.infrun.coupon.domain.exception.UnavailableCouponException;
 import com.google.common.annotations.VisibleForTesting;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -99,17 +100,14 @@ public class Coupon {
 
     // TODO: 쿠폰 사용 로직 작성하기
     public void use() {
-        verifyIsUsable();
-        this.status = CouponStatus.USED;
+        if (verifyIsUsable()) {
+            this.status = CouponStatus.USED;
+        }
+        throw new UnavailableCouponException();
     }
 
-    private void verifyIsUsable() {
-        if (this.status == CouponStatus.USED) {
-            throw new AlreadyRegisteredCouponException();
-        }
-        if (this.status == CouponStatus.EXPIRED) {
-            throw new ExpiredCouponException();
-        }
+    public boolean verifyIsUsable() {
+        return this.status != CouponStatus.USED && this.status != CouponStatus.EXPIRED;
     }
 
     @VisibleForTesting
