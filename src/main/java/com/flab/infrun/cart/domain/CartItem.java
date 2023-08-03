@@ -23,11 +23,11 @@ public class CartItem {
         return new CartItem(lectureId, price);
     }
 
-    public Long getLectureId() {
+    Long getLectureId() {
         return lectureId;
     }
 
-    public BigDecimal getPrice() {
+    BigDecimal getPrice() {
         return price;
     }
 

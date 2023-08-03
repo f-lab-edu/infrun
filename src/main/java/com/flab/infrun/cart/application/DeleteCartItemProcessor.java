@@ -18,7 +18,7 @@ public class DeleteCartItemProcessor {
     @Transactional
     public DeletedCartItemResult execute(final DeleteCartItemCommand command) {
         final Cart cart = cartRepository.findByOwnerId(command.ownerId())
-            .orElseThrow(() -> new NotFoundCartException());
+            .orElseThrow(NotFoundCartException::new);
 
         cart.deleteCartItem(command.lectureId());
 

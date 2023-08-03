@@ -26,7 +26,7 @@ public enum ErrorCode {
 
     // CART
     NOT_FOUND_CART("수강바구니를 찾을 수 없습니다."),
-    ;
+    NOT_FOUND_CART_ITEM("수강바구니에 해당 상품을 찾을 수 없습니다.");
 
     private final String message;
 

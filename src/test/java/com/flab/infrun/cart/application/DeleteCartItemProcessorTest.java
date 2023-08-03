@@ -8,6 +8,7 @@ import com.flab.infrun.cart.domain.Cart;
 import com.flab.infrun.cart.domain.CartItem;
 import com.flab.infrun.cart.domain.CartRepository;
 import com.flab.infrun.cart.domain.exception.NotFoundCartException;
+import com.flab.infrun.cart.domain.exception.NotFoundCartItemException;
 import java.math.BigDecimal;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -37,11 +38,21 @@ final class DeleteCartItemProcessorTest {
 
     @Test
     @DisplayName("수강바구니가 없다면 예외가 발생한다")
-    void deleteCartItem_withoutCart() {
+    void deleteCartItem_notFoundCart() {
         final var command = createDeleteCartCommand();
 
         assertThatThrownBy(() -> sut.execute(command))
             .isInstanceOf(NotFoundCartException.class);
+    }
+
+    @Test
+    @DisplayName("수강바구니에 해당 강의가 없다면 예외가 발생한다")
+    void deleteCartItem_notFoundCartItem() {
+        createCart();
+        final var command = createDeleteCartCommand();
+
+        assertThatThrownBy(() -> sut.execute(command))
+            .isInstanceOf(NotFoundCartItemException.class);
     }
 
     private DeleteCartItemCommand createDeleteCartCommand() {
@@ -53,5 +64,9 @@ final class DeleteCartItemProcessorTest {
         cart.addCartItem(CartItem.of(1L, BigDecimal.valueOf(63_000)));
 
         return cart;
+    }
+
+    private void createCart() {
+        cartRepository.save(Cart.create(1L));
     }
 }
