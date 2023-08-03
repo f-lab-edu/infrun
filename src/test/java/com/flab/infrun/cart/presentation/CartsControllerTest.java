@@ -20,7 +20,6 @@ import com.flab.infrun.cart.application.result.CartsResult;
 import com.flab.infrun.cart.application.result.CartsResult.CartItemResult;
 import com.flab.infrun.cart.application.result.DeletedCartItemResult;
 import com.flab.infrun.cart.presentation.request.AddCartItemRequest;
-import com.flab.infrun.cart.presentation.request.DeleteCartItemRequest;
 import com.flab.infrun.common.config.security.UserAdapter;
 import com.flab.infrun.member.domain.Member;
 import com.flab.infrun.member.domain.MemberRepository;
@@ -105,11 +104,11 @@ final class CartsControllerTest {
     @Test
     @DisplayName("수강바구니의 수강 삭제 시 200 상태코드와 수강바구니에 담긴 수강 ID 목록을 반환한다")
     void deleteCartItem_success() throws Exception {
-        final var request = createCorrectDeleteCartItemRequest();
+        final var request = 1L;
         when(cartsFacade.deleteCartItem(any()))
             .thenReturn(DeletedCartItemResult.from(List.of(2L, 3L)));
 
-        final var result = mockMvc.perform(delete(CART_URI + "/" + request.lectureId())
+        final var result = mockMvc.perform(delete(CART_URI + "/" + request)
             .with(user(createUser()))
             .with(csrf())
         ).andDo(print());
@@ -119,6 +118,19 @@ final class CartsControllerTest {
             .andExpect(jsonPath("$.data.lectureIds").value(containsInAnyOrder(2, 3)));
     }
 
+    @Test
+    @DisplayName("수강바구니에 수강 삭제 시 입력 값이 유효하지 않은 경우 400 에러코드와 예외를 반환한다")
+    void deleteCartItem_withInvalidRequest() throws Exception {
+        final var request = 0L;
+
+        final var result = mockMvc.perform(delete(CART_URI + "/" + request)
+            .with(user(createUser()))
+            .with(csrf())
+        ).andDo(print());
+
+        result.andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.message").exists());
+    }
 
     private AddCartItemRequest createCorrectAddCartItemRequest() {
         return new AddCartItemRequest(1L);
@@ -126,10 +138,6 @@ final class CartsControllerTest {
 
     private AddCartItemRequest createInvalidAddCartItemRequest() {
         return new AddCartItemRequest(null);
-    }
-
-    private DeleteCartItemRequest createCorrectDeleteCartItemRequest() {
-        return new DeleteCartItemRequest(1L);
     }
 
     private UserAdapter createUser() {
