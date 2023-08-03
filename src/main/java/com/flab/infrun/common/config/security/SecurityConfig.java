@@ -51,6 +51,7 @@ public class SecurityConfig {
 
             .authorizeHttpRequests(request -> request
                 .requestMatchers("/members/**").permitAll()
+                .requestMatchers("/lecture/**").permitAll()
                 .anyRequest().authenticated()
             )
 

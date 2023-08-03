@@ -48,5 +48,12 @@ public class LectureController {
         var result = lectureFacade.searchLecture(lectureSearch.toQuery());
         return Response.success(result);
     }
+
+    @PostMapping("/review")
+    public ResponseEntity<Response<Long>> registerLectureReview(
+        @RequestBody @Valid LectureReviewRegisterRequest lectureReviewRequest) {
+        var result = lectureFacade.registerLectureReview(lectureReviewRequest.toCommand());
+        return ResponseEntity.status(HttpStatus.CREATED).body(Response.success(result));
+    }
 }
 
