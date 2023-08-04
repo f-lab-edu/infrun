@@ -1,5 +1,6 @@
 package com.flab.infrun.lecture.domain;
 
+import com.google.common.annotations.VisibleForTesting;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -61,5 +62,10 @@ public class LectureDetail {
             ", name='" + name + '\'' +
             ", lecture=" + lecture +
             '}';
+    }
+
+    @VisibleForTesting
+    void assignId(final Long id) {
+        this.id = id;
     }
 }

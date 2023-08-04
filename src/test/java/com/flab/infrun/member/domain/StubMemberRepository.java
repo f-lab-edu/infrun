@@ -1,13 +1,11 @@
-package com.flab.infrun.lecture.application;
+package com.flab.infrun.member.domain;
 
-import com.flab.infrun.member.domain.Member;
-import com.flab.infrun.member.domain.MemberRepository;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-final class StubMemberRepository implements MemberRepository {
+public final class StubMemberRepository implements MemberRepository {
 
     private final Map<Long, Member> persistence = new ConcurrentHashMap<>();
     private Long sequence = 0L;
@@ -15,6 +13,7 @@ final class StubMemberRepository implements MemberRepository {
     @Override
     public Member save(final Member member) {
         persistence.put(++sequence, member);
+        member.assignId(sequence);
         return member;
     }
 

@@ -1,12 +1,12 @@
-package com.flab.infrun.lecture.application;
+package com.flab.infrun.lecture.domain;
 
-import com.flab.infrun.lecture.domain.LectureReview;
 import com.flab.infrun.lecture.domain.repository.LectureReviewRepository;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-final class StubLectureReviewRepository implements LectureReviewRepository {
+public final class StubLectureReviewRepository implements LectureReviewRepository {
 
     private final Map<Long, LectureReview> persistence = new ConcurrentHashMap<>();
     private Long sequence = 0L;
@@ -14,6 +14,7 @@ final class StubLectureReviewRepository implements LectureReviewRepository {
     @Override
     public LectureReview save(final LectureReview entity) {
         persistence.put(++sequence, entity);
+        entity.assignId(sequence);
         return entity;
     }
 
@@ -25,11 +26,12 @@ final class StubLectureReviewRepository implements LectureReviewRepository {
     }
 
     @Override
-    public void delete(LectureReview entity) {
-        persistence.remove(entity.getId());
+    public Optional<LectureReview> findById(Long id) {
+        return Optional.ofNullable(persistence.get(id));
     }
 
-    public Long getId() {
-        return this.sequence;
+    @Override
+    public void delete(LectureReview entity) {
+        persistence.remove(entity.getId());
     }
 }

@@ -55,5 +55,12 @@ public class LectureController {
         var result = lectureFacade.registerLectureReview(lectureReviewRequest.toCommand());
         return ResponseEntity.status(HttpStatus.CREATED).body(Response.success(result));
     }
+
+    @PatchMapping("/review")
+    public ResponseEntity<Response<Long>> modifyLectureReview(
+        @RequestBody @Valid LectureReviewModifyRequest lectureReviewModifyRequest) {
+        var result = lectureFacade.modifyLectureReview(lectureReviewModifyRequest.toCommand());
+        return ResponseEntity.status(HttpStatus.CREATED).body(Response.success(result));
+    }
 }
 

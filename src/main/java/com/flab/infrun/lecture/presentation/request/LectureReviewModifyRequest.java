@@ -1,15 +1,14 @@
 package com.flab.infrun.lecture.presentation.request;
 
-import com.flab.infrun.lecture.application.command.LectureReviewRegisterCommand;
+import com.flab.infrun.lecture.application.command.LectureReviewModifyCommand;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-public record LectureReviewRegisterRequest(
+public record LectureReviewModifyRequest(
     @NotNull
-    Long lectureId,
-
+    Long lectureReviewId,
     @NotBlank
     @Size(max = 400)
     String content,
@@ -19,7 +18,7 @@ public record LectureReviewRegisterRequest(
 
 ) {
 
-    public LectureReviewRegisterCommand toCommand() {
-        return new LectureReviewRegisterCommand(lectureId, content, memberEmail);
+    public LectureReviewModifyCommand toCommand() {
+        return new LectureReviewModifyCommand(lectureReviewId, content, memberEmail);
     }
 }

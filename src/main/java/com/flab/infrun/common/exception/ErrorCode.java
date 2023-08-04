@@ -19,6 +19,10 @@ public enum ErrorCode {
     DUPLICATED_FILE_NAME("중복되는 파일명이 존재합니다."),
     NOT_FOUND_LECTURE("존재하지 않는 강의입니다."),
 
+    //LECTURE_REVIEW
+    NOT_FOUND_LECTURE_REVIEW("존재하지 않는 강의 리뷰입니다."),
+    INVALID_AUTHORIZATION_LECTURE_REVIEW("리뷰 수정 권한이 없습니다."),
+
     // COUPON
     INVALID_COUPON_EXPIRATION_AT("쿠폰 만료일이 유효하지 않습니다."),
     INVALID_COUPON_QUANTITY("쿠폰 수량이 유효하지 않습니다."),

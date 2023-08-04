@@ -1,19 +1,19 @@
-package com.flab.infrun.lecture.application;
+package com.flab.infrun.lecture.domain;
 
-import com.flab.infrun.lecture.domain.Lecture;
 import com.flab.infrun.lecture.domain.repository.LectureRepository;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-final class StubLectureRepository implements LectureRepository {
+public final class StubLectureRepository implements LectureRepository {
 
     private final Map<Long, Lecture> persistence = new ConcurrentHashMap<>();
     private Long sequence = 0L;
 
     @Override
-    public Lecture save(final Lecture entity) {
+    public Lecture save(Lecture entity) {
         persistence.put(++sequence, entity);
+        entity.assignId(sequence);
         return entity;
     }
 
@@ -21,9 +21,4 @@ final class StubLectureRepository implements LectureRepository {
     public Optional<Lecture> findById(Long id) {
         return Optional.ofNullable(persistence.get(id));
     }
-
-    public Long getId() {
-        return this.sequence;
-    }
-
 }

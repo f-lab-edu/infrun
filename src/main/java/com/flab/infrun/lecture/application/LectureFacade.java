@@ -1,6 +1,7 @@
 package com.flab.infrun.lecture.application;
 
 import com.flab.infrun.lecture.application.command.LectureRegisterCommand;
+import com.flab.infrun.lecture.application.command.LectureReviewModifyCommand;
 import com.flab.infrun.lecture.application.command.LectureReviewRegisterCommand;
 import com.flab.infrun.lecture.application.query.LectureSearchQuery;
 import com.flab.infrun.lecture.presentation.response.LectureQueryResponse;
@@ -25,5 +26,9 @@ public class LectureFacade {
 
     public Long registerLectureReview(LectureReviewRegisterCommand command) {
         return lectureCommandProcessor.registerLectureReview(command);
+    }
+
+    public Long modifyLectureReview(LectureReviewModifyCommand command) {
+        return lectureCommandProcessor.modifyLectureReview(command);
     }
 }

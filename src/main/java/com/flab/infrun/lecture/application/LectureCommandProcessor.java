@@ -1,6 +1,8 @@
 package com.flab.infrun.lecture.application;
 
 import com.flab.infrun.lecture.application.command.LectureRegisterCommand;
+import com.flab.infrun.lecture.application.command.LectureReviewModifyCommand;
+import com.flab.infrun.lecture.application.command.LectureReviewRegisterCommand;
 import com.flab.infrun.lecture.application.exception.DuplicateLectureFileNameException;
 import com.flab.infrun.lecture.application.fileCommand.StorageUpload;
 import com.flab.infrun.lecture.domain.Lecture;
@@ -12,6 +14,7 @@ import com.flab.infrun.member.domain.Member;
 import com.flab.infrun.member.domain.MemberRepository;
 import com.flab.infrun.lecture.domain.LectureReview;
 import com.flab.infrun.lecture.domain.exception.NotFoundLectureException;
+import com.flab.infrun.lecture.domain.exception.NotFoundLectureReviewException;
 import com.flab.infrun.lecture.domain.repository.LectureFileRepository;
 import com.flab.infrun.lecture.domain.repository.LectureRepository;
 import com.flab.infrun.lecture.domain.repository.LectureReviewRepository;
@@ -97,5 +100,17 @@ public class LectureCommandProcessor {
         LectureReview lectureReview = LectureReview.of(command.content(), lecture, member);
         LectureReview saved = lectureReviewRepository.save(lectureReview);
         return saved.getId();
+    }
+
+    @Transactional
+    public Long modifyLectureReview(LectureReviewModifyCommand command) {
+        LectureReview lectureReview = lectureReviewRepository.findById(command.lectureReviewId())
+            .orElseThrow(NotFoundLectureReviewException::new);
+        //todo - member currentuser 로 Member 정보 get
+        Member member = memberRepository.findByEmail(command.memberEmail()).orElseThrow(
+            NotFoundMemberException::new);
+        lectureReview.checkReviewAuthorization(member);
+        lectureReview.changeContent(command.content());
+        return lectureReview.getId();
     }
 }

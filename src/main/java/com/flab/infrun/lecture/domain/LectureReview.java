@@ -1,6 +1,8 @@
 package com.flab.infrun.lecture.domain;
 
+import com.flab.infrun.lecture.domain.exception.InvalidAuthorizationLectureReviewException;
 import com.flab.infrun.member.domain.Member;
+import com.google.common.annotations.VisibleForTesting;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -34,6 +36,14 @@ public class LectureReview {
         return lecture;
     }
 
+    public String getContent() {
+        return content;
+    }
+
+    public Member getMember() {
+        return member;
+    }
+
     private LectureReview(String content, Lecture lecture, Member member) {
         this.content = content;
         this.lecture = lecture;
@@ -44,4 +54,18 @@ public class LectureReview {
         return new LectureReview(content, lecture, member);
     }
 
+    public void checkReviewAuthorization(Member member) {
+        if (!this.member.getId().equals(member.getId())) {
+            throw new InvalidAuthorizationLectureReviewException();
+        }
+    }
+
+    public void changeContent(String content) {
+        this.content = content;
+    }
+
+    @VisibleForTesting
+    void assignId(final Long id) {
+        this.id = id;
+    }
 }
