@@ -15,4 +15,5 @@ public interface LectureReviewJpaRepository extends JpaRepository<LectureReview,
 
     List<LectureReview> findByLectureId(Long id);
 
+    Long deleteCountById(Long id);
 }

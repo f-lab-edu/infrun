@@ -28,8 +28,8 @@ public class LectureReviewRepositoryAdapter implements LectureReviewRepository {
     }
 
     @Override
-    public void delete(LectureReview entity) {
-
+    public Long deleteById(Long id) {
+        return jpaRepository.deleteCountById(id);
     }
 
 }

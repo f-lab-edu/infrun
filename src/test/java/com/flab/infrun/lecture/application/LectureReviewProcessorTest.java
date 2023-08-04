@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
+import com.flab.infrun.lecture.application.command.LectureReviewDeleteCommand;
 import com.flab.infrun.lecture.application.command.LectureReviewModifyCommand;
 import com.flab.infrun.lecture.application.command.LectureReviewRegisterCommand;
 import com.flab.infrun.lecture.domain.Lecture;
@@ -87,7 +88,7 @@ class LectureReviewProcessorTest {
     @DisplayName("강의 리뷰 수정 실패 - NotFoundMember")
     void modifyLectureReviewMemberException() {
         LectureReviewModifyCommand command = new LectureReviewModifyCommand(
-            setupLectureReview().getId(),
+            setupLectureReview(setupLecture(), setupMember()).getId(),
             "content", "nono@test.com");
 
         assertThatThrownBy(() -> processor.modifyLectureReview(command)).isInstanceOf(
@@ -99,7 +100,7 @@ class LectureReviewProcessorTest {
     void modifyLectureReviewAuthorizationException() {
         setupMember2();
         LectureReviewModifyCommand command = new LectureReviewModifyCommand(
-            setupLectureReview().getId(), "content", "test2@test.com");
+            setupLectureReview(setupLecture(), setupMember()).getId(), "content", "test2@test.com");
 
         assertThatThrownBy(() -> processor.modifyLectureReview(command)).isInstanceOf(
             InvalidAuthorizationLectureReviewException.class);
@@ -108,7 +109,7 @@ class LectureReviewProcessorTest {
     @Test
     @DisplayName("강의 리뷰 수정 성공")
     void modifyLectureReviewSuccess() {
-        LectureReview lectureReview = setupLectureReview();
+        LectureReview lectureReview = setupLectureReview(setupLecture(), setupMember());
         String changeContent = "content_modified";
         LectureReviewModifyCommand command = new LectureReviewModifyCommand(
             lectureReview.getId(), changeContent, setupMember().getEmail());
@@ -118,6 +119,52 @@ class LectureReviewProcessorTest {
             .orElseThrow(NotFoundLectureReviewException::new);
 
         assertThat(lectureReviewModified.getContent()).isEqualTo(changeContent);
+    }
+
+    @Test
+    @DisplayName("강의 리뷰 삭제 실패 - NotFoundLectureReview")
+    void deleteLectureReviewNotFoundReviewException() {
+        LectureReviewDeleteCommand command = new LectureReviewDeleteCommand(1L,
+            setupMember().getEmail());
+        assertThatThrownBy(() -> processor.deleteLectureReview(command)).isInstanceOf(
+            NotFoundLectureReviewException.class);
+    }
+
+    @Test
+    @DisplayName("강의 리뷰 삭제 실패 - NotFoundMember")
+    void deleteLectureReviewNotFoundMemberException() {
+        LectureReviewDeleteCommand command = new LectureReviewDeleteCommand(
+            setupLectureReview(setupLecture(), setupMember()).getId(),
+            "test2@test.com");
+        assertThatThrownBy(() -> processor.deleteLectureReview(command)).isInstanceOf(
+            NotFoundMemberException.class);
+    }
+
+    @Test
+    @DisplayName("강의 리뷰 삭제 실패 - InvalidAuthorizationLectureReview")
+    void deleteLectureReviewInvalidAuthorizationException() {
+        LectureReview lectureReview = setupLectureReview(setupLecture(), setupMember());
+        setupMember2();
+        LectureReviewDeleteCommand command = new LectureReviewDeleteCommand(lectureReview.getId(),
+            "test2@test.com");
+
+        assertThatThrownBy(() -> processor.deleteLectureReview(command)).isInstanceOf(
+            InvalidAuthorizationLectureReviewException.class);
+    }
+
+    @Test
+    @DisplayName("강의 리뷰 삭제 성공")
+    void deleteLectureReviewSuccess() {
+        Member member = setupMember();
+        LectureReview lectureReview = setupLectureReview(setupLecture(), member);
+
+        LectureReviewDeleteCommand command = new LectureReviewDeleteCommand(
+            lectureReview.getId(),
+            member.getEmail());
+        Long deletedCount = processor.deleteLectureReview(command);
+
+        assertThat(deletedCount).isEqualTo(1);
+        assertThat(lectureReviewRepository.findById(lectureReview.getId())).isEmpty();
     }
 
     private Lecture setupLecture() {
@@ -139,8 +186,8 @@ class LectureReviewProcessorTest {
         return memberRepository.save(Member.of(nickname, email, password));
     }
 
-    private LectureReview setupLectureReview() {
-        LectureReview lectureReview = LectureReview.of("reply002", setupLecture(), setupMember());
+    private LectureReview setupLectureReview(Lecture lecture, Member member) {
+        LectureReview lectureReview = LectureReview.of("reply002", lecture, member);
         return lectureReviewRepository.save(lectureReview);
     }
 }

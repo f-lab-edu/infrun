@@ -12,6 +12,5 @@ public interface LectureReviewRepository {
 
     LectureReview save(LectureReview entity);
 
-    void delete(LectureReview entity);
-
+    Long deleteById(Long id);
 }

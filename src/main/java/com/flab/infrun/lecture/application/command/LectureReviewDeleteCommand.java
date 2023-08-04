@@ -1,8 +1,7 @@
 package com.flab.infrun.lecture.application.command;
 
-public record LectureReviewModifyCommand(
+public record LectureReviewDeleteCommand(
     Long lectureReviewId,
-    String content,
     String memberEmail
 ) {
 

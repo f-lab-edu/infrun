@@ -1,6 +1,7 @@
 package com.flab.infrun.lecture.application;
 
 import com.flab.infrun.lecture.application.command.LectureRegisterCommand;
+import com.flab.infrun.lecture.application.command.LectureReviewDeleteCommand;
 import com.flab.infrun.lecture.application.command.LectureReviewModifyCommand;
 import com.flab.infrun.lecture.application.command.LectureReviewRegisterCommand;
 import com.flab.infrun.lecture.application.exception.DuplicateLectureFileNameException;
@@ -112,5 +113,16 @@ public class LectureCommandProcessor {
         lectureReview.checkReviewAuthorization(member);
         lectureReview.changeContent(command.content());
         return lectureReview.getId();
+    }
+
+    @Transactional
+    public Long deleteLectureReview(LectureReviewDeleteCommand command) {
+        LectureReview lectureReview = lectureReviewRepository.findById(command.lectureReviewId())
+            .orElseThrow(NotFoundLectureReviewException::new);
+        //todo - member currentuser 로 Member 정보 get
+        Member member = memberRepository.findByEmail(command.memberEmail()).orElseThrow(
+            NotFoundMemberException::new);
+        lectureReview.checkReviewAuthorization(member);
+        return lectureReviewRepository.deleteById(lectureReview.getId());
     }
 }

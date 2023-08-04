@@ -19,6 +19,14 @@ public final class StubLectureReviewRepository implements LectureReviewRepositor
     }
 
     @Override
+    public Long deleteById(Long id) {
+        int size = persistence.size();
+        persistence.remove(id);
+
+        return (long) (size - persistence.size());
+    }
+
+    @Override
     public List<LectureReview> findByLectureId(Long lectureId) {
         return persistence.values().stream()
             .filter(r -> r.getLecture().getId().equals(lectureId))
@@ -28,10 +36,5 @@ public final class StubLectureReviewRepository implements LectureReviewRepositor
     @Override
     public Optional<LectureReview> findById(Long id) {
         return Optional.ofNullable(persistence.get(id));
-    }
-
-    @Override
-    public void delete(LectureReview entity) {
-        persistence.remove(entity.getId());
     }
 }
