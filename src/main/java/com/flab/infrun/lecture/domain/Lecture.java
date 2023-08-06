@@ -1,5 +1,6 @@
 package com.flab.infrun.lecture.domain;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.flab.infrun.member.domain.Member;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -54,6 +55,10 @@ public class Lecture {
         return id;
     }
 
+    public void setId(long key) {
+        this.id = key;
+    }
+
     public String getName() {
         return name;
     }
@@ -76,6 +81,11 @@ public class Lecture {
 
     public List<LectureDetail> getLectureDetailList() {
         return lectureDetailList;
+    }
+
+    @VisibleForTesting
+    public void assignId(Long id) {
+        this.id = id;
     }
 
     @Override
