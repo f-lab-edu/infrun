@@ -3,9 +3,9 @@ package com.flab.infrun.coupon.domain.exception;
 import com.flab.infrun.common.exception.ErrorCode;
 import com.flab.infrun.common.exception.SystemException;
 
-public final class InvalidCouponDiscountTypeException extends SystemException {
+public final class NotFoundCouponException extends SystemException {
 
-    public InvalidCouponDiscountTypeException(final ErrorCode errorCode) {
+    public NotFoundCouponException(final ErrorCode errorCode) {
         super(errorCode);
     }
 }

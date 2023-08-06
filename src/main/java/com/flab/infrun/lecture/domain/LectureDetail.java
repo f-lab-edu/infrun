@@ -7,7 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import java.util.Objects;
+import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -20,64 +20,46 @@ public class LectureDetail {
     private Long id;
     private String chapter;
     private String name;
-    private Long lectureId;
     @ManyToOne(fetch = FetchType.LAZY)
+    private Lecture lecture;
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lecture_file_id")
     private LectureFile lectureFile;
 
-    private LectureDetail(String chapter, String name, Long lectureId, LectureFile lectureFile) {
+    private LectureDetail(String chapter, String name, LectureFile lectureFile) {
         this.chapter = chapter;
         this.name = name;
-        this.lectureId = lectureId;
         this.lectureFile = lectureFile;
     }
 
-    public static LectureDetail of(String chapter, String name, Long lectureId,
+    public static LectureDetail of(String chapter, String name,
         LectureFile lectureFile) {
-        return new LectureDetail(chapter, name, lectureId, lectureFile);
+        return new LectureDetail(chapter, name, lectureFile);
     }
 
-    public void setId(long key) {
-        this.id = key;
+    void setLecture(Lecture lecture) {
+        this.lecture = lecture;
     }
 
     public Long getId() {
         return id;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
+    public Lecture getLecture() {
+        return lecture;
+    }
 
-        LectureDetail that = (LectureDetail) o;
-
-        if (!Objects.equals(id, that.id)) {
-            return false;
-        }
-        if (!Objects.equals(chapter, that.chapter)) {
-            return false;
-        }
-        if (!Objects.equals(name, that.name)) {
-            return false;
-        }
-        if (!Objects.equals(lectureId, that.lectureId)) {
-            return false;
-        }
-        return Objects.equals(lectureFile, that.lectureFile);
+    public LectureFile getLectureFile() {
+        return lectureFile;
     }
 
     @Override
-    public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (chapter != null ? chapter.hashCode() : 0);
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (lectureId != null ? lectureId.hashCode() : 0);
-        result = 31 * result + (lectureFile != null ? lectureFile.hashCode() : 0);
-        return result;
+    public String toString() {
+        return "LectureDetail{" +
+            "id=" + id +
+            ", chapter='" + chapter + '\'' +
+            ", name='" + name + '\'' +
+            ", lecture=" + lecture +
+            '}';
     }
 }

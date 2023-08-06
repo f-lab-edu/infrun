@@ -1,11 +1,16 @@
 package com.flab.infrun.lecture.domain;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.flab.infrun.member.domain.Member;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import java.util.Objects;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -21,21 +26,29 @@ public class Lecture {
     private int lectureLevel;
     private String skill;
     private String introduce;
-    private long userId;
+    @OneToMany(mappedBy = "lecture", cascade = CascadeType.ALL)
+    private List<LectureDetail> lectureDetailList;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Member member;
 
     private Lecture(String name, int price, int level, String skill, String introduce,
-        long userId) {
+        Member member) {
         this.name = name;
         this.price = price;
         this.lectureLevel = level;
         this.skill = skill;
         this.introduce = introduce;
-        this.userId = userId;
+        this.member = member;
     }
 
     public static Lecture of(String name, int price, int lectureLevel, String skill,
-        String introduce, long userId) {
-        return new Lecture(name, price, lectureLevel, skill, introduce, userId);
+        String introduce, Member member) {
+        return new Lecture(name, price, lectureLevel, skill, introduce, member);
+    }
+
+    public void addLectureDetail(List<LectureDetail> lectureDetailList) {
+        this.lectureDetailList = lectureDetailList;
+        lectureDetailList.forEach(detail -> detail.setLecture(this));
     }
 
     public Long getId() {
@@ -66,8 +79,8 @@ public class Lecture {
         return introduce;
     }
 
-    public long getUserId() {
-        return userId;
+    public List<LectureDetail> getLectureDetailList() {
+        return lectureDetailList;
     }
 
     @VisibleForTesting
@@ -76,46 +89,14 @@ public class Lecture {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        Lecture lecture = (Lecture) o;
-
-        if (price != lecture.price) {
-            return false;
-        }
-        if (lectureLevel != lecture.lectureLevel) {
-            return false;
-        }
-        if (userId != lecture.userId) {
-            return false;
-        }
-        if (!Objects.equals(id, lecture.id)) {
-            return false;
-        }
-        if (!Objects.equals(name, lecture.name)) {
-            return false;
-        }
-        if (!Objects.equals(skill, lecture.skill)) {
-            return false;
-        }
-        return Objects.equals(introduce, lecture.introduce);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + price;
-        result = 31 * result + lectureLevel;
-        result = 31 * result + (skill != null ? skill.hashCode() : 0);
-        result = 31 * result + (introduce != null ? introduce.hashCode() : 0);
-        result = 31 * result;
-        return result;
+    public String toString() {
+        return "Lecture{" +
+            "id=" + id +
+            ", name='" + name + '\'' +
+            ", price=" + price +
+            ", lectureLevel=" + lectureLevel +
+            ", skill='" + skill + '\'' +
+            ", introduce='" + introduce + '\'' +
+            '}';
     }
 }

@@ -20,7 +20,7 @@ class LectureDetailRepositoryTest {
     @Test
     @DisplayName("강의상세 저장 테스트")
     void save() {
-        LectureDetail lectureDetail = LectureDetail.of("1", "강의 A의 챕터1", 1L,
+        LectureDetail lectureDetail = LectureDetail.of("1", "강의 A의 챕터1",
             LectureFile.of("", "spring기초"));
 
         LectureDetail saved = repository.save(lectureDetail);

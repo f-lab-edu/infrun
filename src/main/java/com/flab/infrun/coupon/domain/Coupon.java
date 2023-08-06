@@ -1,11 +1,15 @@
 package com.flab.infrun.coupon.domain;
 
+import com.flab.infrun.common.exception.ErrorCode;
+import com.flab.infrun.coupon.domain.exception.AlreadyRegisteredCouponException;
+import com.flab.infrun.coupon.domain.exception.ExpiredCouponException;
 import com.flab.infrun.member.domain.Member;
 import com.google.common.annotations.VisibleForTesting;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -34,7 +38,7 @@ public class Coupon {
 
     private LocalDateTime expirationAt;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id")
     private Member owner;
 
@@ -61,14 +65,46 @@ public class Coupon {
             .build();
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public String getCode() {
         return code;
     }
 
-    public void registerOwner(final Member owner) {
-        this.owner = owner;
+    public CouponStatus getStatus() {
+        return status;
     }
 
+    public Member getOwner() {
+        return owner;
+    }
+
+    public DiscountInfo getDiscountInfo() {
+        return discountInfo;
+    }
+
+    public LocalDateTime getExpirationAt() {
+        return expirationAt;
+    }
+
+    public void enroll(final Member owner, final LocalDateTime currentTime) {
+        verifyIsRegistrable(currentTime);
+        this.owner = owner;
+        this.status = CouponStatus.REGISTERED;
+    }
+
+    private void verifyIsRegistrable(final LocalDateTime currentTime) {
+        if (this.status != CouponStatus.UNREGISTERED) {
+            throw new AlreadyRegisteredCouponException(ErrorCode.ALREADY_REGISTERED_COUPON);
+        }
+        if (this.expirationAt.isBefore(currentTime)) {
+            throw new ExpiredCouponException(ErrorCode.EXPIRED_COUPON);
+        }
+    }
+
+    // TODO: 쿠폰 사용 로직 작성하기
     public void use() {
         if (this.status == CouponStatus.USED || this.status == CouponStatus.EXPIRED) {
             throw new IllegalArgumentException("이미 사용했거나, 만료된 쿠폰입니다.");
