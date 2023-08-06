@@ -26,7 +26,10 @@ public enum ErrorCode {
     NOT_FOUND_COUPON("존재하지 않는 쿠폰입니다."),
     ALREADY_REGISTERED_COUPON("이미 등록된 쿠폰입니다."),
     EXPIRED_COUPON("만료된 쿠폰입니다."),
-    ;
+
+    // CART
+    NOT_FOUND_CART("수강바구니를 찾을 수 없습니다."),
+    NOT_FOUND_CART_ITEM("수강바구니에 해당 상품을 찾을 수 없습니다.");
 
     private final String message;
 
