@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flab.infrun.common.config.security.UserAdapter;
+import com.flab.infrun.coupon.domain.CouponRepository;
 import com.flab.infrun.member.domain.Member;
 import com.flab.infrun.order.application.OrderFacade;
 import com.flab.infrun.order.application.result.CreatedOrderResult;
