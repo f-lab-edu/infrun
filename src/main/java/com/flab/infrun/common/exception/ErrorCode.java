@@ -24,8 +24,10 @@ public enum ErrorCode {
     INVALID_COUPON_DISCOUNT_TYPE("쿠폰 할인 타입이 유효하지 않습니다."),
     INVALID_COUPON_DISCOUNT_AMOUNT("쿠폰 할인 금액 또는 할인율이 유효하지 않습니다."),
     NOT_FOUND_COUPON("존재하지 않는 쿠폰입니다."),
+    ALREADY_USED_COUPON("이미 사용된 쿠폰입니다."),
     ALREADY_REGISTERED_COUPON("이미 등록된 쿠폰입니다."),
     EXPIRED_COUPON("만료된 쿠폰입니다."),
+    INVALID_COUPON_OWNER("쿠폰 소유자가 아닙니다."),
 
     // CART
     NOT_FOUND_CART("수강바구니를 찾을 수 없습니다."),
@@ -33,7 +35,8 @@ public enum ErrorCode {
 
     // ORDER
     INVALID_CREATE_ORDER("유효하지 않은 주문 정보입니다."),
-    INVALID_PRICE_VALUE("주문 금액은 0원보다 적을 수 없습니다.");
+    INVALID_PRICE_VALUE("주문 금액은 0원보다 적을 수 없습니다."),
+    NOT_FOUND_ORDER("주문을 찾을 수 없습니다.");
 
     private final String message;
 
