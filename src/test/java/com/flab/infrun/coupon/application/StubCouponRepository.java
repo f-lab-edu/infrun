@@ -2,6 +2,7 @@ package com.flab.infrun.coupon.application;
 
 import com.flab.infrun.coupon.domain.Coupon;
 import com.flab.infrun.coupon.domain.CouponRepository;
+import com.flab.infrun.coupon.domain.exception.NotFoundCouponException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,14 @@ class StubCouponRepository implements CouponRepository {
         });
 
         return coupons;
+    }
+
+    @Override
+    public Coupon findByCouponCode(final String couponCode) {
+        return persistence.values().stream()
+            .filter(coupon -> Objects.equals(coupon.getCode(), couponCode))
+            .findFirst()
+            .orElseThrow(NotFoundCouponException::new);
     }
 
     @Override

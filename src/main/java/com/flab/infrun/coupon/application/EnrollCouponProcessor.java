@@ -1,6 +1,5 @@
 package com.flab.infrun.coupon.application;
 
-import com.flab.infrun.common.exception.ErrorCode;
 import com.flab.infrun.coupon.application.command.CouponRegisterCommand;
 import com.flab.infrun.coupon.application.result.EnrolledCouponResult;
 import com.flab.infrun.coupon.domain.Coupon;
@@ -23,7 +22,7 @@ public class EnrollCouponProcessor {
         final LocalDateTime currentTime
     ) {
         final Coupon coupon = couponRepository.findByCouponCodeWithLock(command.couponCode())
-            .orElseThrow(() -> new NotFoundCouponException(ErrorCode.NOT_FOUND_COUPON));
+            .orElseThrow(NotFoundCouponException::new);
 
         coupon.enroll(command.member(), currentTime);
 
