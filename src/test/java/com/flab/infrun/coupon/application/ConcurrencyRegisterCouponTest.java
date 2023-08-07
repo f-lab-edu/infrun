@@ -40,7 +40,8 @@ class ConcurrencyRegisterCouponTest {
         final String couponCode = "coupon";
         final LocalDateTime expirationAt = LocalDateTime.of(2100, 1, 1, 0, 0);
         couponRepository.save(
-            Coupon.create(couponCode, DiscountInfo.of(DiscountType.FIX, 1000), expirationAt));
+            Coupon.create(couponCode, DiscountInfo.of(DiscountType.FIX, 1_000),
+                expirationAt));
     }
 
     @RepeatedTest(30)

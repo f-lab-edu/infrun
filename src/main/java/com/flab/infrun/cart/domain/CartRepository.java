@@ -7,4 +7,6 @@ public interface CartRepository {
     Cart save(final Cart cart);
 
     Optional<Cart> findByOwnerId(final Long ownerId);
+
+    Cart findWithCartItemsByOwnerId(final Long ownerId);
 }

@@ -12,6 +12,7 @@ import com.flab.infrun.coupon.domain.exception.AlreadyRegisteredCouponException;
 import com.flab.infrun.coupon.domain.exception.ExpiredCouponException;
 import com.flab.infrun.coupon.domain.exception.NotFoundCouponException;
 import com.flab.infrun.member.domain.Member;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -26,11 +27,12 @@ final class EnrollCouponProcessorTest {
 
     @BeforeEach
     void setUp() {
-        final CouponRepository couponRepository = new StubCouponRepository();
+        final CouponRepository couponRepository = new FakeCouponRepository();
         sut = new EnrollCouponProcessor(couponRepository);
 
         couponRepository.save(
-            Coupon.create(couponCode, DiscountInfo.of(DiscountType.FIX, 1000), expirationAt));
+            Coupon.create(couponCode, DiscountInfo.of(DiscountType.FIX, 1_000),
+                expirationAt));
     }
 
     @Test
@@ -43,7 +45,7 @@ final class EnrollCouponProcessorTest {
 
         assertThat(result.ownerEmail()).isEqualTo(member.getEmail());
         assertThat(result.discountInfo().getDiscountType()).isEqualTo(DiscountType.FIX);
-        assertThat(result.discountInfo().getDiscountValue()).isEqualTo(1000);
+        assertThat(result.discountInfo().getDiscountValue()).isEqualTo(BigDecimal.valueOf(1_000));
         assertThat(result.expirationAt()).isEqualTo(expirationAt);
     }
 

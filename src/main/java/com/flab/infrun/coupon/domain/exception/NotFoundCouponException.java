@@ -5,7 +5,7 @@ import com.flab.infrun.common.exception.SystemException;
 
 public final class NotFoundCouponException extends SystemException {
 
-    public NotFoundCouponException(final ErrorCode errorCode) {
-        super(errorCode);
+    public NotFoundCouponException() {
+        super(ErrorCode.NOT_FOUND_COUPON);
     }
 }
