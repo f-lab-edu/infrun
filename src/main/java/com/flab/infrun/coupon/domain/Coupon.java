@@ -2,7 +2,9 @@ package com.flab.infrun.coupon.domain;
 
 import com.flab.infrun.common.exception.ErrorCode;
 import com.flab.infrun.coupon.domain.exception.AlreadyRegisteredCouponException;
+import com.flab.infrun.coupon.domain.exception.AlreadyUsedCouponException;
 import com.flab.infrun.coupon.domain.exception.ExpiredCouponException;
+import com.flab.infrun.coupon.domain.exception.InvalidCouponOwnerException;
 import com.flab.infrun.member.domain.Member;
 import com.google.common.annotations.VisibleForTesting;
 import jakarta.persistence.Embedded;
@@ -15,6 +17,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -104,12 +107,29 @@ public class Coupon {
         }
     }
 
-    // TODO: 쿠폰 사용 로직 작성하기
-    public void use() {
-        if (this.status == CouponStatus.USED || this.status == CouponStatus.EXPIRED) {
-            throw new IllegalArgumentException("이미 사용했거나, 만료된 쿠폰입니다.");
+    public BigDecimal apply(final BigDecimal price) {
+        return this.discountInfo.discount(price);
+    }
+
+    public void isUsable(final LocalDateTime currentTime, final Member customer) {
+        if (!this.owner.equals(customer)) {
+            throw new InvalidCouponOwnerException();
         }
+        if (this.expirationAt.isBefore(currentTime)) {
+            this.status = CouponStatus.EXPIRED;
+            throw new ExpiredCouponException(ErrorCode.EXPIRED_COUPON);
+        }
+        if (this.status == CouponStatus.USED) {
+            throw new AlreadyUsedCouponException();
+        }
+    }
+
+    public void use(final BigDecimal totalPrice) {
         this.status = CouponStatus.USED;
+    }
+
+    public void rollback() {
+        this.status = CouponStatus.REGISTERED;
     }
 
     @VisibleForTesting

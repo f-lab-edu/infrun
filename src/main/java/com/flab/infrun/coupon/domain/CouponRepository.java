@@ -9,5 +9,7 @@ public interface CouponRepository {
 
     List<Coupon> saveAll(final List<Coupon> coupons);
 
+    Coupon findByCouponCode(final String couponCode);
+
     Optional<Coupon> findByCouponCodeWithLock(final String couponCode);
 }
