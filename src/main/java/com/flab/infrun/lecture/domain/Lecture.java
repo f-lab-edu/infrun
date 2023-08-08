@@ -1,7 +1,7 @@
 package com.flab.infrun.lecture.domain;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.flab.infrun.member.domain.Member;
+import com.google.common.annotations.VisibleForTesting;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -81,6 +81,10 @@ public class Lecture {
 
     public List<LectureDetail> getLectureDetailList() {
         return lectureDetailList;
+    }
+
+    public Member getMember() {
+        return member;
     }
 
     @VisibleForTesting
