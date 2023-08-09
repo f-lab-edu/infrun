@@ -37,7 +37,7 @@ public class CartsReader {
 
         return new CartsResult(lectures.stream()
             .map(lecture -> {
-                final Member teacher = memberRepository.findById(lecture.getUserId());
+                final Member teacher = memberRepository.findById(lecture.getMember().getId());
                 return new CartItemResult(
                     lecture.getId(),
                     lecture.getName(),

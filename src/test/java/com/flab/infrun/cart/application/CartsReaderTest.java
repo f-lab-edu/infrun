@@ -55,14 +55,25 @@ final class CartsReaderTest {
     }
 
     private Lecture createLecture() {
-        final Lecture lecture = Lecture.of("JPA 강의", 53_000, 3, "JPA", "JPA 강의입니다.", 2L);
+        final Member member = createMember();
+        final Lecture lecture = Lecture.of(
+            "JPA 강의",
+            53_000,
+            3,
+            "JPA",
+            "JPA 강의입니다.",
+            member
+        );
         lecture.assignId(1L);
 
         return lecture;
     }
 
     private Member createMember() {
-        return Member.of("test", "test@test.com", "1234");
+        final Member member = Member.of("test", "test@test.com", "1234");
+        member.assignId(1L);
+
+        return member;
     }
 
     private Cart createCart() {

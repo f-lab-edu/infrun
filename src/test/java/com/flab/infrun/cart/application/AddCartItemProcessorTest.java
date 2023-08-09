@@ -7,6 +7,7 @@ import com.flab.infrun.cart.domain.Cart;
 import com.flab.infrun.cart.domain.CartItem;
 import com.flab.infrun.cart.domain.CartRepository;
 import com.flab.infrun.lecture.domain.Lecture;
+import com.flab.infrun.member.domain.Member;
 import java.math.BigDecimal;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -62,10 +63,19 @@ final class AddCartItemProcessorTest {
     }
 
     private void createLectures(final FakeLectureRepository lectureRepository) {
+        final Member member = createMember();
+
         lectureRepository.saveAll(List.of(
-            Lecture.of("JPA 강의", 53_000, 3, "JPA", "JPA 강의입니다.", 2L),
-            Lecture.of("스프링 강의", 79_000, 3, "SPRING", "SPRING 강의입니다.", 2L),
-            Lecture.of("JAVA 강의", 88_000, 3, "JAVA", "JAVA 강의입니다.", 2L)
+            Lecture.of("JPA 강의", 53_000, 3, "JPA", "JPA 강의입니다.", member),
+            Lecture.of("스프링 강의", 79_000, 3, "SPRING", "SPRING 강의입니다.", member),
+            Lecture.of("JAVA 강의", 88_000, 3, "JAVA", "JAVA 강의입니다.", member)
         ));
+    }
+
+    private Member createMember() {
+        final Member member = Member.of("test", "test@test.com", "1234");
+        member.assignId(1L);
+
+        return member;
     }
 }
