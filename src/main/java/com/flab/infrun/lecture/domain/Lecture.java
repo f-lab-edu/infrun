@@ -1,6 +1,7 @@
 package com.flab.infrun.lecture.domain;
 
 import com.flab.infrun.member.domain.Member;
+import com.google.common.annotations.VisibleForTesting;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -54,6 +55,10 @@ public class Lecture {
         return id;
     }
 
+    public void setId(long key) {
+        this.id = key;
+    }
+
     public String getName() {
         return name;
     }
@@ -76,6 +81,15 @@ public class Lecture {
 
     public List<LectureDetail> getLectureDetailList() {
         return lectureDetailList;
+    }
+
+    public Member getMember() {
+        return member;
+    }
+
+    @VisibleForTesting
+    public void assignId(Long id) {
+        this.id = id;
     }
 
     @Override
