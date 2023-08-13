@@ -10,4 +10,6 @@ public interface CouponRepository {
     List<Coupon> saveAll(final List<Coupon> coupons);
 
     Optional<Coupon> findByCouponCodeWithLock(final String couponCode);
+
+    List<Coupon> findAllByOwnerId(final Long ownerId);
 }

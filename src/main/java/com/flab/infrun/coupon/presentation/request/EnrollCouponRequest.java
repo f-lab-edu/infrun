@@ -1,7 +1,7 @@
 package com.flab.infrun.coupon.presentation.request;
 
-import com.flab.infrun.common.config.security.UserAdapter;
 import com.flab.infrun.coupon.application.command.CouponRegisterCommand;
+import com.flab.infrun.member.domain.Member;
 import jakarta.validation.constraints.NotBlank;
 
 public record EnrollCouponRequest(
@@ -9,7 +9,7 @@ public record EnrollCouponRequest(
     String couponCode
 ) {
 
-    public CouponRegisterCommand toCommand(final UserAdapter user) {
-        return new CouponRegisterCommand(user.getMember(), couponCode);
+    public CouponRegisterCommand toCommand(final Member member) {
+        return new CouponRegisterCommand(member, couponCode);
     }
 }

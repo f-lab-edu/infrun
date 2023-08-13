@@ -5,7 +5,7 @@ import com.flab.infrun.common.exception.SystemException;
 
 public final class AlreadyRegisteredCouponException extends SystemException {
 
-    public AlreadyRegisteredCouponException(final ErrorCode errorCode) {
-        super(errorCode);
+    public AlreadyRegisteredCouponException() {
+        super(ErrorCode.ALREADY_REGISTERED_COUPON);
     }
 }
