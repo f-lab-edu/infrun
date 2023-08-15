@@ -48,6 +48,12 @@ public class Cart {
         totalPrice = cartItems.calculateTotalPrice();
     }
 
+    public void hasCartItem(final List<Long> itemIds) {
+        if (!cartItems.hasCartItem(itemIds)) {
+            throw new NotFoundCartItemException();
+        }
+    }
+
     public BigDecimal getTotalPrice() {
         return totalPrice;
     }

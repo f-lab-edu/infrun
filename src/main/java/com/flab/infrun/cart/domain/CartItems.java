@@ -39,4 +39,10 @@ public class CartItems {
             .map(CartItem::getPrice)
             .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
+
+    public boolean hasCartItem(final List<Long> itemIds) {
+        return cartItems.stream()
+            .map(CartItem::getLectureId)
+            .allMatch(itemIds::contains);
+    }
 }
