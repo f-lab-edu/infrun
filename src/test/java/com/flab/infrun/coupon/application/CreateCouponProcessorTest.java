@@ -27,7 +27,7 @@ final class CreateCouponProcessorTest {
 
     @BeforeEach
     void setUp() {
-        final CouponRepository couponRepository = new StubCouponRepository();
+        final CouponRepository couponRepository = new FakeCouponRepository();
         CouponCodeGenerator couponCodeGenerator = new UUIDCouponCodeGenerator();
         CouponValidator couponValidator = new CouponValidatorImpl();
         sut = new CreateCouponProcessor(

@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-class StubCouponRepository implements CouponRepository {
+public class FakeCouponRepository implements CouponRepository {
 
     private final Map<Long, Coupon> persistence = new HashMap<>();
     private Long sequence = 0L;

@@ -10,6 +10,7 @@ import com.flab.infrun.coupon.domain.DiscountType;
 import com.flab.infrun.coupon.infrastructure.persistence.CouponJpaRepository;
 import com.flab.infrun.member.domain.Member;
 import com.flab.infrun.member.infrastructure.persistence.MemberJpaRepository;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +41,8 @@ class ConcurrencyRegisterCouponTest {
         final String couponCode = "coupon";
         final LocalDateTime expirationAt = LocalDateTime.of(2100, 1, 1, 0, 0);
         couponRepository.save(
-            Coupon.create(couponCode, DiscountInfo.of(DiscountType.FIX, 1000), expirationAt));
+            Coupon.create(couponCode, DiscountInfo.of(DiscountType.FIX, BigDecimal.valueOf(1000)),
+                expirationAt));
     }
 
     @RepeatedTest(30)
