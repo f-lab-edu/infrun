@@ -36,6 +36,7 @@ public enum ErrorCode {
     // ORDER
     INVALID_CREATE_ORDER("유효하지 않은 주문 정보입니다."),
     INVALID_PRICE_VALUE("주문 금액은 0원보다 적을 수 없습니다."),
+    INVALID_ORDER_ITEM_PRICE_VALUE("주문 상품 가격이 올바르지 않습니다."),
     NOT_FOUND_ORDER("주문을 찾을 수 없습니다.");
 
     private final String message;
