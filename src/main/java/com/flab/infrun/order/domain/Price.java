@@ -23,8 +23,8 @@ public class Price {
         return new Price(totalPrice, BigDecimal.ZERO);
     }
 
-    public static Price create(final BigDecimal totalPrice, final BigDecimal discountPrice) {
-        return new Price(totalPrice, discountPrice);
+    public static Price create(final BigDecimal totalPrice, final BigDecimal basePrice) {
+        return new Price(totalPrice, basePrice.subtract(totalPrice));
     }
 
     private void verifyPrice(final BigDecimal totalPrice, final BigDecimal discountPrice) {
