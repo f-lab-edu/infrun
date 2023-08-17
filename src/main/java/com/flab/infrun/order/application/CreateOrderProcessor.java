@@ -9,8 +9,9 @@ import com.flab.infrun.lecture.domain.Lecture;
 import com.flab.infrun.lecture.domain.LectureRepository;
 import com.flab.infrun.member.domain.Member;
 import com.flab.infrun.order.application.command.CreateOrderCommand;
-import com.flab.infrun.order.application.result.CreateOrderResult;
+import com.flab.infrun.order.application.result.CreatedOrderResult;
 import com.flab.infrun.order.domain.Order;
+import com.flab.infrun.order.domain.OrderItem;
 import com.flab.infrun.order.domain.OrderRepository;
 import com.flab.infrun.order.domain.Price;
 import jakarta.transaction.Transactional;
@@ -32,7 +33,7 @@ public class CreateOrderProcessor {
     private final CartRepository cartRepository;
 
     @Transactional
-    public CreateOrderResult execute(
+    public CreatedOrderResult execute(
         final CreateOrderCommand command,
         final LocalDateTime currentTime
     ) {
@@ -40,11 +41,12 @@ public class CreateOrderProcessor {
         final Coupon coupon = verifyCoupon(command.customer(), command.couponCode(), currentTime);
         final List<Lecture> lectures = lectureRepository.findAllByIdIn(command.lectureIds());
         final Price price = createPrice(lectures, coupon);
+        final List<OrderItem> orderItems = createOrderItems(lectures);
 
         final Order order = orderRepository.save(
-            Order.create(command.customer(), lectures, price));
+            Order.create(command.customer(), orderItems, price, coupon));
 
-        return CreateOrderResult.from(order);
+        return CreatedOrderResult.from(order);
     }
 
     private Coupon verifyCoupon(
@@ -69,19 +71,26 @@ public class CreateOrderProcessor {
     }
 
     private Price createPrice(final List<Lecture> lectures, final Coupon coupon) {
-        final BigDecimal totalPrice = calculateTotalPrice(lectures);
+        final BigDecimal basePrice = calculateBasePrice(lectures);
         if (Objects.isNull(coupon)) {
-            return Price.create(totalPrice);
+            return Price.create(basePrice);
         }
-        final BigDecimal discountValue = coupon.apply(totalPrice);
+        final BigDecimal totalPrice = coupon.apply(basePrice);
 
-        return Price.create(totalPrice.subtract(discountValue));
+        return Price.create(totalPrice, basePrice);
     }
 
-    private BigDecimal calculateTotalPrice(final List<Lecture> lectures) {
+    private BigDecimal calculateBasePrice(final List<Lecture> lectures) {
         return lectures.stream()
             .map(lecture -> BigDecimal.valueOf(lecture.getPrice()))
             .reduce(BigDecimal::add)
             .orElse(BigDecimal.ZERO);
+    }
+
+    private List<OrderItem> createOrderItems(final List<Lecture> lectures) {
+        return lectures.stream()
+            .map(lecture -> OrderItem.create(lecture.getId(), lecture.getName(),
+                BigDecimal.valueOf(lecture.getPrice()), BigDecimal.ZERO))
+            .toList();
     }
 }
