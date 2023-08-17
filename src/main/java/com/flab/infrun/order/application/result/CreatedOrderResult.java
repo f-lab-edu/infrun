@@ -4,21 +4,23 @@ import com.flab.infrun.order.domain.Order;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-public record CreateOrderResult(
+public record CreatedOrderResult(
     Long orderId,
     BigDecimal totalPrice,
     LocalDateTime orderedAt,
-    String orderStatus
+    String orderStatus,
+    boolean isCouponApplied
 ) {
 
-    public static CreateOrderResult from(
+    public static CreatedOrderResult from(
         final Order order
     ) {
-        return new CreateOrderResult(
+        return new CreatedOrderResult(
             order.getId(),
             order.getTotalPrice(),
             order.getCreatedAt(),
-            order.getOrderStatus().getDescription()
+            order.getOrderStatus().getDescription(),
+            order.isCouponApplied()
         );
     }
 }
