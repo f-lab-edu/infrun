@@ -1,27 +1,25 @@
 package com.flab.infrun.order.application;
 
+import static com.flab.infrun.cart.domain.CartFixture.aCartFixture;
+import static com.flab.infrun.cart.domain.CartItemFixture.aCartItemFixture;
+import static com.flab.infrun.coupon.domain.CouponFixture.aCouponFixture;
+import static com.flab.infrun.member.domain.MemberFixture.aMemberFixture;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.flab.infrun.cart.domain.CartFixture;
-import com.flab.infrun.cart.domain.CartItem;
-import com.flab.infrun.cart.domain.CartItemsFixture;
+import com.flab.infrun.cart.domain.Cart;
 import com.flab.infrun.cart.domain.CartRepository;
 import com.flab.infrun.common.IntegrationTest;
-import com.flab.infrun.coupon.domain.Coupon;
-import com.flab.infrun.coupon.domain.CouponFixture;
 import com.flab.infrun.coupon.domain.CouponRepository;
 import com.flab.infrun.coupon.domain.DiscountInfo;
 import com.flab.infrun.coupon.domain.DiscountType;
 import com.flab.infrun.lecture.domain.LectureFixture;
 import com.flab.infrun.lecture.infrastructure.persistence.jpa.LectureJpaRepository;
 import com.flab.infrun.member.domain.Member;
-import com.flab.infrun.member.domain.MemberFixture;
 import com.flab.infrun.member.domain.MemberRepository;
 import com.flab.infrun.order.application.command.CreateOrderCommand;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -77,6 +75,7 @@ final class CreateOrderProcessorTest extends IntegrationTest {
         assertThat(result.orderId()).isEqualTo(1L);
         assertThat(result.orderStatus()).isEqualTo("주문 생성");
         assertThat(result.totalPrice()).isEqualTo(BigDecimal.valueOf(89_000));
+        assertThat(result.orderItems()).hasSize(3);
         assertThat(result.isCouponApplied()).isTrue();
     }
 
@@ -100,30 +99,34 @@ final class CreateOrderProcessorTest extends IntegrationTest {
     }
 
     private void setupCart() {
+        final Cart build = aCartFixture()
+            .cartItems(
+                aCartItemFixture()
+                    .lectureId(1L)
+                    .price(BigDecimal.valueOf(30_000)),
+                aCartItemFixture()
+                    .lectureId(2L)
+                    .price(BigDecimal.valueOf(20_000)),
+                aCartItemFixture()
+                    .lectureId(3L)
+                    .price(BigDecimal.valueOf(40_000))
+            )
+            .build();
         cartRepository.save(
-            CartFixture.aCartFixture().cartItems(
-                new CartItemsFixture().cartItems(
-                    Set.of(
-                        CartItem.of(1L, BigDecimal.valueOf(30_000)),
-                        CartItem.of(2L, BigDecimal.valueOf(20_000)),
-                        CartItem.of(3L, BigDecimal.valueOf(40_000))
-                    )
-                ).build()
-            ).build()
+            build
         );
     }
 
     private Member createMember() {
-        return MemberFixture.aMemberFixture().build();
+        return aMemberFixture().build();
     }
 
     private void setupCoupon() {
-        final Coupon coupon = CouponFixture.aCouponFixture()
-            .discountInfo(
-                DiscountInfo.of(DiscountType.FIX, BigDecimal.valueOf(1_000)))
-            .build();
-
-        couponRepository.save(coupon);
+        couponRepository.save(
+            aCouponFixture()
+                .discountInfo(
+                    DiscountInfo.of(DiscountType.FIX, BigDecimal.valueOf(1_000)))
+                .build());
     }
 }
 

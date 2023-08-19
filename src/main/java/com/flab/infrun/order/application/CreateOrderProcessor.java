@@ -1,8 +1,6 @@
 package com.flab.infrun.order.application;
 
-import com.flab.infrun.cart.domain.Cart;
 import com.flab.infrun.cart.domain.CartRepository;
-import com.flab.infrun.cart.domain.exception.NotFoundCartException;
 import com.flab.infrun.coupon.domain.Coupon;
 import com.flab.infrun.coupon.domain.CouponRepository;
 import com.flab.infrun.lecture.domain.Lecture;
@@ -14,6 +12,7 @@ import com.flab.infrun.order.domain.Order;
 import com.flab.infrun.order.domain.OrderItem;
 import com.flab.infrun.order.domain.OrderRepository;
 import com.flab.infrun.order.domain.Price;
+import groovy.util.logging.Slf4j;
 import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -25,6 +24,7 @@ import org.springframework.util.StringUtils;
 
 @RequiredArgsConstructor
 @Component
+@Slf4j
 public class CreateOrderProcessor {
 
     private final OrderRepository orderRepository;
@@ -64,10 +64,8 @@ public class CreateOrderProcessor {
     }
 
     private void verifyCart(final Long ownerId, final List<Long> lectureIds) {
-        final Cart cart = cartRepository.findByOwnerId(ownerId)
-            .orElseThrow(NotFoundCartException::new);
-
-        cart.hasCartItem(lectureIds);
+        cartRepository.findWithCartItemsByOwnerId(ownerId)
+            .hasCartItem(lectureIds);
     }
 
     private Price createPrice(final List<Lecture> lectures, final Coupon coupon) {
@@ -89,8 +87,12 @@ public class CreateOrderProcessor {
 
     private List<OrderItem> createOrderItems(final List<Lecture> lectures) {
         return lectures.stream()
-            .map(lecture -> OrderItem.create(lecture.getId(), lecture.getName(),
-                BigDecimal.valueOf(lecture.getPrice()), BigDecimal.ZERO))
+            .map(lecture -> OrderItem.create(
+                lecture.getId(),
+                lecture.getMember().getNickname(),
+                lecture.getName(),
+                BigDecimal.valueOf(lecture.getPrice()),
+                BigDecimal.ZERO))
             .toList();
     }
 }
