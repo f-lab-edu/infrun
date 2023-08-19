@@ -40,7 +40,7 @@ public class Order extends BaseEntity {
     @Embedded
     private Price price;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
     private List<OrderItem> orderItems;
 
@@ -89,6 +89,14 @@ public class Order extends BaseEntity {
 
     public BigDecimal getTotalPrice() {
         return price.getTotalPrice();
+    }
+
+    public BigDecimal getDiscountPrice() {
+        return price.getDiscountPrice();
+    }
+
+    public List<OrderItem> getOrderItems() {
+        return orderItems;
     }
 
     public OrderStatus getOrderStatus() {

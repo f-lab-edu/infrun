@@ -6,6 +6,7 @@ public class OrderItemFixture {
 
     private Long id = 1L;
     private Long itemId = 1L;
+    private String providerName = "조영호님";
     private String itemName = "객체지향의 사실과 오해";
     private BigDecimal basePrice = BigDecimal.valueOf(30_000);
     private BigDecimal salesPrice = BigDecimal.ZERO;
@@ -40,6 +41,6 @@ public class OrderItemFixture {
     }
 
     public OrderItem build() {
-        return OrderItem.create(itemId, itemName, basePrice, salesPrice);
+        return OrderItem.create(itemId, itemName, providerName, basePrice, salesPrice);
     }
 }

@@ -11,7 +11,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flab.infrun.common.config.security.UserAdapter;
-import com.flab.infrun.coupon.domain.CouponRepository;
 import com.flab.infrun.member.domain.Member;
 import com.flab.infrun.order.application.OrderFacade;
 import com.flab.infrun.order.application.result.CreatedOrderResult;
@@ -42,8 +41,6 @@ final class OrderControllerTest {
     private ObjectMapper objectMapper;
     @MockBean
     private OrderFacade orderFacade;
-    @MockBean
-    private CouponRepository couponRepository;
 
     private static Stream<Arguments> provideCreateOrderRequest() {
         return Stream.of(
@@ -72,6 +69,7 @@ final class OrderControllerTest {
             .andExpect(jsonPath("$.data.totalPrice").value("90,000"))
             .andExpect(jsonPath("$.data.orderDate").exists())
             .andExpect(jsonPath("$.data.orderStatus").value("주문 생성"))
+            .andExpect(jsonPath("$.data.orderItems").isNotEmpty())
             .andExpect(jsonPath("$.data.isCouponApplied").value(false));
     }
 
@@ -94,8 +92,29 @@ final class OrderControllerTest {
         return new CreatedOrderResult(
             1L,
             BigDecimal.valueOf(90_000),
+            BigDecimal.ZERO,
             LocalDateTime.now(),
             "주문 생성",
+            List.of(
+                new CreatedOrderResult.OrderItemResult(
+                    "스프링의 신",
+                    "스프링 강의",
+                    BigDecimal.valueOf(30_000),
+                    BigDecimal.ZERO
+                ),
+                new CreatedOrderResult.OrderItemResult(
+                    "JPA의 신",
+                    "JPA 강의",
+                    BigDecimal.valueOf(30_000),
+                    BigDecimal.ZERO
+                ),
+                new CreatedOrderResult.OrderItemResult(
+                    "Java의 신",
+                    "Java 강의",
+                    BigDecimal.valueOf(30_000),
+                    BigDecimal.ZERO
+                )
+            ),
             false);
     }
 
