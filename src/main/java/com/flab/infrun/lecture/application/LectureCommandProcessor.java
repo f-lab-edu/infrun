@@ -8,7 +8,8 @@ import com.flab.infrun.lecture.domain.LectureDetail;
 import com.flab.infrun.lecture.domain.LectureFile;
 import com.flab.infrun.lecture.domain.LectureFileRepository;
 import com.flab.infrun.lecture.domain.LectureRepository;
-import com.flab.infrun.lecture.infrastructure.persistence.LectureDetailRepositoryAdapter;
+import com.flab.infrun.member.domain.Member;
+import com.flab.infrun.member.domain.MemberRepository;
 import com.google.common.annotations.VisibleForTesting;
 import java.util.List;
 import java.util.Map;
@@ -24,8 +25,8 @@ import org.springframework.web.multipart.MultipartFile;
 public class LectureCommandProcessor {
 
     private final LectureRepository lectureRepository;
-    private final LectureDetailRepositoryAdapter lectureDetailRepository;
     private final LectureFileRepository lectureFileRepository;
+    private final MemberRepository memberRepository;
     private final StorageUpload storageUpload;
 
     @Transactional
@@ -38,14 +39,14 @@ public class LectureCommandProcessor {
 
     private long getSavedLecture(LectureRegisterCommand lectureRegisterCommand,
         Map<String, LectureFile> mappingFileWithName) {
+        Member member = memberRepository.findById(lectureRegisterCommand.memberId());
         Lecture lecture = Lecture.of(
             lectureRegisterCommand.name(),
             lectureRegisterCommand.price(),
             lectureRegisterCommand.level(),
             lectureRegisterCommand.skill(),
             lectureRegisterCommand.introduce(),
-            //todo-member getReferenceById or Make Temp Member
-            null);
+            member);
 
         List<LectureDetail> lectureDetails = lectureRegisterCommand.lectureDetailCommandList()
             .stream()

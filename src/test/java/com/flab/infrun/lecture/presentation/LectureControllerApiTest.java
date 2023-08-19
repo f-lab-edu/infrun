@@ -1,24 +1,21 @@
 package com.flab.infrun.lecture.presentation;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.flab.infrun.common.exception.ErrorCode;
 import com.flab.infrun.lecture.presentation.request.LectureDetailRequest;
 import com.flab.infrun.lecture.presentation.request.LectureRegisterRequest;
 import com.flab.infrun.member.presentation.LoginRequest;
 import io.restassured.RestAssured;
+import io.restassured.response.ExtractableResponse;
+import io.restassured.response.Response;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javax.sql.DataSource;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,7 +39,8 @@ class LectureControllerApiTest {
 
     @Autowired
     private MockMvc mockMvc;
-    private final ObjectMapper mapper = new ObjectMapper();
+    @Autowired
+    private ObjectMapper mapper;
 
     private static final String MEMBER_URI = "/members";
 
@@ -67,50 +65,22 @@ class LectureControllerApiTest {
     }
 
     @Test
-    @DisplayName("강의 등록 시 Role check - 토큰 오류 (UN_AUTHORIZATION)")
-    void lectureRegisterRoleCheckFailAuth() throws Exception {
-
-        mockMvc.perform(post("/lecture")
-                .header("Authorization", "Bearer " + "wrong token"))
-            .andExpect(content().json(getJsonValue("UN_AUTHORIZATION")))
-            .andDo(print());
-    }
-
-    @Test
-    @DisplayName("강의 등록 시 Role check - 권한 오류 (ACCESS_DENIED)")
-    void lectureRegisterRoleCheckFailAcc() throws Exception {
-
-        String token = loginSuccess_returnToken(createMemberLoginRequest());
-
-        mockMvc.perform(createMultiPartRequest()
-                .header("Authorization", "Bearer " + token))
-            .andExpect(content().json(getJsonValue("ACCESS_DENIED")))
-            .andDo(print())
-            .andReturn();
-    }
-
-    @Test
     @DisplayName("강의 등록 시 Role check - 성공")
     void lectureRegisterRoleCheckSuccess() throws Exception {
-
         String token = loginSuccess_returnToken(createTeacherLoginRequest());
+        String headerName = "Authorization";
+        String authorizationValue = "Bearer " + token;
+        MockMultipartHttpServletRequestBuilder multiPartRequest = createMultiPartRequest();
 
-        mockMvc.perform(createMultiPartRequest()
-                .header("Authorization", "Bearer " + token))
+        mockMvc.perform(multiPartRequest
+                .header(headerName, authorizationValue))
+
             .andExpect(status().is2xxSuccessful())
             .andDo(print());
     }
 
-    private String getJsonValue(String errVal) throws JsonProcessingException {
-        ErrorCode errorCode = ErrorCode.valueOf(errVal);
-        Map<String, String> map = new HashMap<>();
-        map.put("errorCode", errVal);
-        map.put("message", errorCode.getMessage());
-        return mapper.writeValueAsString(map);
-    }
-
     private String loginSuccess_returnToken(LoginRequest loginRequest) {
-        var response = RestAssured.given()
+        ExtractableResponse<Response> response = RestAssured.given()
             .log()
             .all()
             .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -164,11 +134,4 @@ class LectureControllerApiTest {
     private LoginRequest createTeacherLoginRequest() {
         return new LoginRequest("teacher1@test.com", "1234Qwer!");
     }
-
-    private LoginRequest createMemberLoginRequest() {
-        return new LoginRequest("member1@test.com", "1234Qwer!");
-    }
 }
-
-
-

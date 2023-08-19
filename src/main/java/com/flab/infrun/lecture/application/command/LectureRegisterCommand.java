@@ -11,7 +11,7 @@ public record LectureRegisterCommand(
     String introduce,
     List<LectureDetailCommand> lectureDetailCommandList,
     List<MultipartFile> lectureFileList,
-    long userId
+    long memberId
 
 ) {
 
