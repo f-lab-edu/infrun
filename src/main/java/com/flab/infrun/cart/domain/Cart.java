@@ -32,26 +32,30 @@ public class Cart {
         return new Cart(ownerId);
     }
 
-    public Long getOwnerId() {
-        return ownerId;
+    private void calculateTotalPrice() {
+        totalPrice = cartItems.calculateTotalPrice();
     }
 
-    public void addCartItem(final CartItem cartItem) {
-        cartItems.add(cartItem);
-        totalPrice = cartItems.calculateTotalPrice();
+    public void addCartItem(final Long lectureId, final BigDecimal price) {
+        cartItems.add(new CartItem(this, lectureId, price));
+        calculateTotalPrice();
     }
 
     public void deleteCartItem(final Long lectureId) {
         if (!cartItems.delete(lectureId)) {
             throw new NotFoundCartItemException();
         }
-        totalPrice = cartItems.calculateTotalPrice();
+        calculateTotalPrice();
     }
 
     public void hasCartItem(final List<Long> itemIds) {
         if (!cartItems.hasCartItem(itemIds)) {
             throw new NotFoundCartItemException();
         }
+    }
+
+    public Long getOwnerId() {
+        return ownerId;
     }
 
     public BigDecimal getTotalPrice() {
