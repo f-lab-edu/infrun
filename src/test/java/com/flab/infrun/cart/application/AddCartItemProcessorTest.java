@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.flab.infrun.cart.application.command.AddCartItemCommand;
 import com.flab.infrun.cart.domain.Cart;
-import com.flab.infrun.cart.domain.CartItem;
 import com.flab.infrun.cart.domain.CartRepository;
 import com.flab.infrun.lecture.domain.Lecture;
 import com.flab.infrun.member.domain.Member;
@@ -57,7 +56,7 @@ final class AddCartItemProcessorTest {
 
     private Cart createCartItem() {
         final Cart cart = cartRepository.save(Cart.create(1L));
-        cart.addCartItem(CartItem.of(1L, BigDecimal.valueOf(63_000)));
+        cart.addCartItem(1L, BigDecimal.valueOf(63_000));
 
         return cart;
     }

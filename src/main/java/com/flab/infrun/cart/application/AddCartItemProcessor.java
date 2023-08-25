@@ -3,7 +3,6 @@ package com.flab.infrun.cart.application;
 import com.flab.infrun.cart.application.command.AddCartItemCommand;
 import com.flab.infrun.cart.application.result.AddedCartItemResult;
 import com.flab.infrun.cart.domain.Cart;
-import com.flab.infrun.cart.domain.CartItem;
 import com.flab.infrun.cart.domain.CartRepository;
 import com.flab.infrun.lecture.domain.Lecture;
 import com.flab.infrun.lecture.domain.LectureRepository;
@@ -26,7 +25,7 @@ public class AddCartItemProcessor {
         final Cart cart = cartRepository.findByOwnerId(command.ownerId())
             .orElse(Cart.create(command.ownerId()));
 
-        cart.addCartItem(CartItem.of(lecture.getId(), BigDecimal.valueOf(lecture.getPrice())));
+        cart.addCartItem(lecture.getId(), BigDecimal.valueOf(lecture.getPrice()));
 
         return AddedCartItemResult.from(cart.getLectureIds());
     }
