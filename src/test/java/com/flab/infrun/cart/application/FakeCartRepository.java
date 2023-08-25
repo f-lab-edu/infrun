@@ -24,4 +24,9 @@ public class FakeCartRepository implements CartRepository {
             .filter(cart -> cart.getOwnerId().equals(ownerId))
             .findFirst();
     }
+
+    @Override
+    public Cart findWithCartItemsByOwnerId(final Long ownerId) {
+        return null;
+    }
 }
