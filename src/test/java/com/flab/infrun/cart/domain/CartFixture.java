@@ -1,12 +1,15 @@
 package com.flab.infrun.cart.domain;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class CartFixture {
 
     private Long id = 1L;
     private Long ownerId = 1L;
-    private CartItems cartItems = CartItemsFixture.aCartItemsFixture().build();
+    private List<CartItemFixture> cartItems = new ArrayList<>();
     private BigDecimal totalPrice = BigDecimal.valueOf(100_000);
 
 
@@ -24,8 +27,8 @@ public class CartFixture {
         return this;
     }
 
-    public CartFixture cartItems(final CartItems cartItems) {
-        this.cartItems = cartItems;
+    public CartFixture cartItems(final CartItemFixture... cartItems) {
+        this.cartItems = Arrays.asList(cartItems);
         return this;
     }
 
@@ -36,7 +39,10 @@ public class CartFixture {
 
     public Cart build() {
         final Cart cart = Cart.create(this.ownerId);
-        cart.assignId(this.id);
+
+        this.cartItems.stream()
+            .map(CartItemFixture::build)
+            .forEach(cartItem -> cart.addCartItem(cartItem.getLectureId(), cartItem.getPrice()));
 
         return cart;
     }

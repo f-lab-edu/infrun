@@ -1,15 +1,25 @@
 package com.flab.infrun.cart.domain;
 
+import static com.flab.infrun.cart.domain.CartFixture.aCartFixture;
+
 import java.math.BigDecimal;
 
 public class CartItemFixture {
 
     private Long lectureId = 1L;
     private BigDecimal price = BigDecimal.valueOf(30_000);
+    private CartFixture cart = aCartFixture();
 
-    public CartItemFixture(final Long lectureId, final BigDecimal price) {
-        this.lectureId = lectureId;
-        this.price = price;
+    public static CartItemFixture aCartItemFixture() {
+        return new CartItemFixture();
+    }
+
+    public Long getLectureId() {
+        return lectureId;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
     }
 
     public CartItemFixture lectureId(final Long lectureId) {
@@ -23,6 +33,6 @@ public class CartItemFixture {
     }
 
     public CartItem build() {
-        return CartItem.of(this.lectureId, this.price);
+        return new CartItem(this.cart.build(), this.lectureId, this.price);
     }
 }

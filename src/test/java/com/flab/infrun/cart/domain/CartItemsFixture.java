@@ -1,27 +1,26 @@
 package com.flab.infrun.cart.domain;
 
-import java.util.HashSet;
-import java.util.Set;
+import static com.flab.infrun.cart.domain.CartItemFixture.aCartItemFixture;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class CartItemsFixture {
 
-    private Set<CartItem> cartItems = new HashSet<>();
+    private List<CartItemFixture> cartItems = List.of(aCartItemFixture());
 
     public static CartItemsFixture aCartItemsFixture() {
         return new CartItemsFixture();
     }
 
-    public CartItemsFixture cartItems(final Set<CartItem> cartItems) {
-        this.cartItems = cartItems;
+    public CartItemsFixture cartItems(final CartItemFixture... cartItems) {
+        this.cartItems = Arrays.asList(cartItems);
         return this;
     }
 
-    public CartItems build() {
-        final CartItems items = new CartItems();
-
-        cartItems.stream()
-            .forEach(items::add);
-
-        return items;
+    public List<CartItem> build() {
+        return cartItems.stream()
+            .map(CartItemFixture::build)
+            .toList();
     }
 }

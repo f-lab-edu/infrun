@@ -1,26 +1,34 @@
 package com.flab.infrun.cart.domain;
 
-import jakarta.persistence.Embeddable;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import java.math.BigDecimal;
 import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Embeddable
+@Entity
 public class CartItem {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private Long lectureId;
-
     private BigDecimal price;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cart_id")
+    private Cart cart;
 
-    private CartItem(final Long lectureId, final BigDecimal price) {
+    public CartItem(final Cart cart, final Long lectureId, final BigDecimal price) {
+        this.cart = cart;
         this.lectureId = lectureId;
         this.price = price;
-    }
-
-    public static CartItem of(final Long lectureId, final BigDecimal price) {
-        return new CartItem(lectureId, price);
     }
 
     Long getLectureId() {
@@ -40,7 +48,7 @@ public class CartItem {
             return false;
         }
         final CartItem cartItem = (CartItem) o;
-        return Objects.equals(lectureId, cartItem.lectureId);
+        return Objects.equals(id, cartItem.id);
     }
 
     @Override
