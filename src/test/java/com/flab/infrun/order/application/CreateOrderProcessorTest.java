@@ -125,7 +125,7 @@ final class CreateOrderProcessorTest extends IntegrationTest {
         couponRepository.save(
             aCouponFixture()
                 .discountInfo(
-                    DiscountInfo.of(DiscountType.FIX, BigDecimal.valueOf(1_000)))
+                    DiscountInfo.of(DiscountType.FIX, 1_000))
                 .build());
     }
 }

@@ -31,7 +31,7 @@ final class EnrollCouponProcessorTest {
         sut = new EnrollCouponProcessor(couponRepository);
 
         couponRepository.save(
-            Coupon.create(couponCode, DiscountInfo.of(DiscountType.FIX, BigDecimal.valueOf(1000)),
+            Coupon.create(couponCode, DiscountInfo.of(DiscountType.FIX, 1_000),
                 expirationAt));
     }
 

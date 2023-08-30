@@ -108,10 +108,11 @@ public class Coupon {
     }
 
     public BigDecimal apply(final BigDecimal price) {
+        this.status = CouponStatus.USED;
         return this.discountInfo.discount(price);
     }
 
-    public void isUsable(final LocalDateTime currentTime, final Member customer) {
+    public void verifyIsUsable(final LocalDateTime currentTime, final Member customer) {
         if (!this.owner.equals(customer)) {
             throw new InvalidCouponOwnerException();
         }
@@ -124,11 +125,7 @@ public class Coupon {
         }
     }
 
-    public void use(final BigDecimal totalPrice) {
-        this.status = CouponStatus.USED;
-    }
-
-    public void rollback() {
+    public void unapply() {
         this.status = CouponStatus.REGISTERED;
     }
 
