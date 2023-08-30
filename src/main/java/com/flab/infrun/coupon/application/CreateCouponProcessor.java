@@ -49,7 +49,7 @@ public class CreateCouponProcessor {
     private void verifyCouponCommand(final CreateCouponCommand command,
         final LocalDateTime currentTime) {
         couponValidator.verifyDiscountType(command.discountType());
-        couponValidator.verifyDiscountAmount(command.discountAmount());
+        couponValidator.verifyDiscountValue(command.discountValue());
         couponValidator.verifyExpirationAt(command.expirationAt(), currentTime);
         couponValidator.verifyQuantity(command.quantity());
     }

@@ -3,12 +3,11 @@ package com.flab.infrun.coupon.application.command;
 import com.flab.infrun.coupon.domain.Coupon;
 import com.flab.infrun.coupon.domain.DiscountInfo;
 import com.flab.infrun.coupon.domain.DiscountType;
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public record CreateCouponCommand(
     String discountType,
-    int discountAmount,
+    int discountValue,
     LocalDateTime expirationAt,
     int quantity
 ) {
@@ -18,7 +17,7 @@ public record CreateCouponCommand(
             code,
             DiscountInfo.of(
                 DiscountType.valueOf(discountType),
-                BigDecimal.valueOf(discountAmount)
+                discountValue
             ),
             expirationAt
         );

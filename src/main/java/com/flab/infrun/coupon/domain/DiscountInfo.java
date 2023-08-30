@@ -10,16 +10,18 @@ import lombok.NoArgsConstructor;
 public class DiscountInfo {
 
     private DiscountType discountType;
-    private BigDecimal discountValue;
+    private int discountValue;
 
-    private DiscountInfo(final DiscountType discountType, final BigDecimal discountValue) {
+    private DiscountInfo(final DiscountType discountType, final int discountValue) {
         this.discountType = discountType;
         this.discountValue = discountValue;
     }
 
-    public static DiscountInfo of(final DiscountType discountType,
-        final BigDecimal discountAmount) {
-        return new DiscountInfo(discountType, discountAmount);
+    public static DiscountInfo of(
+        final DiscountType discountType,
+        final int discountValue
+    ) {
+        return new DiscountInfo(discountType, discountValue);
     }
 
     public DiscountType getDiscountType() {
@@ -27,11 +29,11 @@ public class DiscountInfo {
     }
 
     public BigDecimal getDiscountValue() {
-        return discountValue;
+        return BigDecimal.valueOf(discountValue);
     }
 
     public BigDecimal discount(final BigDecimal price) {
         return BigDecimal.valueOf(
-            this.discountType.calculateDiscountPrice(price.intValue(), discountValue.intValue()));
+            this.discountType.calculateDiscountPrice(price.intValue(), discountValue));
     }
 }

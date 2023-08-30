@@ -17,7 +17,7 @@ import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -38,29 +38,33 @@ public class CreateOrderProcessor {
         final LocalDateTime currentTime
     ) {
         verifyCart(command.customer().getId(), command.lectureIds());
-        final Coupon coupon = verifyCoupon(command.customer(), command.couponCode(), currentTime);
+        final Optional<Coupon> optionalCoupon = verifyAndGetCoupon(
+            command.customer(),
+            command.couponCode(),
+            currentTime);
         final List<Lecture> lectures = lectureRepository.findAllByIdIn(command.lectureIds());
-        final Price price = createPrice(lectures, coupon);
+        final Price price = createPrice(lectures, optionalCoupon);
         final List<OrderItem> orderItems = createOrderItems(lectures);
 
         final Order order = orderRepository.save(
-            Order.create(command.customer(), orderItems, price, coupon));
+            Order.create(command.customer(), orderItems, price, optionalCoupon.orElse(null)));
 
         return CreatedOrderResult.from(order);
     }
 
-    private Coupon verifyCoupon(
+    private Optional<Coupon> verifyAndGetCoupon(
         final Member member,
         final String couponCode,
         final LocalDateTime currentTime
     ) {
         if (!StringUtils.hasText(couponCode)) {
-            return null;
+            return Optional.empty();
         }
-        final Coupon coupon = couponRepository.findByCouponCode(couponCode);
-        coupon.isUsable(currentTime, member);
 
-        return coupon;
+        final Coupon coupon = couponRepository.findByCouponCode(couponCode);
+        coupon.verifyIsUsable(currentTime, member);
+
+        return Optional.of(coupon);
     }
 
     private void verifyCart(final Long ownerId, final List<Long> lectureIds) {
@@ -68,14 +72,12 @@ public class CreateOrderProcessor {
             .hasCartItem(lectureIds);
     }
 
-    private Price createPrice(final List<Lecture> lectures, final Coupon coupon) {
+    private Price createPrice(final List<Lecture> lectures, final Optional<Coupon> optionalCoupon) {
         final BigDecimal basePrice = calculateBasePrice(lectures);
-        if (Objects.isNull(coupon)) {
-            return Price.create(basePrice);
-        }
-        final BigDecimal totalPrice = coupon.apply(basePrice);
 
-        return Price.create(totalPrice, basePrice);
+        return optionalCoupon.map(
+                coupon -> Price.create(coupon.apply(basePrice)))
+            .orElse(Price.create(basePrice));
     }
 
     private BigDecimal calculateBasePrice(final List<Lecture> lectures) {

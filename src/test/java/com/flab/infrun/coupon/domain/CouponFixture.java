@@ -1,7 +1,6 @@
 package com.flab.infrun.coupon.domain;
 
 import com.flab.infrun.member.domain.MemberFixture;
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class CouponFixture {
@@ -9,8 +8,7 @@ public class CouponFixture {
     private Long id = 1L;
     private String code = "coupon-code";
     private CouponStatus status = CouponStatus.REGISTERED;
-    private DiscountInfo discountInfo = DiscountInfo.of(DiscountType.FIX,
-        BigDecimal.valueOf(1_000));
+    private DiscountInfo discountInfo = DiscountInfo.of(DiscountType.FIX, 1_000);
     private LocalDateTime expirationAt = LocalDateTime.of(2099, 12, 31, 0, 0);
     private MemberFixture ownerFixture = MemberFixture.aMemberFixture();
 

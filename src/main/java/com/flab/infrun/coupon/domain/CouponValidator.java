@@ -6,7 +6,7 @@ public interface CouponValidator {
 
     void verifyDiscountType(final String discountType);
 
-    void verifyDiscountAmount(final int discountAmount);
+    void verifyDiscountValue(final int discountValue);
 
     void verifyExpirationAt(final LocalDateTime expirationAt, final LocalDateTime currentTime);
 
