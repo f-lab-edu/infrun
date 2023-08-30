@@ -18,7 +18,7 @@ public class CouponValidatorImpl implements CouponValidator {
     }
 
     @Override
-    public void verifyDiscountAmount(final int discountAmount) {
+    public void verifyDiscountValue(final int discountAmount) {
         if (discountAmount <= 0) {
             throw new InvalidCouponDiscountAmountException(
                 ErrorCode.INVALID_COUPON_DISCOUNT_AMOUNT);
