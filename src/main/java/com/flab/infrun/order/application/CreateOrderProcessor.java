@@ -12,7 +12,6 @@ import com.flab.infrun.order.domain.Order;
 import com.flab.infrun.order.domain.OrderItem;
 import com.flab.infrun.order.domain.OrderRepository;
 import com.flab.infrun.order.domain.Price;
-import groovy.util.logging.Slf4j;
 import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -24,7 +23,6 @@ import org.springframework.util.StringUtils;
 
 @RequiredArgsConstructor
 @Component
-@Slf4j
 public class CreateOrderProcessor {
 
     private final OrderRepository orderRepository;

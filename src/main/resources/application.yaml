@@ -25,3 +25,7 @@ spring:
 jwt:
   secret: Zi1sYWItZWR1LWluZnJ1bi1zZWNyZXQtand0LWtleS1oczUxMgo=
   token-validity-in-seconds: 86400
+
+payment:
+  toss:
+    test_secret_key: test_sk_Z61JOxRQVE1YDkDPo0yVW0X9bAqw
