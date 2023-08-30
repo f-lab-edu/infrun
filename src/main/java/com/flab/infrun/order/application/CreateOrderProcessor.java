@@ -11,7 +11,6 @@ import com.flab.infrun.order.application.result.CreatedOrderResult;
 import com.flab.infrun.order.domain.Order;
 import com.flab.infrun.order.domain.OrderItem;
 import com.flab.infrun.order.domain.OrderRepository;
-import com.flab.infrun.order.domain.Price;
 import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -41,11 +40,12 @@ public class CreateOrderProcessor {
             command.couponCode(),
             currentTime);
         final List<Lecture> lectures = lectureRepository.findAllByIdIn(command.lectureIds());
-        final Price price = createPrice(lectures, optionalCoupon);
+        BigDecimal price = calculatePrice(lectures);
         final List<OrderItem> orderItems = createOrderItems(lectures);
 
         final Order order = orderRepository.save(
-            Order.create(command.customer(), orderItems, price, optionalCoupon.orElse(null)));
+            Order.create(command.customer().getId(), orderItems, price,
+                optionalCoupon.orElse(null)));
 
         return CreatedOrderResult.from(order);
     }
@@ -60,7 +60,7 @@ public class CreateOrderProcessor {
         }
 
         final Coupon coupon = couponRepository.findByCouponCode(couponCode);
-        coupon.verifyIsUsable(currentTime, member);
+        coupon.verifyIsUsableAndExpireIfNecessary(currentTime, member);
 
         return Optional.of(coupon);
     }
@@ -70,15 +70,7 @@ public class CreateOrderProcessor {
             .hasCartItem(lectureIds);
     }
 
-    private Price createPrice(final List<Lecture> lectures, final Optional<Coupon> optionalCoupon) {
-        final BigDecimal basePrice = calculateBasePrice(lectures);
-
-        return optionalCoupon.map(
-                coupon -> Price.create(coupon.apply(basePrice)))
-            .orElse(Price.create(basePrice));
-    }
-
-    private BigDecimal calculateBasePrice(final List<Lecture> lectures) {
+    private BigDecimal calculatePrice(final List<Lecture> lectures) {
         return lectures.stream()
             .map(lecture -> BigDecimal.valueOf(lecture.getPrice()))
             .reduce(BigDecimal::add)

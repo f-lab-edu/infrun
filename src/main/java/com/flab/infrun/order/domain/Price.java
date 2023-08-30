@@ -34,6 +34,10 @@ public class Price {
         }
     }
 
+    public boolean comparePrice(final BigDecimal price) {
+        return totalPrice.compareTo(price) == 0;
+    }
+
     public BigDecimal getTotalPrice() {
         return totalPrice;
     }

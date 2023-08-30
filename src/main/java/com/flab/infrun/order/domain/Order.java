@@ -2,8 +2,11 @@ package com.flab.infrun.order.domain;
 
 import com.flab.infrun.common.entity.BaseEntity;
 import com.flab.infrun.coupon.domain.Coupon;
-import com.flab.infrun.member.domain.Member;
+import com.flab.infrun.coupon.domain.CouponStatus;
+import com.flab.infrun.order.domain.exception.AlreadyCanceledOrderException;
+import com.flab.infrun.order.domain.exception.AlreadyCompletedOrderException;
 import com.flab.infrun.order.domain.exception.InvalidCreateOrderException;
+import com.flab.infrun.order.domain.exception.OrderPayAmountNotMatchException;
 import com.google.common.annotations.VisibleForTesting;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embedded;
@@ -15,7 +18,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -34,8 +36,7 @@ public class Order extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Member member;
+    private Long customerId;
 
     @Embedded
     private Price price;
@@ -47,40 +48,79 @@ public class Order extends BaseEntity {
     @Enumerated(value = EnumType.STRING)
     private OrderStatus orderStatus;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     private Coupon coupon;
 
     private Order(
-        final Member member,
+        final Long customerId,
         final List<OrderItem> orderItems,
-        final Price price,
+        final BigDecimal price,
         final Coupon coupon
     ) {
-        verifyOrder(member, orderItems);
-        this.member = member;
+        verifyOrder(customerId, orderItems);
+        this.price = createPrice(price, coupon);
+        this.customerId = customerId;
         this.orderItems = orderItems;
-        this.price = price;
         this.orderStatus = OrderStatus.ORDER_CREATED;
         this.coupon = coupon;
     }
 
     public static Order create(
-        final Member member,
+        final Long customerId,
         final List<OrderItem> orderItems,
-        final Price price,
+        final BigDecimal price,
         final Coupon coupon
     ) {
-        return new Order(member, orderItems, price, coupon);
+        return new Order(
+            customerId,
+            orderItems,
+            price,
+            coupon);
     }
 
-    private void verifyOrder(final Member member, final List<OrderItem> orderItems) {
-        if (Objects.isNull(member) || Objects.isNull(orderItems) || orderItems.isEmpty()) {
+    private void verifyOrder(final Long customerId, final List<OrderItem> orderItems) {
+        if (Objects.isNull(customerId) || customerId <= 0 || Objects.isNull(orderItems)
+            || orderItems.isEmpty()) {
             throw new InvalidCreateOrderException();
         }
     }
 
+    private Price createPrice(final BigDecimal price, final Coupon coupon) {
+        if (Objects.isNull(coupon)) {
+            return Price.create(price);
+        }
+
+        return Price.create(coupon.apply(price), price);
+    }
+
     public boolean isCouponApplied() {
-        return Objects.nonNull(coupon);
+        if (Objects.isNull(coupon)) {
+            return false;
+        }
+
+        return coupon.isApplied();
+    }
+
+    public void pay(final BigDecimal payAmount) {
+        verifyPay(payAmount);
+        this.orderStatus = OrderStatus.ORDER_COMPLETED;
+    }
+
+    private void verifyPay(final BigDecimal payAmount) {
+        if (this.orderStatus == OrderStatus.ORDER_CANCELED) {
+            throw new AlreadyCanceledOrderException();
+        }
+        if (this.orderStatus == OrderStatus.ORDER_COMPLETED) {
+            throw new AlreadyCompletedOrderException();
+        }
+        if (!this.price.comparePrice(payAmount)) {
+            throw new OrderPayAmountNotMatchException();
+        }
+    }
+
+    public void cancel() {
+        this.orderStatus = OrderStatus.ORDER_CANCELED;
+        this.coupon.unapply();
     }
 
     public Long getId() {
@@ -106,5 +146,15 @@ public class Order extends BaseEntity {
     @VisibleForTesting
     public void assignId(final long id) {
         this.id = id;
+    }
+
+    @VisibleForTesting
+    void assignOrderStatus(final OrderStatus orderStatus) {
+        this.orderStatus = orderStatus;
+    }
+
+    @VisibleForTesting
+    public CouponStatus getCouponStatus() {
+        return this.coupon.getStatus();
     }
 }
