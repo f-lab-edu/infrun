@@ -3,7 +3,10 @@ package com.flab.infrun.order.domain;
 import com.flab.infrun.common.entity.BaseEntity;
 import com.flab.infrun.coupon.domain.Coupon;
 import com.flab.infrun.member.domain.Member;
+import com.flab.infrun.order.domain.exception.AlreadyCanceledOrderException;
+import com.flab.infrun.order.domain.exception.AlreadyCompletedOrderException;
 import com.flab.infrun.order.domain.exception.InvalidCreateOrderException;
+import com.flab.infrun.order.domain.exception.OrderPayAmountNotMatchException;
 import com.google.common.annotations.VisibleForTesting;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embedded;
@@ -81,6 +84,23 @@ public class Order extends BaseEntity {
 
     public boolean isCouponApplied() {
         return Objects.nonNull(coupon);
+    }
+
+    public void pay(final BigDecimal payAmount) {
+        verifyPay(payAmount);
+        this.orderStatus = OrderStatus.ORDER_COMPLETED;
+    }
+
+    private void verifyPay(final BigDecimal payAmount) {
+        if (this.orderStatus == OrderStatus.ORDER_CANCELED) {
+            throw new AlreadyCanceledOrderException();
+        }
+        if (this.orderStatus == OrderStatus.ORDER_COMPLETED) {
+            throw new AlreadyCompletedOrderException();
+        }
+        if (!Objects.equals(this.price.getTotalPrice(), payAmount)) {
+            throw new OrderPayAmountNotMatchException();
+        }
     }
 
     public Long getId() {
