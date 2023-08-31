@@ -1,6 +1,4 @@
-package com.flab.infrun.payment.application;
-
-import com.flab.infrun.payment.domain.Payment;
+package com.flab.infrun.payment.domain;
 
 public interface PaymentRepository {
 
