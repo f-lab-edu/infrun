@@ -2,15 +2,22 @@ package com.flab.infrun.payment.domain;
 
 public enum PayType {
 
-    CARD("카드"),
-    CASH("현금");
+    LUMP_SUM("일시불", 1),
+    INSTALLMENT("할부", 1);
 
     private String description;
+    private int period;
 
-    PayType(final String description) {
+    PayType(final String description, final int period) {
+        this.description = description;
+        this.period = period;
     }
 
     public String getDescription() {
         return description;
+    }
+
+    public int getPeriod() {
+        return period;
     }
 }
