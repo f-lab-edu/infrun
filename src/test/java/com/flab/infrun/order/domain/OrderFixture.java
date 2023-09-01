@@ -1,7 +1,6 @@
 package com.flab.infrun.order.domain;
 
 import com.flab.infrun.coupon.domain.CouponFixture;
-import com.flab.infrun.member.domain.MemberFixture;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
@@ -9,8 +8,8 @@ import java.util.List;
 public class OrderFixture {
 
     private Long id = 1L;
-    private MemberFixture memberFixture = MemberFixture.aMemberFixture();
-    private Price price = Price.create(BigDecimal.valueOf(100_000));
+    private Long customerId = 1L;
+    private BigDecimal price = BigDecimal.valueOf(100_000);
     private List<OrderItemFixture> orderItemFixtures = List.of(
         OrderItemFixture.anOrderItemsFixture());
     private OrderStatus orderStatus = OrderStatus.ORDER_CREATED;
@@ -25,13 +24,13 @@ public class OrderFixture {
         return this;
     }
 
-    public OrderFixture memberFixture(final MemberFixture memberFixture) {
-        this.memberFixture = memberFixture;
+    public OrderFixture customerId(final Long customerId) {
+        this.customerId = customerId;
         return this;
     }
 
     public OrderFixture price(final BigDecimal price) {
-        this.price = Price.create(price);
+        this.price = price;
         return this;
     }
 
@@ -52,7 +51,7 @@ public class OrderFixture {
 
     public Order build() {
         final Order order = Order.create(
-            memberFixture.build(),
+            customerId,
             buildOrderItems(),
             price,
             couponFixture.build());
