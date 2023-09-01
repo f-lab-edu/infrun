@@ -8,6 +8,7 @@ public enum PayMethod {
     private String description;
 
     PayMethod(final String description) {
+        this.description = description;
     }
 
     public String getDescription() {

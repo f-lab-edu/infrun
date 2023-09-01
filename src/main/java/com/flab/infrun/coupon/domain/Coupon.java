@@ -70,30 +70,6 @@ public class Coupon {
             .build();
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public CouponStatus getStatus() {
-        return status;
-    }
-
-    public Member getOwner() {
-        return owner;
-    }
-
-    public DiscountInfo getDiscountInfo() {
-        return discountInfo;
-    }
-
-    public LocalDateTime getExpirationAt() {
-        return expirationAt;
-    }
-
     public void enroll(final Member owner, final LocalDateTime currentTime) {
         verifyIsRegistrable(currentTime);
         this.owner = owner;
@@ -129,6 +105,34 @@ public class Coupon {
 
     public void unapply() {
         this.status = CouponStatus.REGISTERED;
+    }
+
+    public boolean isApplied() {
+        return this.status == CouponStatus.USED;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public CouponStatus getStatus() {
+        return status;
+    }
+
+    public Member getOwner() {
+        return owner;
+    }
+
+    public DiscountInfo getDiscountInfo() {
+        return discountInfo;
+    }
+
+    public LocalDateTime getExpirationAt() {
+        return expirationAt;
     }
 
     @VisibleForTesting
