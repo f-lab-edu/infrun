@@ -9,10 +9,6 @@ import com.flab.infrun.lecture.application.fileCommand.StorageUpload;
 import com.flab.infrun.lecture.domain.Lecture;
 import com.flab.infrun.lecture.domain.LectureDetail;
 import com.flab.infrun.lecture.domain.LectureFile;
-import com.flab.infrun.lecture.domain.LectureFileRepository;
-import com.flab.infrun.lecture.domain.LectureRepository;
-import com.flab.infrun.member.domain.Member;
-import com.flab.infrun.member.domain.MemberRepository;
 import com.flab.infrun.lecture.domain.LectureReview;
 import com.flab.infrun.lecture.domain.exception.NotFoundLectureException;
 import com.flab.infrun.lecture.domain.exception.NotFoundLectureReviewException;
@@ -95,7 +91,6 @@ public class LectureCommandProcessor {
     public Long registerLectureReview(LectureReviewRegisterCommand command) {
         Lecture lecture = lectureRepository.findById(command.lectureId())
             .orElseThrow(NotFoundLectureException::new);
-        //todo - member currentuser 로 Member 정보 get
         Member member = memberRepository.findByEmail(command.memberEmail()).orElseThrow(
             NotFoundMemberException::new);
         LectureReview lectureReview = LectureReview.of(command.content(), lecture, member);
@@ -107,7 +102,6 @@ public class LectureCommandProcessor {
     public Long modifyLectureReview(LectureReviewModifyCommand command) {
         LectureReview lectureReview = lectureReviewRepository.findById(command.lectureReviewId())
             .orElseThrow(NotFoundLectureReviewException::new);
-        //todo - member currentuser 로 Member 정보 get
         Member member = memberRepository.findByEmail(command.memberEmail()).orElseThrow(
             NotFoundMemberException::new);
         lectureReview.checkReviewAuthorization(member);
@@ -119,7 +113,6 @@ public class LectureCommandProcessor {
     public Long deleteLectureReview(LectureReviewDeleteCommand command) {
         LectureReview lectureReview = lectureReviewRepository.findById(command.lectureReviewId())
             .orElseThrow(NotFoundLectureReviewException::new);
-        //todo - member currentuser 로 Member 정보 get
         Member member = memberRepository.findByEmail(command.memberEmail()).orElseThrow(
             NotFoundMemberException::new);
         lectureReview.checkReviewAuthorization(member);
