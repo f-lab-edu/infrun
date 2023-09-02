@@ -1,6 +1,9 @@
 package com.flab.infrun.lecture.application;
 
 import com.flab.infrun.lecture.application.command.LectureRegisterCommand;
+import com.flab.infrun.lecture.application.command.LectureReviewDeleteCommand;
+import com.flab.infrun.lecture.application.command.LectureReviewModifyCommand;
+import com.flab.infrun.lecture.application.command.LectureReviewRegisterCommand;
 import com.flab.infrun.lecture.application.query.LectureSearchQuery;
 import com.flab.infrun.lecture.presentation.response.LectureQueryResponse;
 import java.util.List;
@@ -20,5 +23,17 @@ public class LectureFacade {
 
     public List<LectureQueryResponse> searchLecture(LectureSearchQuery query) {
         return lectureQueryProcessor.searchLecture(query);
+    }
+
+    public Long registerLectureReview(LectureReviewRegisterCommand command) {
+        return lectureCommandProcessor.registerLectureReview(command);
+    }
+
+    public Long modifyLectureReview(LectureReviewModifyCommand command) {
+        return lectureCommandProcessor.modifyLectureReview(command);
+    }
+
+    public Long deleteLectureReview(LectureReviewDeleteCommand command) {
+        return lectureCommandProcessor.deleteLectureReview(command);
     }
 }

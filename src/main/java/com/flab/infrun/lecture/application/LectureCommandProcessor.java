@@ -1,6 +1,9 @@
 package com.flab.infrun.lecture.application;
 
 import com.flab.infrun.lecture.application.command.LectureRegisterCommand;
+import com.flab.infrun.lecture.application.command.LectureReviewDeleteCommand;
+import com.flab.infrun.lecture.application.command.LectureReviewModifyCommand;
+import com.flab.infrun.lecture.application.command.LectureReviewRegisterCommand;
 import com.flab.infrun.lecture.application.exception.DuplicateLectureFileNameException;
 import com.flab.infrun.lecture.application.fileCommand.StorageUpload;
 import com.flab.infrun.lecture.domain.Lecture;
@@ -10,6 +13,15 @@ import com.flab.infrun.lecture.domain.LectureFileRepository;
 import com.flab.infrun.lecture.domain.LectureRepository;
 import com.flab.infrun.member.domain.Member;
 import com.flab.infrun.member.domain.MemberRepository;
+import com.flab.infrun.lecture.domain.LectureReview;
+import com.flab.infrun.lecture.domain.exception.NotFoundLectureException;
+import com.flab.infrun.lecture.domain.exception.NotFoundLectureReviewException;
+import com.flab.infrun.lecture.domain.repository.LectureFileRepository;
+import com.flab.infrun.lecture.domain.repository.LectureRepository;
+import com.flab.infrun.lecture.domain.repository.LectureReviewRepository;
+import com.flab.infrun.member.domain.Member;
+import com.flab.infrun.member.domain.MemberRepository;
+import com.flab.infrun.member.domain.exception.NotFoundMemberException;
 import com.google.common.annotations.VisibleForTesting;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +39,7 @@ public class LectureCommandProcessor {
     private final LectureRepository lectureRepository;
     private final LectureFileRepository lectureFileRepository;
     private final MemberRepository memberRepository;
+    private final LectureReviewRepository lectureReviewRepository;
     private final StorageUpload storageUpload;
 
     @Transactional
@@ -77,5 +90,39 @@ public class LectureCommandProcessor {
         if (duplicated) {
             throw new DuplicateLectureFileNameException();
         }
+    }
+
+    public Long registerLectureReview(LectureReviewRegisterCommand command) {
+        Lecture lecture = lectureRepository.findById(command.lectureId())
+            .orElseThrow(NotFoundLectureException::new);
+        //todo - member currentuser 로 Member 정보 get
+        Member member = memberRepository.findByEmail(command.memberEmail()).orElseThrow(
+            NotFoundMemberException::new);
+        LectureReview lectureReview = LectureReview.of(command.content(), lecture, member);
+        LectureReview saved = lectureReviewRepository.save(lectureReview);
+        return saved.getId();
+    }
+
+    @Transactional
+    public Long modifyLectureReview(LectureReviewModifyCommand command) {
+        LectureReview lectureReview = lectureReviewRepository.findById(command.lectureReviewId())
+            .orElseThrow(NotFoundLectureReviewException::new);
+        //todo - member currentuser 로 Member 정보 get
+        Member member = memberRepository.findByEmail(command.memberEmail()).orElseThrow(
+            NotFoundMemberException::new);
+        lectureReview.checkReviewAuthorization(member);
+        lectureReview.changeContent(command.content());
+        return lectureReview.getId();
+    }
+
+    @Transactional
+    public Long deleteLectureReview(LectureReviewDeleteCommand command) {
+        LectureReview lectureReview = lectureReviewRepository.findById(command.lectureReviewId())
+            .orElseThrow(NotFoundLectureReviewException::new);
+        //todo - member currentuser 로 Member 정보 get
+        Member member = memberRepository.findByEmail(command.memberEmail()).orElseThrow(
+            NotFoundMemberException::new);
+        lectureReview.checkReviewAuthorization(member);
+        return lectureReviewRepository.deleteById(lectureReview.getId());
     }
 }

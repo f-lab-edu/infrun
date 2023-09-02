@@ -1,7 +1,7 @@
 package com.flab.infrun.lecture.infrastructure.persistence;
 
 import com.flab.infrun.lecture.domain.LectureFile;
-import com.flab.infrun.lecture.domain.LectureFileRepository;
+import com.flab.infrun.lecture.domain.repository.LectureFileRepository;
 import com.flab.infrun.lecture.infrastructure.persistence.jpa.LectureFileJpaRepository;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
