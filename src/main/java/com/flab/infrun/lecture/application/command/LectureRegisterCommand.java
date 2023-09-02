@@ -1,7 +1,6 @@
 package com.flab.infrun.lecture.application.command;
 
 import java.util.List;
-import org.springframework.web.multipart.MultipartFile;
 
 public record LectureRegisterCommand(
     String name,
@@ -10,9 +9,7 @@ public record LectureRegisterCommand(
     String skill,
     String introduce,
     List<LectureDetailCommand> lectureDetailCommandList,
-    List<MultipartFile> lectureFileList,
-    long memberId
-
+    Long memberId
 ) {
 
 }

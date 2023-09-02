@@ -8,7 +8,9 @@ import com.flab.infrun.lecture.presentation.request.LectureReviewDeleteRequest;
 import com.flab.infrun.lecture.presentation.request.LectureReviewModifyRequest;
 import com.flab.infrun.lecture.presentation.request.LectureReviewRegisterRequest;
 import com.flab.infrun.lecture.presentation.request.LectureSearchRequest;
+import com.flab.infrun.lecture.presentation.request.PreSingedUrlRequest;
 import com.flab.infrun.lecture.presentation.response.LectureQueryResponse;
+import com.flab.infrun.lecture.presentation.response.PreSignedUrlResponse;
 import com.flab.infrun.member.domain.Member;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -22,10 +24,8 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
 @RestController
@@ -34,16 +34,24 @@ public class LectureController {
 
     private final LectureFacade lectureFacade;
 
+    @PostMapping("/preSignedUrl")
+    @PreAuthorize("hasRole('ROLE_TEACHER')")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Response<PreSignedUrlResponse> publishPreSignedUrl(
+        @Valid @RequestBody PreSingedUrlRequest preSingedUrlRequest
+    ) {
+        var result = lectureFacade.publishPreSignedUrl(preSingedUrlRequest.toCommand());
+        return Response.success(result);
+    }
+
     @PostMapping
     @PreAuthorize("hasRole('ROLE_TEACHER')")
     @ResponseStatus(HttpStatus.CREATED)
-    public Response<Long> registerLecture(
-        @Valid @RequestPart("lecture") LectureRegisterRequest lecture,
-        @RequestPart("file") List<MultipartFile> lectureVideoFile,
+    public Response<Long> registerLectureTest(
+        @Valid @RequestBody LectureRegisterRequest lecture,
         @CurrentUser Member member
     ) {
-        var result = lectureFacade.registerLecture(
-            lecture.toCommand(lectureVideoFile, member.getId()));
+        var result = lectureFacade.registerLecture(lecture.toCommand(member.getId()));
         return Response.success(result);
     }
 

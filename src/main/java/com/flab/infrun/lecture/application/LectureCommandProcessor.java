@@ -4,50 +4,47 @@ import com.flab.infrun.lecture.application.command.LectureRegisterCommand;
 import com.flab.infrun.lecture.application.command.LectureReviewDeleteCommand;
 import com.flab.infrun.lecture.application.command.LectureReviewModifyCommand;
 import com.flab.infrun.lecture.application.command.LectureReviewRegisterCommand;
-import com.flab.infrun.lecture.application.exception.DuplicateLectureFileNameException;
-import com.flab.infrun.lecture.application.fileCommand.StorageUpload;
+import com.flab.infrun.lecture.application.command.PublishPreSignedUrlCommand;
 import com.flab.infrun.lecture.domain.Lecture;
 import com.flab.infrun.lecture.domain.LectureDetail;
-import com.flab.infrun.lecture.domain.LectureFile;
 import com.flab.infrun.lecture.domain.LectureReview;
 import com.flab.infrun.lecture.domain.exception.NotFoundLectureException;
 import com.flab.infrun.lecture.domain.exception.NotFoundLectureReviewException;
-import com.flab.infrun.lecture.domain.repository.LectureFileRepository;
 import com.flab.infrun.lecture.domain.repository.LectureRepository;
 import com.flab.infrun.lecture.domain.repository.LectureReviewRepository;
+import com.flab.infrun.lecture.infrastructure.storage.aws.SimpleStorageService;
+import com.flab.infrun.lecture.presentation.response.PreSignedUrlResponse;
 import com.flab.infrun.member.domain.Member;
 import com.flab.infrun.member.domain.MemberRepository;
 import com.flab.infrun.member.domain.exception.NotFoundMemberException;
-import com.google.common.annotations.VisibleForTesting;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
 @Component
 public class LectureCommandProcessor {
 
     private final LectureRepository lectureRepository;
-    private final LectureFileRepository lectureFileRepository;
     private final MemberRepository memberRepository;
     private final LectureReviewRepository lectureReviewRepository;
-    private final StorageUpload storageUpload;
+    private final SimpleStorageService s3;
 
-    @Transactional
-    public long registerLecture(LectureRegisterCommand lectureRegisterCommand) {
-        validateLectureFile(lectureRegisterCommand.lectureFileList());
-        List<LectureFile> uploadedFile = uploadFile(lectureRegisterCommand);
-        Map<String, LectureFile> mappingFileWithName = mappingFileId(uploadedFile);
-        return getSavedLecture(lectureRegisterCommand, mappingFileWithName);
+    public PreSignedUrlResponse publishPreSignedUrl(PublishPreSignedUrlCommand command) {
+        String uploadId = s3.getUploadIdDefaultConfig(command.objectKey());
+        List<String> preSignedList = s3.getPreSignedUrlDefaultConfig(command.objectKey(), uploadId,
+            command.partCnt());
+        return new PreSignedUrlResponse(uploadId, preSignedList);
     }
 
-    private long getSavedLecture(LectureRegisterCommand lectureRegisterCommand,
-        Map<String, LectureFile> mappingFileWithName) {
+    @Transactional
+    public Long registerLecture(LectureRegisterCommand lectureRegisterCommand) {
+        completeMultipartUpload(lectureRegisterCommand);
+        return getSavedLecture(lectureRegisterCommand);
+    }
+
+    private Long getSavedLecture(LectureRegisterCommand lectureRegisterCommand) {
         Member member = memberRepository.findById(lectureRegisterCommand.memberId());
         Lecture lecture = Lecture.of(
             lectureRegisterCommand.name(),
@@ -59,33 +56,17 @@ public class LectureCommandProcessor {
 
         List<LectureDetail> lectureDetails = lectureRegisterCommand.lectureDetailCommandList()
             .stream()
-            .map(
-                d -> LectureDetail.of(d.chapter(), d.name(), mappingFileWithName.get(d.fileName())))
+            .map(d -> LectureDetail.of(d.chapter(), d.name(), d.objectKey()))
             .toList();
         lecture.addLectureDetail(lectureDetails);
         return lectureRepository.save(lecture).getId();
     }
 
-    private Map<String, LectureFile> mappingFileId(List<LectureFile> uploadedFile) {
-        return uploadedFile.stream()
-            .collect(Collectors.toMap(LectureFile::getName, Function.identity()));
-    }
-
-    public List<LectureFile> uploadFile(LectureRegisterCommand lectureRegisterCommand) {
-        return lectureRegisterCommand.lectureFileList().stream()
-            .map(file -> lectureFileRepository.save(storageUpload.upload(file)))
-            .collect(Collectors.toList());
-    }
-
-    @VisibleForTesting
-    void validateLectureFile(List<MultipartFile> lectureFileList) {
-        boolean duplicated = lectureFileList.stream()
-            .map(MultipartFile::getOriginalFilename)
-            .distinct()
-            .count() != lectureFileList.size();
-        if (duplicated) {
-            throw new DuplicateLectureFileNameException();
-        }
+    private void completeMultipartUpload(LectureRegisterCommand lectureRegisterCommand) {
+        lectureRegisterCommand.lectureDetailCommandList().stream()
+            .filter(t -> null != t.objectKey() && !"".equals(t.objectKey()))
+            .forEach(
+                d -> s3.completeUploadDefaultConfig(d.objectKey(), d.uploadId(), d.etagList()));
     }
 
     public Long registerLectureReview(LectureReviewRegisterCommand command) {

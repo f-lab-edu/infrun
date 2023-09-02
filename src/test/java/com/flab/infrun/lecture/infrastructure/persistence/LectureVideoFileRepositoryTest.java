@@ -1,9 +1,5 @@
 package com.flab.infrun.lecture.infrastructure.persistence;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import com.flab.infrun.lecture.domain.LectureFile;
-import com.flab.infrun.lecture.infrastructure.persistence.jpa.LectureFileJpaRepository;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

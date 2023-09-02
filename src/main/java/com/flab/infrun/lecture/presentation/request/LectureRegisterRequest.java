@@ -8,7 +8,6 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import java.util.List;
-import org.springframework.web.multipart.MultipartFile;
 
 public record LectureRegisterRequest(
     @NotBlank @Size(max = 30)
@@ -26,12 +25,8 @@ public record LectureRegisterRequest(
     Long userId
 ) {
 
-    public LectureRegisterCommand toCommand(List<MultipartFile> multipartFile, Long memberId) {
-        return new LectureRegisterCommand(name, price, lectureLevel, skill,
-            introduce,
-            lectureDetailRequest.stream().map(LectureDetailRequest::toCommand).toList(),
-            multipartFile,
-            memberId
-        );
+    public LectureRegisterCommand toCommand(Long memberId) {
+        return new LectureRegisterCommand(name, price, lectureLevel, skill, introduce,
+            lectureDetailRequest.stream().map(LectureDetailRequest::toCommand).toList(), memberId);
     }
 }
