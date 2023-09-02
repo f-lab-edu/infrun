@@ -23,15 +23,15 @@ public record LectureRegisterRequest(
     String introduce,
     @NotNull @Valid
     List<LectureDetailRequest> lectureDetailRequest,
-    long userId
+    Long userId
 ) {
 
-    public LectureRegisterCommand toCommand(List<MultipartFile> multipartFile) {
+    public LectureRegisterCommand toCommand(List<MultipartFile> multipartFile, Long memberId) {
         return new LectureRegisterCommand(name, price, lectureLevel, skill,
             introduce,
             lectureDetailRequest.stream().map(LectureDetailRequest::toCommand).toList(),
             multipartFile,
-            userId
+            memberId
         );
     }
 }
