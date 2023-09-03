@@ -141,4 +141,9 @@ public class Order extends BaseEntity {
     public void assignId(final long id) {
         this.id = id;
     }
+
+    @VisibleForTesting
+    void assignOrderStatus(final OrderStatus orderStatus) {
+        this.orderStatus = orderStatus;
+    }
 }

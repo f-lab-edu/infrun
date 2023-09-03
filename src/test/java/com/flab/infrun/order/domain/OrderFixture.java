@@ -56,6 +56,7 @@ public class OrderFixture {
             price,
             couponFixture.build());
         order.assignId(id);
+        order.assignOrderStatus(orderStatus);
 
         return order;
     }
