@@ -14,7 +14,12 @@ import com.flab.infrun.common.config.security.UserAdapter;
 import com.flab.infrun.member.domain.Member;
 import com.flab.infrun.order.application.OrderFacade;
 import com.flab.infrun.order.application.result.CreatedOrderResult;
+import com.flab.infrun.order.application.result.PayedOrderResult;
+import com.flab.infrun.order.domain.OrderStatus;
 import com.flab.infrun.order.presentation.request.CreateOrderRequest;
+import com.flab.infrun.order.presentation.request.PayOrderRequest;
+import com.flab.infrun.payment.domain.PayMethod;
+import com.flab.infrun.payment.domain.PayType;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -42,13 +47,6 @@ final class OrderControllerTest {
     @MockBean
     private OrderFacade orderFacade;
 
-    private static Stream<Arguments> provideCreateOrderRequest() {
-        return Stream.of(
-            Arguments.of(new CreateOrderRequest(List.of(), null)),
-            Arguments.of(new CreateOrderRequest(null, null))
-        );
-    }
-
     @Test
     @DisplayName("주문을 생성하면 200 상태코드와 생성된 주문 정보를 반환한다")
     void createOrder_success() throws Exception {
@@ -74,7 +72,7 @@ final class OrderControllerTest {
     }
 
     @ParameterizedTest
-    @MethodSource("provideCreateOrderRequest")
+    @MethodSource("provideInvalidCreateOrderRequest")
     @DisplayName("주문 생성 요청이 잘못된 경우 400 상태코드와 에러 메시지를 반환한다")
     void createOrder_withInvalidRequest(final CreateOrderRequest request) throws Exception {
         final var result = mockMvc.perform(post(ORDER_URI)
@@ -86,6 +84,66 @@ final class OrderControllerTest {
 
         result.andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.message").exists());
+    }
+
+    private static Stream<Arguments> provideInvalidCreateOrderRequest() {
+        return Stream.of(
+            Arguments.of(new CreateOrderRequest(List.of(), null)),
+            Arguments.of(new CreateOrderRequest(null, null))
+        );
+    }
+
+    @Test
+    @DisplayName("주문 결제가 성공하면 200 상태코드와 결제된 주문 정보를 반환한다")
+    void payOrder_success() throws Exception {
+        given(orderFacade.payOrder(any()))
+            .willReturn(payedOrderResult());
+        final var request = new PayOrderRequest(1L, BigDecimal.valueOf(90_000), "CARD", "LUMP_SUM");
+
+        final ResultActions result = mockMvc.perform(post(ORDER_URI + "/pay")
+            .contentType(MediaType.APPLICATION_JSON)
+            .with(user(createUser()))
+            .with(csrf())
+            .content(objectMapper.writeValueAsString(request))
+        ).andDo(print());
+
+        result.andExpect(status().isOk())
+            .andExpect(jsonPath("$.data").exists())
+            .andExpect(jsonPath("$.data.amount").value("90000"))
+            .andExpect(jsonPath("$.data.payMethod").value("카드"))
+            .andExpect(jsonPath("$.data.payType").value("일시불"))
+            .andExpect(jsonPath("$.data.orderStatus").value("주문 완료"))
+            .andExpect(jsonPath("$.data.payedAt").exists());
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideInvalidPayOrderRequest")
+    @DisplayName("주문 결제 요청이 잘못된 경우 400 상태코드와 에러 메시지를 반환한다")
+    void payOrder_withInvalidRequest(final PayOrderRequest request) throws Exception {
+        final var result = mockMvc.perform(post(ORDER_URI + "/pay")
+            .contentType(MediaType.APPLICATION_JSON)
+            .with(user(createUser()))
+            .with(csrf())
+            .content(objectMapper.writeValueAsString(request))
+        ).andDo(print());
+
+        result.andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.message").exists());
+    }
+
+    private static Stream<Arguments> provideInvalidPayOrderRequest() {
+        return Stream.of(
+            Arguments.of(new PayOrderRequest(null, BigDecimal.valueOf(90_000), "CARD", "LUMP_SUM")),
+            Arguments.of(new PayOrderRequest(1L, null, "CARD", "LUMP_SUM")),
+            Arguments.of(new PayOrderRequest(1L, BigDecimal.valueOf(90_000), null, "LUMP_SUM")),
+            Arguments.of(new PayOrderRequest(1L, BigDecimal.valueOf(90_000), "ANY", "LUMP_SUM")),
+            Arguments.of(new PayOrderRequest(1L, BigDecimal.valueOf(90_000), "CARD", null)),
+            Arguments.of(new PayOrderRequest(1L, BigDecimal.valueOf(90_000), "CARD", "ANY"))
+        );
+    }
+
+    private UserAdapter createUser() {
+        return new UserAdapter(Member.of("test", "test", "test"));
     }
 
     private CreatedOrderResult createOrderResult() {
@@ -118,7 +176,13 @@ final class OrderControllerTest {
             false);
     }
 
-    private UserAdapter createUser() {
-        return new UserAdapter(Member.of("test", "test", "test"));
+    private PayedOrderResult payedOrderResult() {
+        return new PayedOrderResult(
+            BigDecimal.valueOf(90_000),
+            PayType.LUMP_SUM,
+            PayMethod.CARD,
+            OrderStatus.ORDER_COMPLETED.getDescription(),
+            LocalDateTime.now()
+        );
     }
 }
