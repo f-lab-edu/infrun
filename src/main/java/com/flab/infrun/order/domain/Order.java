@@ -2,6 +2,7 @@ package com.flab.infrun.order.domain;
 
 import com.flab.infrun.common.entity.BaseEntity;
 import com.flab.infrun.coupon.domain.Coupon;
+import com.flab.infrun.coupon.domain.CouponStatus;
 import com.flab.infrun.order.domain.exception.AlreadyCanceledOrderException;
 import com.flab.infrun.order.domain.exception.AlreadyCompletedOrderException;
 import com.flab.infrun.order.domain.exception.InvalidCreateOrderException;
@@ -47,7 +48,7 @@ public class Order extends BaseEntity {
     @Enumerated(value = EnumType.STRING)
     private OrderStatus orderStatus;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     private Coupon coupon;
 
     private Order(
@@ -117,6 +118,11 @@ public class Order extends BaseEntity {
         }
     }
 
+    public void cancel() {
+        this.orderStatus = OrderStatus.ORDER_CANCELED;
+        this.coupon.unapply();
+    }
+
     public Long getId() {
         return id;
     }
@@ -145,5 +151,10 @@ public class Order extends BaseEntity {
     @VisibleForTesting
     void assignOrderStatus(final OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
+    }
+
+    @VisibleForTesting
+    public CouponStatus getCouponStatus() {
+        return this.coupon.getStatus();
     }
 }
