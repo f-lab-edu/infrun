@@ -9,11 +9,13 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import com.flab.infrun.common.IntegrationTest;
 import com.flab.infrun.coupon.domain.CouponFixture;
 import com.flab.infrun.coupon.domain.CouponRepository;
+import com.flab.infrun.coupon.domain.CouponStatus;
 import com.flab.infrun.coupon.domain.DiscountInfo;
 import com.flab.infrun.coupon.domain.DiscountType;
 import com.flab.infrun.member.domain.MemberFixture;
 import com.flab.infrun.member.domain.MemberRepository;
 import com.flab.infrun.order.application.command.PayOrderCommand;
+import com.flab.infrun.order.domain.Order;
 import com.flab.infrun.order.domain.OrderFixture;
 import com.flab.infrun.order.domain.OrderRepository;
 import com.flab.infrun.order.domain.OrderStatus;
@@ -46,10 +48,6 @@ final class PayOrderProcessorTest extends IntegrationTest {
 
     @BeforeEach
     void setup() {
-        setupMember();
-    }
-
-    private void setupMember() {
         memberRepository.save(MemberFixture.aMemberFixture().build());
     }
 
@@ -74,23 +72,28 @@ final class PayOrderProcessorTest extends IntegrationTest {
     }
 
     @Test
-    @DisplayName("주문 금액과 결제 금액이 일치하지 않는 경우 예외가 발생한다")
+    @DisplayName("주문 금액과 결제 금액이 일치하지 않는 경우 예외가 발생하고 주문이 취소된다")
     void payOrder_withIncorrectPayAmount() {
         setupCouponAndOrder(OrderStatus.ORDER_CREATED);
         final var command = new PayOrderCommand(
             1L,
             1L,
-            BigDecimal.valueOf(30_000),
+            BigDecimal.ZERO,
             PayMethod.CARD,
             PayType.LUMP_SUM);
 
         assertThatThrownBy(() -> sut.execute(command))
             .isInstanceOf(OrderPayAmountNotMatchException.class);
+
+        final Order order = orderRepository.findById(1L);
+
+        assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.ORDER_CANCELED);
+        assertThat(order.getCouponStatus()).isEqualTo(CouponStatus.REGISTERED);
     }
 
     @ParameterizedTest
     @MethodSource("provideOrderStatus")
-    @DisplayName("이미 취소됐거나, 완료된 주문을 결제하면 예외가 발생한다")
+    @DisplayName("이미 취소됐거나, 완료된 주문을 결제하면 예외가 발생하고 주문이 취소된다")
     void payOrder_alreadyCompleted(final OrderStatus orderStatus) {
         setupCouponAndOrder(orderStatus);
         final var command = new PayOrderCommand(
@@ -104,6 +107,11 @@ final class PayOrderProcessorTest extends IntegrationTest {
             .isInstanceOfAny(
                 AlreadyCanceledOrderException.class,
                 AlreadyCompletedOrderException.class);
+
+        final Order order = orderRepository.findById(1L);
+
+        assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.ORDER_CANCELED);
+        assertThat(order.getCouponStatus()).isEqualTo(CouponStatus.REGISTERED);
     }
 
     private static Stream<Arguments> provideOrderStatus() {
