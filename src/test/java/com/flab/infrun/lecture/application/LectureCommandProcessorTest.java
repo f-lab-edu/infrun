@@ -25,8 +25,8 @@ class LectureCommandProcessorTest {
             //todo- utils stub refactor
             lectureRepository,
             null,
-            null,
             memberRepository,
+            null,
             null
         );
     }

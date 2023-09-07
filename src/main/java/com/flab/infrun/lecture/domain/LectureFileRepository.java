@@ -1,6 +1,5 @@
-package com.flab.infrun.lecture.domain.repository;
+package com.flab.infrun.lecture.domain;
 
-import com.flab.infrun.lecture.domain.LectureFile;
 import java.util.Optional;
 
 public interface LectureFileRepository {

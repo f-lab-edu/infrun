@@ -2,6 +2,7 @@ package com.flab.infrun.utils.persistence;
 
 import com.flab.infrun.lecture.domain.Lecture;
 import com.flab.infrun.lecture.domain.LectureRepository;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -20,5 +21,10 @@ final class StubLectureRepository implements LectureRepository {
     @Override
     public Optional<Lecture> findById(Long id) {
         return Optional.ofNullable(persistence.get(id));
+    }
+
+    @Override
+    public List<Lecture> findAllByIdIn(List<Long> lectureIds) {
+        return null;
     }
 }
