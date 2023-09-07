@@ -35,8 +35,8 @@ class LectureReviewProcessorTest {
             //todo- utils stub refactor
             lectureRepository,
             null,
-            lectureReviewRepository,
             memberRepository,
+            lectureReviewRepository,
             null
         );
     }

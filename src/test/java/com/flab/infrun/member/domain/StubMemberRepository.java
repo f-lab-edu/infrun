@@ -35,4 +35,9 @@ public final class StubMemberRepository implements MemberRepository {
             .filter(member -> Objects.equals(member.getEmail(), email))
             .findAny();
     }
+
+    @Override
+    public Member findById(Long id) {
+        return null;
+    }
 }
