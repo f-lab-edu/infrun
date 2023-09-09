@@ -1,0 +1,34 @@
+version: "3.8"
+
+name: infrun
+
+services:
+  infrun-database:
+    restart: on-failure
+    platform: linux/amd64
+    build:
+      dockerfile: db.Dockerfile
+      context: ./database
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./database/config:/etc/mysql/conf.d
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+      MYSQL_DATABASE: "${MYSQL_DATABASE}"
+      MYSQL_USER: "${MYSQL_USER}"
+      MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
+  infrun-app:
+    restart: always
+    image: chicori3/infrun-app
+    platform: linux/amd64
+    depends_on:
+      - infrun-database
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_USER: "${MYSQL_USER}"
+      SPRING_DATASOURCE_PASSWORD: "${MYSQL_PASSWORD}"
+      JWT_SECRET: "${JWT_SECRET}"
+      JWT_TOKEN_VALIDITY_IN_SECONDS: "${JWT_TOKEN_VALIDITY_IN_SECONDS}"
