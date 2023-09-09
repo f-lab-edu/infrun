@@ -3,13 +3,11 @@ package com.flab.infrun.common.config.security;
 import com.flab.infrun.common.config.jwt.JwtSecurityConfig;
 import com.flab.infrun.member.infrastructure.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer.FrameOptionsConfig;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -26,13 +24,6 @@ public class SecurityConfig {
     private final TokenProvider tokenProvider;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
-
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return web -> web.ignoring()
-            .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
-            .requestMatchers(PathRequest.toH2Console());
-    }
 
     @Bean
     public SecurityFilterChain filterChain(final HttpSecurity http) throws Exception {
