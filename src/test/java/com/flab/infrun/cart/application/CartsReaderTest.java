@@ -9,7 +9,7 @@ import com.flab.infrun.cart.application.result.CartsResult;
 import com.flab.infrun.cart.domain.Cart;
 import com.flab.infrun.cart.domain.CartRepository;
 import com.flab.infrun.lecture.domain.Lecture;
-import com.flab.infrun.lecture.domain.LectureRepository;
+import com.flab.infrun.lecture.domain.repository.LectureRepository;
 import com.flab.infrun.member.domain.Member;
 import com.flab.infrun.member.domain.MemberRepository;
 import java.math.BigDecimal;

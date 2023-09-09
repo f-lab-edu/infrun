@@ -37,4 +37,9 @@ class StubCouponRepository implements CouponRepository {
             .filter(coupon -> Objects.equals(coupon.getCode(), couponCode))
             .findFirst();
     }
+
+    @Override
+    public List<Coupon> findAllByOwnerId(Long ownerId) {
+        return null;
+    }
 }
