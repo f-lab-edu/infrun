@@ -2,28 +2,10 @@ server:
   port: 8080
 
 spring:
-  h2:
-    console:
-      path: /h2-console
-      enabled: true
-  datasource:
-    url: jdbc:h2:mem:~/local
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
-  servlet:
-    multipart:
-      max-file-size: 50MB
-      max-request-size: 50MB
-  jpa:
-    properties:
-      hibernate:
-        #        show_sql: true
-        format_sql: true
-#        use_sql_comments: true
-jwt:
-  secret: Zi1sYWItZWR1LWluZnJ1bi1zZWNyZXQtand0LWtleS1oczUxMgo=
-  token-validity-in-seconds: 86400
+  application:
+    name: infrun
+  profiles:
+    active: local
 
 logging.level:
   org.hibernate.SQL: debug
