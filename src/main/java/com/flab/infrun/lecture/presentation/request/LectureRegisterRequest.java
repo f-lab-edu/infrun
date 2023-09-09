@@ -21,12 +21,11 @@ public record LectureRegisterRequest(
     @NotBlank @Size(max = 200)
     String introduce,
     @NotNull @Valid
-    List<LectureDetailRequest> lectureDetailRequest,
-    Long userId
+    List<LectureDetailRequest> lectureDetailRequest
 ) {
 
-    public LectureRegisterCommand toCommand(Long memberId) {
+    public LectureRegisterCommand toCommand() {
         return new LectureRegisterCommand(name, price, lectureLevel, skill, introduce,
-            lectureDetailRequest.stream().map(LectureDetailRequest::toCommand).toList(), memberId);
+            lectureDetailRequest.stream().map(LectureDetailRequest::toCommand).toList());
     }
 }

@@ -13,7 +13,6 @@ import com.flab.infrun.lecture.presentation.response.LectureQueryResponse;
 import com.flab.infrun.lecture.presentation.response.PreSignedUrlResponse;
 import com.flab.infrun.member.domain.Member;
 import jakarta.validation.Valid;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,14 +33,14 @@ public class LectureController {
 
     private final LectureFacade lectureFacade;
 
-    @PostMapping("/preSignedUrl")
+    @PostMapping("/pre-signed-url")
     @PreAuthorize("hasRole('ROLE_TEACHER')")
     @ResponseStatus(HttpStatus.CREATED)
     public Response<PreSignedUrlResponse> publishPreSignedUrl(
         @Valid @RequestBody PreSingedUrlRequest preSingedUrlRequest
     ) {
         var result = lectureFacade.publishPreSignedUrl(preSingedUrlRequest.toCommand());
-        return Response.success(result);
+        return Response.success(PreSignedUrlResponse.from(result));
     }
 
     @PostMapping
@@ -51,37 +50,42 @@ public class LectureController {
         @Valid @RequestBody LectureRegisterRequest lecture,
         @CurrentUser Member member
     ) {
-        var result = lectureFacade.registerLecture(lecture.toCommand(member.getId()));
+        var result = lectureFacade.registerLecture(lecture.toCommand(), member);
         return Response.success(result);
     }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public Response<List<LectureQueryResponse>> searchLecture(
+    public Response<LectureQueryResponse> searchLecture(
         @Valid LectureSearchRequest lectureSearch
     ) {
         var result = lectureFacade.searchLecture(lectureSearch.toQuery());
-        return Response.success(result);
+        return Response.success(LectureQueryResponse.from(result));
     }
 
     @PostMapping("/review")
     public ResponseEntity<Response<Long>> registerLectureReview(
-        @RequestBody @Valid LectureReviewRegisterRequest lectureReviewRequest) {
-        var result = lectureFacade.registerLectureReview(lectureReviewRequest.toCommand());
+        @RequestBody @Valid LectureReviewRegisterRequest lectureReviewRequest,
+        @CurrentUser Member member) {
+        var result = lectureFacade.registerLectureReview(lectureReviewRequest.toCommand(), member);
         return ResponseEntity.status(HttpStatus.CREATED).body(Response.success(result));
     }
 
     @PatchMapping("/review")
     public ResponseEntity<Response<Long>> modifyLectureReview(
-        @RequestBody @Valid LectureReviewModifyRequest lectureReviewModifyRequest) {
-        var result = lectureFacade.modifyLectureReview(lectureReviewModifyRequest.toCommand());
+        @RequestBody @Valid LectureReviewModifyRequest lectureReviewModifyRequest,
+        @CurrentUser Member member) {
+        var result = lectureFacade.modifyLectureReview(lectureReviewModifyRequest.toCommand(),
+            member);
         return ResponseEntity.status(HttpStatus.OK).body(Response.success(result));
     }
 
     @DeleteMapping("/review")
     public ResponseEntity<Response<Long>> deleteLectureReview(
-        @RequestBody @Valid LectureReviewDeleteRequest lectureReviewDeleteRequest) {
-        var result = lectureFacade.deleteLectureReview(lectureReviewDeleteRequest.toCommand());
+        @RequestBody @Valid LectureReviewDeleteRequest lectureReviewDeleteRequest,
+        @CurrentUser Member member) {
+        var result = lectureFacade.deleteLectureReview(lectureReviewDeleteRequest.toCommand(),
+            member);
         return ResponseEntity.status(HttpStatus.OK).body(Response.success(result));
     }
 }

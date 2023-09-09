@@ -5,6 +5,7 @@ import com.flab.infrun.lecture.application.command.LectureReviewDeleteCommand;
 import com.flab.infrun.lecture.application.command.LectureReviewModifyCommand;
 import com.flab.infrun.lecture.application.command.LectureReviewRegisterCommand;
 import com.flab.infrun.lecture.application.command.PublishPreSignedUrlCommand;
+import com.flab.infrun.lecture.application.result.PreSignedUrlResult;
 import com.flab.infrun.lecture.domain.Lecture;
 import com.flab.infrun.lecture.domain.LectureDetail;
 import com.flab.infrun.lecture.domain.LectureReview;
@@ -13,10 +14,8 @@ import com.flab.infrun.lecture.domain.exception.NotFoundLectureReviewException;
 import com.flab.infrun.lecture.domain.repository.LectureRepository;
 import com.flab.infrun.lecture.domain.repository.LectureReviewRepository;
 import com.flab.infrun.lecture.infrastructure.storage.aws.SimpleStorageService;
-import com.flab.infrun.lecture.presentation.response.PreSignedUrlResponse;
+import com.flab.infrun.lecture.infrastructure.storage.aws.config.S3Config;
 import com.flab.infrun.member.domain.Member;
-import com.flab.infrun.member.domain.MemberRepository;
-import com.flab.infrun.member.domain.exception.NotFoundMemberException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -27,25 +26,26 @@ import org.springframework.transaction.annotation.Transactional;
 public class LectureCommandProcessor {
 
     private final LectureRepository lectureRepository;
-    private final MemberRepository memberRepository;
     private final LectureReviewRepository lectureReviewRepository;
     private final SimpleStorageService s3;
+    private final S3Config s3Config;
 
-    public PreSignedUrlResponse publishPreSignedUrl(PublishPreSignedUrlCommand command) {
-        String uploadId = s3.getUploadIdDefaultConfig(command.objectKey());
-        List<String> preSignedList = s3.getPreSignedUrlDefaultConfig(command.objectKey(), uploadId,
-            command.partCnt());
-        return new PreSignedUrlResponse(uploadId, preSignedList);
+    public PreSignedUrlResult publishPreSignedUrl(PublishPreSignedUrlCommand command) {
+        String uploadId = s3.getUploadId(s3Config.getBucketName(), command.objectKey(),
+            s3Config.getProfileName(), s3Config.getRegion());
+        List<String> preSignedList = s3.getPreSignedUrl(s3Config.getBucketName(),
+            command.objectKey(), s3Config.getProfileName(), s3Config.getRegion(), uploadId,
+            command.partCnt(), s3Config.getDuration());
+        return new PreSignedUrlResult(uploadId, preSignedList);
     }
 
     @Transactional
-    public Long registerLecture(LectureRegisterCommand lectureRegisterCommand) {
+    public Long registerLecture(LectureRegisterCommand lectureRegisterCommand, Member member) {
         completeMultipartUpload(lectureRegisterCommand);
-        return getSavedLecture(lectureRegisterCommand);
+        return getSavedLecture(lectureRegisterCommand, member);
     }
 
-    private Long getSavedLecture(LectureRegisterCommand lectureRegisterCommand) {
-        Member member = memberRepository.findById(lectureRegisterCommand.memberId());
+    private Long getSavedLecture(LectureRegisterCommand lectureRegisterCommand, Member member) {
         Lecture lecture = Lecture.of(
             lectureRegisterCommand.name(),
             lectureRegisterCommand.price(),
@@ -56,7 +56,7 @@ public class LectureCommandProcessor {
 
         List<LectureDetail> lectureDetails = lectureRegisterCommand.lectureDetailCommandList()
             .stream()
-            .map(d -> LectureDetail.of(d.chapter(), d.name(), d.objectKey()))
+            .map(detail -> LectureDetail.of(detail.chapter(), detail.name(), detail.objectKey()))
             .toList();
         lecture.addLectureDetail(lectureDetails);
         return lectureRepository.save(lecture).getId();
@@ -64,38 +64,35 @@ public class LectureCommandProcessor {
 
     private void completeMultipartUpload(LectureRegisterCommand lectureRegisterCommand) {
         lectureRegisterCommand.lectureDetailCommandList().stream()
-            .filter(t -> null != t.objectKey() && !"".equals(t.objectKey()))
+            .filter(lectureDetail -> null != lectureDetail.objectKey() && !"".equals(
+                lectureDetail.objectKey()))
             .forEach(
-                d -> s3.completeUploadDefaultConfig(d.objectKey(), d.uploadId(), d.etagList()));
+                lectureDetail -> s3.completeUpload(s3Config.getProfileName(),
+                    lectureDetail.objectKey(), s3Config.getProfileName(), s3Config.getRegion(),
+                    lectureDetail.uploadId(), lectureDetail.etagList()));
     }
 
-    public Long registerLectureReview(LectureReviewRegisterCommand command) {
+    public Long registerLectureReview(LectureReviewRegisterCommand command, Member member) {
         Lecture lecture = lectureRepository.findById(command.lectureId())
             .orElseThrow(NotFoundLectureException::new);
-        Member member = memberRepository.findByEmail(command.memberEmail()).orElseThrow(
-            NotFoundMemberException::new);
         LectureReview lectureReview = LectureReview.of(command.content(), lecture, member);
         LectureReview saved = lectureReviewRepository.save(lectureReview);
         return saved.getId();
     }
 
     @Transactional
-    public Long modifyLectureReview(LectureReviewModifyCommand command) {
+    public Long modifyLectureReview(LectureReviewModifyCommand command, Member member) {
         LectureReview lectureReview = lectureReviewRepository.findById(command.lectureReviewId())
             .orElseThrow(NotFoundLectureReviewException::new);
-        Member member = memberRepository.findByEmail(command.memberEmail()).orElseThrow(
-            NotFoundMemberException::new);
         lectureReview.checkReviewAuthorization(member);
         lectureReview.changeContent(command.content());
         return lectureReview.getId();
     }
 
     @Transactional
-    public Long deleteLectureReview(LectureReviewDeleteCommand command) {
+    public Long deleteLectureReview(LectureReviewDeleteCommand command, Member member) {
         LectureReview lectureReview = lectureReviewRepository.findById(command.lectureReviewId())
             .orElseThrow(NotFoundLectureReviewException::new);
-        Member member = memberRepository.findByEmail(command.memberEmail()).orElseThrow(
-            NotFoundMemberException::new);
         lectureReview.checkReviewAuthorization(member);
         return lectureReviewRepository.deleteById(lectureReview.getId());
     }

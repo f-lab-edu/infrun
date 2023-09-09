@@ -8,8 +8,7 @@ public record LectureRegisterCommand(
     int level,
     String skill,
     String introduce,
-    List<LectureDetailCommand> lectureDetailCommandList,
-    Long memberId
+    List<LectureDetailCommand> lectureDetailCommandList
 ) {
 
 }

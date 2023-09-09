@@ -1,6 +1,5 @@
 package com.flab.infrun.lecture.infrastructure.storage.aws;
 
-import com.flab.infrun.lecture.infrastructure.storage.aws.config.S3Const;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,10 +20,6 @@ import software.amazon.awssdk.services.s3.presigner.model.UploadPartPresignReque
 @Service
 public class SimpleStorageService {
 
-    public String getUploadIdDefaultConfig(String objectKey) {
-        return getUploadId(S3Const.bucketName, objectKey, S3Const.profileName, S3Const.region);
-    }
-
     public String getUploadId(String bucketName, String objectKey, String profileName,
         Region region) {
         ProfileCredentialsProvider credentialsProvider = ProfileCredentialsProvider.create(
@@ -41,12 +36,6 @@ public class SimpleStorageService {
         return createResponse.uploadId();
     }
 
-    public List<String> getPreSignedUrlDefaultConfig(String objectKey, String uploadId,
-        int partCnt) {
-        return getPreSignedUrl(S3Const.bucketName, objectKey, S3Const.profileName, S3Const.region,
-            uploadId, partCnt, S3Const.duration);
-    }
-
     public List<String> getPreSignedUrl(String bucketName, String objectKey,
         String profileName, Region region, String uploadId, int partCnt, Duration duration) {
         ProfileCredentialsProvider credentialsProvider = ProfileCredentialsProvider.create(
@@ -61,11 +50,6 @@ public class SimpleStorageService {
                 publishPreSignedUrl(bucketName, objectKey, duration, uploadId, preSigner, partNum));
         }
         return preSignedUrlList;
-    }
-
-    public void completeUploadDefaultConfig(String objectKey, String uploadId, List<String> etag) {
-        completeUpload(S3Const.bucketName, objectKey, S3Const.profileName, S3Const.region, uploadId,
-            etag);
     }
 
     public void completeUpload(String bucketName, String objectKey,

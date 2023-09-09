@@ -11,7 +11,9 @@ public record LectureDetailRequest(
     String chapter,
     @NotBlank @Size(max = 30)
     String name,
+    @NotBlank
     String objectKey,
+    @NotBlank
     String uploadId,
     List<String> etagList
 ) {

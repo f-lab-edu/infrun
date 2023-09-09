@@ -34,9 +34,8 @@ class LectureReviewProcessorTest {
         processor = new LectureCommandProcessor(
             //todo- utils stub refactor
             lectureRepository,
-            null,
             lectureReviewRepository,
-            memberRepository,
+            null,
             null
         );
     }
@@ -44,43 +43,48 @@ class LectureReviewProcessorTest {
     @Test
     @DisplayName("강의 리뷰 등록 실패 - NotFoundLecture")
     void registerLectureReviewLectureException() {
+        Member member = setupMember();
         LectureReviewRegisterCommand command = new LectureReviewRegisterCommand(15L,
-            "review content", setupMember().getEmail());
+            "review content");
 
-        assertThatThrownBy(() -> processor.registerLectureReview(command)).isInstanceOf(
+        assertThatThrownBy(
+            () -> processor.registerLectureReview(command, member)).isInstanceOf(
             NotFoundLectureException.class);
     }
 
     @Test
     @DisplayName("강의 리뷰 등록 실패 - NotFoundMember")
     void registerLectureReviewMemberException() {
+        Member member = setupMember();
         LectureReviewRegisterCommand command = new LectureReviewRegisterCommand(
             setupLecture().getId(),
-            "review content",
-            "test@test.com");
+            "review content"
+        );
 
-        assertThatThrownBy(() -> processor.registerLectureReview(command)).isInstanceOf(
+        assertThatThrownBy(
+            () -> processor.registerLectureReview(command, member)).isInstanceOf(
             NotFoundMemberException.class);
     }
 
     @Test
     @DisplayName("강의 리뷰 등록 성공")
     void registerLectureReview() {
+        Member member = setupMember();
         LectureReviewRegisterCommand command = new LectureReviewRegisterCommand(
             setupLecture().getId(),
-            "review content",
-            setupMember().getEmail());
+            "review content"
+        );
 
-        assertDoesNotThrow(() -> processor.registerLectureReview(command));
+        assertDoesNotThrow(() -> processor.registerLectureReview(command, member));
     }
 
     @Test
     @DisplayName("강의 리뷰 수정 실패 - NotFoundLectureReview")
     void modifyLectureReviewNotFoundException() {
-        LectureReviewModifyCommand command = new LectureReviewModifyCommand(1L, "content",
-            "test@test.com");
+        LectureReviewModifyCommand command = new LectureReviewModifyCommand(1L, "content");
 
-        assertThatThrownBy(() -> processor.modifyLectureReview(command)).isInstanceOf(
+        assertThatThrownBy(
+            () -> processor.modifyLectureReview(command, setupMember())).isInstanceOf(
             NotFoundLectureReviewException.class);
     }
 
@@ -88,21 +92,21 @@ class LectureReviewProcessorTest {
     @DisplayName("강의 리뷰 수정 실패 - NotFoundMember")
     void modifyLectureReviewMemberException() {
         LectureReviewModifyCommand command = new LectureReviewModifyCommand(
-            setupLectureReview(setupLecture(), setupMember()).getId(),
-            "content", "nono@test.com");
+            setupLectureReview(setupLecture(), setupMember()).getId(), "content");
 
-        assertThatThrownBy(() -> processor.modifyLectureReview(command)).isInstanceOf(
+        assertThatThrownBy(() -> processor.modifyLectureReview(command, null)).isInstanceOf(
             NotFoundMemberException.class);
     }
 
     @Test
     @DisplayName("강의 리뷰 수정 실패 - InvalidAuthorizationLectureReview")
     void modifyLectureReviewAuthorizationException() {
-        setupMember2();
+        Member member = setupMember2();
         LectureReviewModifyCommand command = new LectureReviewModifyCommand(
-            setupLectureReview(setupLecture(), setupMember()).getId(), "content", "test2@test.com");
+            setupLectureReview(setupLecture(), setupMember()).getId(), "content");
 
-        assertThatThrownBy(() -> processor.modifyLectureReview(command)).isInstanceOf(
+        assertThatThrownBy(
+            () -> processor.modifyLectureReview(command, member)).isInstanceOf(
             InvalidAuthorizationLectureReviewException.class);
     }
 
@@ -111,10 +115,10 @@ class LectureReviewProcessorTest {
     void modifyLectureReviewSuccess() {
         LectureReview lectureReview = setupLectureReview(setupLecture(), setupMember());
         String changeContent = "content_modified";
-        LectureReviewModifyCommand command = new LectureReviewModifyCommand(
-            lectureReview.getId(), changeContent, setupMember().getEmail());
+        LectureReviewModifyCommand command = new LectureReviewModifyCommand(lectureReview.getId(),
+            changeContent);
 
-        Long reviewId = processor.modifyLectureReview(command);
+        Long reviewId = processor.modifyLectureReview(command, setupMember());
         LectureReview lectureReviewModified = lectureReviewRepository.findById(reviewId)
             .orElseThrow(NotFoundLectureReviewException::new);
 
@@ -124,9 +128,9 @@ class LectureReviewProcessorTest {
     @Test
     @DisplayName("강의 리뷰 삭제 실패 - NotFoundLectureReview")
     void deleteLectureReviewNotFoundReviewException() {
-        LectureReviewDeleteCommand command = new LectureReviewDeleteCommand(1L,
-            setupMember().getEmail());
-        assertThatThrownBy(() -> processor.deleteLectureReview(command)).isInstanceOf(
+        LectureReviewDeleteCommand command = new LectureReviewDeleteCommand(1L);
+        assertThatThrownBy(
+            () -> processor.deleteLectureReview(command, setupMember())).isInstanceOf(
             NotFoundLectureReviewException.class);
     }
 
@@ -134,9 +138,9 @@ class LectureReviewProcessorTest {
     @DisplayName("강의 리뷰 삭제 실패 - NotFoundMember")
     void deleteLectureReviewNotFoundMemberException() {
         LectureReviewDeleteCommand command = new LectureReviewDeleteCommand(
-            setupLectureReview(setupLecture(), setupMember()).getId(),
-            "test2@test.com");
-        assertThatThrownBy(() -> processor.deleteLectureReview(command)).isInstanceOf(
+            setupLectureReview(setupLecture(), setupMember()).getId());
+        assertThatThrownBy(
+            () -> processor.deleteLectureReview(command, setupMember2())).isInstanceOf(
             NotFoundMemberException.class);
     }
 
@@ -145,10 +149,10 @@ class LectureReviewProcessorTest {
     void deleteLectureReviewInvalidAuthorizationException() {
         LectureReview lectureReview = setupLectureReview(setupLecture(), setupMember());
         setupMember2();
-        LectureReviewDeleteCommand command = new LectureReviewDeleteCommand(lectureReview.getId(),
-            "test2@test.com");
+        LectureReviewDeleteCommand command = new LectureReviewDeleteCommand(lectureReview.getId());
 
-        assertThatThrownBy(() -> processor.deleteLectureReview(command)).isInstanceOf(
+        assertThatThrownBy(
+            () -> processor.deleteLectureReview(command, setupMember2())).isInstanceOf(
             InvalidAuthorizationLectureReviewException.class);
     }
 
@@ -159,9 +163,8 @@ class LectureReviewProcessorTest {
         LectureReview lectureReview = setupLectureReview(setupLecture(), member);
 
         LectureReviewDeleteCommand command = new LectureReviewDeleteCommand(
-            lectureReview.getId(),
-            member.getEmail());
-        Long deletedCount = processor.deleteLectureReview(command);
+            lectureReview.getId());
+        Long deletedCount = processor.deleteLectureReview(command, member);
 
         assertThat(deletedCount).isEqualTo(1);
         assertThat(lectureReviewRepository.findById(lectureReview.getId())).isEmpty();

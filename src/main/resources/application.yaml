@@ -27,3 +27,10 @@ jwt:
 
 logging.level:
   org.hibernate.SQL: debug
+
+aws:
+  s3:
+    bucketName: infrun
+    profileName: InfrunManager
+    region: ap-northeast-2
+    duration: 30
