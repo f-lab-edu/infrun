@@ -31,6 +31,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-security'
 
+    implementation 'com.mysql:mysql-connector-j'
+
     implementation 'com.google.guava:guava:32.0.1-jre'
     implementation 'io.rest-assured:rest-assured'
 
@@ -68,6 +70,10 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+bootJar {
+    archiveFileName = 'app.jar'
 }
 
 // Querydsl 설정부
