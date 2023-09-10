@@ -19,6 +19,7 @@ import com.flab.infrun.order.domain.OrderStatus;
 import com.flab.infrun.order.presentation.request.CreateOrderRequest;
 import com.flab.infrun.order.presentation.request.PayOrderRequest;
 import com.flab.infrun.payment.domain.PayMethod;
+import com.flab.infrun.payment.domain.PayStatus;
 import com.flab.infrun.payment.domain.PayType;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -48,20 +49,20 @@ final class OrderControllerTest {
     private OrderFacade orderFacade;
 
     @Test
-    @DisplayName("주문을 생성하면 200 상태코드와 생성된 주문 정보를 반환한다")
+    @DisplayName("주문을 생성하면 201 상태코드와 생성된 주문 정보를 반환한다")
     void createOrder_success() throws Exception {
         given(orderFacade.createOrder(any(), any()))
             .willReturn(createOrderResult());
         final var request = new CreateOrderRequest(List.of(1L, 2L), null);
 
-        final ResultActions result = mockMvc.perform(post(ORDER_URI)
+        final var result = mockMvc.perform(post(ORDER_URI)
             .contentType(MediaType.APPLICATION_JSON)
             .with(user(createUser()))
             .with(csrf())
             .content(objectMapper.writeValueAsString(request))
         ).andDo(print());
 
-        result.andExpect(status().isOk())
+        result.andExpect(status().isCreated())
             .andExpect(jsonPath("$.data").exists())
             .andExpect(jsonPath("$.data.orderId").value(1L))
             .andExpect(jsonPath("$.data.totalPrice").value("90,000"))
@@ -113,6 +114,7 @@ final class OrderControllerTest {
             .andExpect(jsonPath("$.data.payMethod").value("카드"))
             .andExpect(jsonPath("$.data.payType").value("일시불"))
             .andExpect(jsonPath("$.data.orderStatus").value("주문 완료"))
+            .andExpect(jsonPath("$.data.payStatus").value("결제 성공"))
             .andExpect(jsonPath("$.data.payedAt").exists());
     }
 
@@ -182,6 +184,7 @@ final class OrderControllerTest {
             PayType.LUMP_SUM,
             PayMethod.CARD,
             OrderStatus.ORDER_COMPLETED.getDescription(),
+            PayStatus.PAYMENT_SUCCESS.getDescription(),
             LocalDateTime.now()
         );
     }

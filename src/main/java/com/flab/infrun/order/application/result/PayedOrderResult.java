@@ -12,6 +12,7 @@ public record PayedOrderResult(
     PayType payType,
     PayMethod payMethod,
     String orderStatus,
+    String payStatus,
     LocalDateTime payedAt
 ) {
 
@@ -21,6 +22,7 @@ public record PayedOrderResult(
             payment.getPayType(),
             payment.getPayMethod(),
             orderStatus.getDescription(),
+            payment.getPayStatus().getDescription(),
             payment.getCreatedAt());
     }
 }

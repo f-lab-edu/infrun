@@ -27,8 +27,9 @@ public class Payment extends BaseEntity {
     private PayType payType;
     @Enumerated(EnumType.STRING)
     private PayMethod payMethod;
-    private boolean isSuccess;
-    private boolean isCanceled;
+
+    @Enumerated(EnumType.STRING)
+    private PayStatus payStatus;
 
     private Payment(
         final Long userId,
@@ -42,8 +43,7 @@ public class Payment extends BaseEntity {
         this.amount = amount;
         this.payType = payType;
         this.payMethod = payMethod;
-        this.isSuccess = true;
-        this.isCanceled = false;
+        this.payStatus = PayStatus.PAYMENT_SUCCESS;
     }
 
     public static Payment create(
@@ -66,5 +66,9 @@ public class Payment extends BaseEntity {
 
     public PayMethod getPayMethod() {
         return payMethod;
+    }
+
+    public PayStatus getPayStatus() {
+        return payStatus;
     }
 }

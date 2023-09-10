@@ -10,6 +10,7 @@ public record PayedOrderResponse(
     String payType,
     String payMethod,
     String orderStatus,
+    String payStatus,
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime payedAt
 ) {
@@ -20,6 +21,7 @@ public record PayedOrderResponse(
             result.payType().getDescription(),
             result.payMethod().getDescription(),
             result.orderStatus(),
+            result.payStatus(),
             result.payedAt()
         );
     }

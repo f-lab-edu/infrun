@@ -71,16 +71,23 @@ public class Coupon {
     }
 
     public void enroll(final Member owner, final LocalDateTime currentTime) {
-        verifyIsRegistrable(currentTime);
+        verifyIsRegistrableAndExpireIfNecessary(currentTime);
         this.owner = owner;
         this.status = CouponStatus.REGISTERED;
     }
 
-    private void verifyIsRegistrable(final LocalDateTime currentTime) {
-        if (this.status != CouponStatus.UNREGISTERED) {
+    private void verifyIsRegistrableAndExpireIfNecessary(final LocalDateTime currentTime) {
+        if (this.status == CouponStatus.REGISTERED) {
             throw new AlreadyRegisteredCouponException(ErrorCode.ALREADY_REGISTERED_COUPON);
         }
+        if (this.status == CouponStatus.USED) {
+            throw new AlreadyUsedCouponException();
+        }
+        if (this.status == CouponStatus.EXPIRED) {
+            throw new ExpiredCouponException(ErrorCode.EXPIRED_COUPON);
+        }
         if (this.expirationAt.isBefore(currentTime)) {
+            this.status = CouponStatus.EXPIRED;
             throw new ExpiredCouponException(ErrorCode.EXPIRED_COUPON);
         }
     }
@@ -90,9 +97,15 @@ public class Coupon {
         return this.discountInfo.discount(price);
     }
 
-    public void verifyIsUsable(final LocalDateTime currentTime, final Member customer) {
+    public void verifyIsUsableAndExpireIfNecessary(
+        final LocalDateTime currentTime,
+        final Member customer
+    ) {
         if (!this.owner.equals(customer)) {
             throw new InvalidCouponOwnerException();
+        }
+        if (this.status == CouponStatus.EXPIRED) {
+            throw new ExpiredCouponException(ErrorCode.EXPIRED_COUPON);
         }
         if (this.expirationAt.isBefore(currentTime)) {
             this.status = CouponStatus.EXPIRED;

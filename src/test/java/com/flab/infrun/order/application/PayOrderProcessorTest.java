@@ -23,6 +23,7 @@ import com.flab.infrun.order.domain.exception.AlreadyCanceledOrderException;
 import com.flab.infrun.order.domain.exception.AlreadyCompletedOrderException;
 import com.flab.infrun.order.domain.exception.OrderPayAmountNotMatchException;
 import com.flab.infrun.payment.domain.PayMethod;
+import com.flab.infrun.payment.domain.PayStatus;
 import com.flab.infrun.payment.domain.PayType;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -69,6 +70,7 @@ final class PayOrderProcessorTest extends IntegrationTest {
         assertThat(result.payType()).isEqualTo(PayType.LUMP_SUM);
         assertThat(result.payedAt()).isBeforeOrEqualTo(LocalDateTime.now());
         assertThat(result.orderStatus()).isEqualTo(OrderStatus.ORDER_COMPLETED.getDescription());
+        assertThat(result.payStatus()).isEqualTo(PayStatus.PAYMENT_SUCCESS.getDescription());
     }
 
     @Test
