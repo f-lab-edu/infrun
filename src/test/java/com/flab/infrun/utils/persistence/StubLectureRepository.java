@@ -1,7 +1,7 @@
 package com.flab.infrun.utils.persistence;
 
 import com.flab.infrun.lecture.domain.Lecture;
-import com.flab.infrun.lecture.domain.LectureRepository;
+import com.flab.infrun.lecture.domain.repository.LectureRepository;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;

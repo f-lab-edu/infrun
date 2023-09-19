@@ -48,6 +48,12 @@ dependencies {
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
+    //s3 추가
+    implementation platform('software.amazon.awssdk:bom:2.20.56')
+    implementation 'software.amazon.awssdk:s3'
+    implementation 'software.amazon.awssdk:sso'
+    implementation 'software.amazon.awssdk:ssooidc'
+
     compileOnly 'org.projectlombok:lombok'
 
     runtimeOnly 'com.h2database:h2'

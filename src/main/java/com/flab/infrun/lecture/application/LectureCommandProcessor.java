@@ -4,51 +4,48 @@ import com.flab.infrun.lecture.application.command.LectureRegisterCommand;
 import com.flab.infrun.lecture.application.command.LectureReviewDeleteCommand;
 import com.flab.infrun.lecture.application.command.LectureReviewModifyCommand;
 import com.flab.infrun.lecture.application.command.LectureReviewRegisterCommand;
-import com.flab.infrun.lecture.application.exception.DuplicateLectureFileNameException;
-import com.flab.infrun.lecture.application.fileCommand.StorageUpload;
+import com.flab.infrun.lecture.application.command.PublishPreSignedUrlCommand;
+import com.flab.infrun.lecture.application.result.PreSignedUrlResult;
 import com.flab.infrun.lecture.domain.Lecture;
 import com.flab.infrun.lecture.domain.LectureDetail;
-import com.flab.infrun.lecture.domain.LectureFile;
-import com.flab.infrun.lecture.domain.LectureFileRepository;
-import com.flab.infrun.lecture.domain.LectureRepository;
 import com.flab.infrun.lecture.domain.LectureReview;
-import com.flab.infrun.lecture.domain.LectureReviewRepository;
 import com.flab.infrun.lecture.domain.exception.NotFoundLectureException;
 import com.flab.infrun.lecture.domain.exception.NotFoundLectureReviewException;
+import com.flab.infrun.lecture.domain.repository.LectureRepository;
+import com.flab.infrun.lecture.domain.repository.LectureReviewRepository;
+import com.flab.infrun.lecture.infrastructure.storage.aws.SimpleStorageService;
+import com.flab.infrun.lecture.infrastructure.storage.aws.config.S3Config;
 import com.flab.infrun.member.domain.Member;
-import com.flab.infrun.member.domain.MemberRepository;
-import com.flab.infrun.member.domain.exception.NotFoundMemberException;
-import com.google.common.annotations.VisibleForTesting;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
 @Component
 public class LectureCommandProcessor {
 
     private final LectureRepository lectureRepository;
-    private final LectureFileRepository lectureFileRepository;
-    private final MemberRepository memberRepository;
     private final LectureReviewRepository lectureReviewRepository;
-    private final StorageUpload storageUpload;
+    private final SimpleStorageService s3;
+    private final S3Config s3Config;
 
-    @Transactional
-    public long registerLecture(LectureRegisterCommand lectureRegisterCommand) {
-        validateLectureFile(lectureRegisterCommand.lectureFileList());
-        List<LectureFile> uploadedFile = uploadFile(lectureRegisterCommand);
-        Map<String, LectureFile> mappingFileWithName = mappingFileId(uploadedFile);
-        return getSavedLecture(lectureRegisterCommand, mappingFileWithName);
+    public PreSignedUrlResult publishPreSignedUrl(PublishPreSignedUrlCommand command) {
+        String uploadId = s3.getUploadId(s3Config.getBucketName(), command.objectKey(),
+            s3Config.getProfileName(), s3Config.getRegion());
+        List<String> preSignedList = s3.getPreSignedUrl(s3Config.getBucketName(),
+            command.objectKey(), s3Config.getProfileName(), s3Config.getRegion(), uploadId,
+            command.partCnt(), s3Config.getDuration());
+        return new PreSignedUrlResult(uploadId, preSignedList);
     }
 
-    private long getSavedLecture(LectureRegisterCommand lectureRegisterCommand,
-        Map<String, LectureFile> mappingFileWithName) {
-        Member member = memberRepository.findById(lectureRegisterCommand.memberId());
+    @Transactional
+    public Long registerLecture(LectureRegisterCommand lectureRegisterCommand, Member member) {
+        completeMultipartUpload(lectureRegisterCommand);
+        return getSavedLecture(lectureRegisterCommand, member);
+    }
+
+    private Long getSavedLecture(LectureRegisterCommand lectureRegisterCommand, Member member) {
         Lecture lecture = Lecture.of(
             lectureRegisterCommand.name(),
             lectureRegisterCommand.price(),
@@ -59,65 +56,43 @@ public class LectureCommandProcessor {
 
         List<LectureDetail> lectureDetails = lectureRegisterCommand.lectureDetailCommandList()
             .stream()
-            .map(
-                d -> LectureDetail.of(d.chapter(), d.name(), mappingFileWithName.get(d.fileName())))
+            .map(detail -> LectureDetail.of(detail.chapter(), detail.name(), detail.objectKey()))
             .toList();
         lecture.addLectureDetail(lectureDetails);
         return lectureRepository.save(lecture).getId();
     }
 
-    private Map<String, LectureFile> mappingFileId(List<LectureFile> uploadedFile) {
-        return uploadedFile.stream()
-            .collect(Collectors.toMap(LectureFile::getName, Function.identity()));
+    private void completeMultipartUpload(LectureRegisterCommand lectureRegisterCommand) {
+        lectureRegisterCommand.lectureDetailCommandList().stream()
+            .filter(lectureDetail -> null != lectureDetail.objectKey() && !"".equals(
+                lectureDetail.objectKey()))
+            .forEach(
+                lectureDetail -> s3.completeUpload(s3Config.getProfileName(),
+                    lectureDetail.objectKey(), s3Config.getProfileName(), s3Config.getRegion(),
+                    lectureDetail.uploadId(), lectureDetail.etagList()));
     }
 
-    public List<LectureFile> uploadFile(LectureRegisterCommand lectureRegisterCommand) {
-        return lectureRegisterCommand.lectureFileList().stream()
-            .map(file -> lectureFileRepository.save(storageUpload.upload(file)))
-            .collect(Collectors.toList());
-    }
-
-    @VisibleForTesting
-    void validateLectureFile(List<MultipartFile> lectureFileList) {
-        boolean duplicated = lectureFileList.stream()
-            .map(MultipartFile::getOriginalFilename)
-            .distinct()
-            .count() != lectureFileList.size();
-        if (duplicated) {
-            throw new DuplicateLectureFileNameException();
-        }
-    }
-
-    public Long registerLectureReview(LectureReviewRegisterCommand command) {
+    public Long registerLectureReview(LectureReviewRegisterCommand command, Member member) {
         Lecture lecture = lectureRepository.findById(command.lectureId())
             .orElseThrow(NotFoundLectureException::new);
-        //todo - member currentuser 로 Member 정보 get
-        Member member = memberRepository.findByEmail(command.memberEmail()).orElseThrow(
-            NotFoundMemberException::new);
         LectureReview lectureReview = LectureReview.of(command.content(), lecture, member);
         LectureReview saved = lectureReviewRepository.save(lectureReview);
         return saved.getId();
     }
 
     @Transactional
-    public Long modifyLectureReview(LectureReviewModifyCommand command) {
+    public Long modifyLectureReview(LectureReviewModifyCommand command, Member member) {
         LectureReview lectureReview = lectureReviewRepository.findById(command.lectureReviewId())
             .orElseThrow(NotFoundLectureReviewException::new);
-        //todo - member currentuser 로 Member 정보 get
-        Member member = memberRepository.findByEmail(command.memberEmail()).orElseThrow(
-            NotFoundMemberException::new);
         lectureReview.checkReviewAuthorization(member);
         lectureReview.changeContent(command.content());
         return lectureReview.getId();
     }
 
     @Transactional
-    public Long deleteLectureReview(LectureReviewDeleteCommand command) {
+    public Long deleteLectureReview(LectureReviewDeleteCommand command, Member member) {
         LectureReview lectureReview = lectureReviewRepository.findById(command.lectureReviewId())
             .orElseThrow(NotFoundLectureReviewException::new);
-        //todo - member currentuser 로 Member 정보 get
-        Member member = memberRepository.findByEmail(command.memberEmail()).orElseThrow(
-            NotFoundMemberException::new);
         lectureReview.checkReviewAuthorization(member);
         return lectureReviewRepository.deleteById(lectureReview.getId());
     }

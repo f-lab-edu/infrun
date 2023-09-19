@@ -3,7 +3,6 @@ package com.flab.infrun.lecture.infrastructure.persistence;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.flab.infrun.lecture.domain.LectureDetail;
-import com.flab.infrun.lecture.domain.LectureFile;
 import com.flab.infrun.lecture.infrastructure.persistence.jpa.LectureDetailJpaRepository;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
@@ -20,8 +19,7 @@ class LectureDetailRepositoryTest {
     @Test
     @DisplayName("강의상세 저장 테스트")
     void save() {
-        LectureDetail lectureDetail = LectureDetail.of("1", "강의 A의 챕터1",
-            LectureFile.of("", "spring기초"));
+        LectureDetail lectureDetail = LectureDetail.of("1", "강의 A의 챕터1", null);
 
         LectureDetail saved = repository.save(lectureDetail);
         Optional<LectureDetail> lecture1 = repository.findById(saved.getId());
