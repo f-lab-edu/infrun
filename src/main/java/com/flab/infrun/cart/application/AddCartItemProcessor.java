@@ -6,7 +6,7 @@ import com.flab.infrun.cart.domain.Cart;
 import com.flab.infrun.cart.domain.CartItem;
 import com.flab.infrun.cart.domain.CartRepository;
 import com.flab.infrun.lecture.domain.Lecture;
-import com.flab.infrun.lecture.domain.repository.LectureRepository;
+import com.flab.infrun.lecture.domain.LectureRepository;
 import java.math.BigDecimal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
