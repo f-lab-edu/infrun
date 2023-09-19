@@ -148,6 +148,43 @@ public class Coupon {
         return expirationAt;
     }
 
+    public void enroll(final Member owner, final LocalDateTime currentTime) {
+        verifyIsRegistrable(currentTime);
+        this.owner = owner;
+        this.status = CouponStatus.REGISTERED;
+    }
+
+    private void verifyIsRegistrable(final LocalDateTime currentTime) {
+        if (this.status != CouponStatus.UNREGISTERED) {
+            throw new AlreadyRegisteredCouponException(ErrorCode.ALREADY_REGISTERED_COUPON);
+        }
+        if (this.expirationAt.isBefore(currentTime)) {
+            throw new ExpiredCouponException(ErrorCode.EXPIRED_COUPON);
+        }
+    }
+
+    public BigDecimal apply(final BigDecimal price) {
+        this.status = CouponStatus.USED;
+        return this.discountInfo.discount(price);
+    }
+
+    public void verifyIsUsable(final LocalDateTime currentTime, final Member customer) {
+        if (!this.owner.equals(customer)) {
+            throw new InvalidCouponOwnerException();
+        }
+        if (this.expirationAt.isBefore(currentTime)) {
+            this.status = CouponStatus.EXPIRED;
+            throw new ExpiredCouponException(ErrorCode.EXPIRED_COUPON);
+        }
+        if (this.status == CouponStatus.USED) {
+            throw new AlreadyUsedCouponException();
+        }
+    }
+
+    public void unapply() {
+        this.status = CouponStatus.REGISTERED;
+    }
+
     @VisibleForTesting
     public void assignId(final Long id) {
         this.id = id;

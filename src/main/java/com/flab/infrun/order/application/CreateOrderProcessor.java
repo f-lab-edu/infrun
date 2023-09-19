@@ -60,6 +60,7 @@ public class CreateOrderProcessor {
         }
 
         final Coupon coupon = couponRepository.findByCouponCode(couponCode);
+      
         coupon.verifyIsUsableAndExpireIfNecessary(currentTime, member);
 
         return Optional.of(coupon);

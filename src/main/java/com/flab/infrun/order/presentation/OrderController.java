@@ -50,4 +50,3 @@ public class OrderController {
         return Response.success(PayedOrderResponse.from(result));
     }
 }
-
