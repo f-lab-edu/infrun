@@ -1,7 +1,7 @@
 package com.flab.infrun.lecture.infrastructure.persistence;
 
 import com.flab.infrun.lecture.domain.Lecture;
-import com.flab.infrun.lecture.domain.repository.LectureRepository;
+import com.flab.infrun.lecture.domain.LectureRepository;
 import com.flab.infrun.lecture.infrastructure.persistence.jpa.LectureJpaRepository;
 import java.util.List;
 import java.util.Optional;
