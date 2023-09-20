@@ -2,12 +2,14 @@ package com.flab.infrun.member.presentation;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.flab.infrun.member.infrastructure.persistence.MemberJpaRepository;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
@@ -20,6 +22,8 @@ final class MemberControllerTest {
 
     @LocalServerPort
     private int port;
+    @Autowired
+    private MemberJpaRepository memberJpaRepository;
 
     public static SignupRequest createCorrectSignupRequest() {
         return new SignupRequest("nickname", "test@test.com", "1234Qwer!");
@@ -51,6 +55,7 @@ final class MemberControllerTest {
         if (RestAssured.port == RestAssured.UNDEFINED_PORT) {
             RestAssured.port = port;
         }
+        memberJpaRepository.deleteAllInBatch();
     }
 
     @Test
