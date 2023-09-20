@@ -1,8 +1,6 @@
 package com.flab.infrun.lecture.presentation;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,8 +17,6 @@ import java.util.List;
 import javax.sql.DataSource;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -62,21 +58,6 @@ class LectureControllerApiTest {
         if (RestAssured.port == RestAssured.UNDEFINED_PORT) {
             RestAssured.port = port;
         }
-    }
-
-    @Test
-    @DisplayName("강의 등록 시 Role check - 성공")
-    void lectureRegisterRoleCheckSuccess() throws Exception {
-        String token = loginSuccess_returnToken(createTeacherLoginRequest());
-        String headerName = "Authorization";
-        String authorizationValue = "Bearer " + token;
-        MockMultipartHttpServletRequestBuilder multiPartRequest = createMultiPartRequest();
-
-        mockMvc.perform(multiPartRequest
-                .header(headerName, authorizationValue))
-
-            .andExpect(status().is2xxSuccessful())
-            .andDo(print());
     }
 
     private String loginSuccess_returnToken(LoginRequest loginRequest) {

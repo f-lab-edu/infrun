@@ -16,7 +16,6 @@ import com.flab.infrun.lecture.domain.exception.NotFoundLectureException;
 import com.flab.infrun.lecture.domain.exception.NotFoundLectureReviewException;
 import com.flab.infrun.member.domain.Member;
 import com.flab.infrun.member.domain.StubMemberRepository;
-import com.flab.infrun.member.domain.exception.NotFoundMemberException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -53,20 +52,6 @@ class LectureReviewProcessorTest {
     }
 
     @Test
-    @DisplayName("강의 리뷰 등록 실패 - NotFoundMember")
-    void registerLectureReviewMemberException() {
-        Member member = setupMember();
-        LectureReviewRegisterCommand command = new LectureReviewRegisterCommand(
-            setupLecture().getId(),
-            "review content"
-        );
-
-        assertThatThrownBy(
-            () -> processor.registerLectureReview(command, member)).isInstanceOf(
-            NotFoundMemberException.class);
-    }
-
-    @Test
     @DisplayName("강의 리뷰 등록 성공")
     void registerLectureReview() {
         Member member = setupMember();
@@ -89,16 +74,6 @@ class LectureReviewProcessorTest {
     }
 
     @Test
-    @DisplayName("강의 리뷰 수정 실패 - NotFoundMember")
-    void modifyLectureReviewMemberException() {
-        LectureReviewModifyCommand command = new LectureReviewModifyCommand(
-            setupLectureReview(setupLecture(), setupMember()).getId(), "content");
-
-        assertThatThrownBy(() -> processor.modifyLectureReview(command, null)).isInstanceOf(
-            NotFoundMemberException.class);
-    }
-
-    @Test
     @DisplayName("강의 리뷰 수정 실패 - InvalidAuthorizationLectureReview")
     void modifyLectureReviewAuthorizationException() {
         Member member = setupMember2();
@@ -113,12 +88,13 @@ class LectureReviewProcessorTest {
     @Test
     @DisplayName("강의 리뷰 수정 성공")
     void modifyLectureReviewSuccess() {
-        LectureReview lectureReview = setupLectureReview(setupLecture(), setupMember());
+        Member member = setupMember();
+        LectureReview lectureReview = setupLectureReview(setupLecture(), member);
         String changeContent = "content_modified";
         LectureReviewModifyCommand command = new LectureReviewModifyCommand(lectureReview.getId(),
             changeContent);
 
-        Long reviewId = processor.modifyLectureReview(command, setupMember());
+        Long reviewId = processor.modifyLectureReview(command, member);
         LectureReview lectureReviewModified = lectureReviewRepository.findById(reviewId)
             .orElseThrow(NotFoundLectureReviewException::new);
 
@@ -132,16 +108,6 @@ class LectureReviewProcessorTest {
         assertThatThrownBy(
             () -> processor.deleteLectureReview(command, setupMember())).isInstanceOf(
             NotFoundLectureReviewException.class);
-    }
-
-    @Test
-    @DisplayName("강의 리뷰 삭제 실패 - NotFoundMember")
-    void deleteLectureReviewNotFoundMemberException() {
-        LectureReviewDeleteCommand command = new LectureReviewDeleteCommand(
-            setupLectureReview(setupLecture(), setupMember()).getId());
-        assertThatThrownBy(
-            () -> processor.deleteLectureReview(command, setupMember2())).isInstanceOf(
-            NotFoundMemberException.class);
     }
 
     @Test

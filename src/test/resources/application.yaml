@@ -18,3 +18,9 @@ spring:
 jwt:
   secret: Zi1sYWItZWR1LWluZnJ1bi1zZWNyZXQtand0LWtleS1oczUxMgo=
   token-validity-in-seconds: 86400
+aws:
+  s3:
+    bucketName: infrun
+    profileName: InfrunManager
+    region: ap-northeast-2
+    duration: 30
