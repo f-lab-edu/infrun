@@ -20,7 +20,8 @@ class LectureCommandProcessorTest {
             lectureRepository,
             null,
             null,
-            null
+            null,
+            new LectureCommandValidator()
         );
     }
 

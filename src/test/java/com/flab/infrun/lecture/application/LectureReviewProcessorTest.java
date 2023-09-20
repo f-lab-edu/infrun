@@ -35,7 +35,8 @@ class LectureReviewProcessorTest {
             lectureRepository,
             lectureReviewRepository,
             null,
-            null
+            null,
+            new LectureCommandValidator()
         );
     }
 

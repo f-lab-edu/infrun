@@ -37,9 +37,11 @@ public class LectureController {
     @PreAuthorize("hasRole('ROLE_TEACHER')")
     @ResponseStatus(HttpStatus.CREATED)
     public Response<PreSignedUrlResponse> publishPreSignedUrl(
-        @Valid @RequestBody PreSingedUrlRequest preSingedUrlRequest
+        @Valid @RequestBody PreSingedUrlRequest preSingedUrlRequest,
+        @CurrentUser Member member
     ) {
-        var result = lectureFacade.publishPreSignedUrl(preSingedUrlRequest.toCommand());
+        var result = lectureFacade.publishPreSignedUrl(
+            preSingedUrlRequest.toCommand(member.getId()));
         return Response.success(PreSignedUrlResponse.from(result));
     }
 

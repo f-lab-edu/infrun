@@ -5,7 +5,9 @@ import com.flab.infrun.lecture.application.command.LectureReviewDeleteCommand;
 import com.flab.infrun.lecture.application.command.LectureReviewModifyCommand;
 import com.flab.infrun.lecture.application.command.LectureReviewRegisterCommand;
 import com.flab.infrun.lecture.application.command.PublishPreSignedUrlCommand;
+import com.flab.infrun.lecture.application.command.PublishPreSignedUrlCommand.MultipartCommandInfo;
 import com.flab.infrun.lecture.application.result.PreSignedUrlResult;
+import com.flab.infrun.lecture.application.result.PreSignedUrlResult.MultipartInfosResult;
 import com.flab.infrun.lecture.domain.Lecture;
 import com.flab.infrun.lecture.domain.LectureDetail;
 import com.flab.infrun.lecture.domain.LectureReview;
@@ -16,6 +18,7 @@ import com.flab.infrun.lecture.domain.repository.LectureReviewRepository;
 import com.flab.infrun.lecture.infrastructure.storage.aws.SimpleStorageService;
 import com.flab.infrun.lecture.infrastructure.storage.aws.config.S3Config;
 import com.flab.infrun.member.domain.Member;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -29,14 +32,26 @@ public class LectureCommandProcessor {
     private final LectureReviewRepository lectureReviewRepository;
     private final SimpleStorageService s3;
     private final S3Config s3Config;
+    private final LectureCommandValidator lectureCommandValidator;
 
     public PreSignedUrlResult publishPreSignedUrl(PublishPreSignedUrlCommand command) {
-        String uploadId = s3.getUploadId(s3Config.getBucketName(), command.objectKey(),
-            s3Config.getProfileName(), s3Config.getRegion());
-        List<String> preSignedList = s3.getPreSignedUrl(s3Config.getBucketName(),
-            command.objectKey(), s3Config.getProfileName(), s3Config.getRegion(), uploadId,
-            command.partCnt(), s3Config.getDuration());
-        return new PreSignedUrlResult(uploadId, preSignedList);
+
+        lectureCommandValidator.validateObjectPath(command);
+
+        List<MultipartInfosResult> multipartInfosResults = new ArrayList<>();
+
+        for (MultipartCommandInfo info : command.multipartInfos()) {
+            String objectKey = command.memberId() + "/" + info.objectPath();
+            String uploadId = s3.getUploadId(s3Config.getBucketName(), objectKey,
+                s3Config.getProfileName(), s3Config.getRegion());
+            List<String> preSignedList = s3.getPreSignedUrl(s3Config.getBucketName(),
+                objectKey, s3Config.getProfileName(), s3Config.getRegion(), uploadId,
+                info.partCnt(), s3Config.getDuration());
+
+            multipartInfosResults.add(new MultipartInfosResult(objectKey, uploadId, preSignedList));
+        }
+
+        return new PreSignedUrlResult(multipartInfosResults);
     }
 
     @Transactional
@@ -59,6 +74,7 @@ public class LectureCommandProcessor {
             .map(detail -> LectureDetail.of(detail.chapter(), detail.name(), detail.objectKey()))
             .toList();
         lecture.addLectureDetail(lectureDetails);
+
         return lectureRepository.save(lecture).getId();
     }
 
