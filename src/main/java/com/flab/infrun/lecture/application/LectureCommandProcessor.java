@@ -35,8 +35,7 @@ public class LectureCommandProcessor {
     private final LectureCommandValidator lectureCommandValidator;
 
     public PreSignedUrlResult publishPreSignedUrl(PublishPreSignedUrlCommand command) {
-
-        lectureCommandValidator.validateObjectPath(command);
+        lectureCommandValidator.validatePathNameUrl(command);
 
         List<MultipartInfosResult> multipartInfosResults = new ArrayList<>();
 
@@ -56,7 +55,10 @@ public class LectureCommandProcessor {
 
     @Transactional
     public Long registerLecture(LectureRegisterCommand lectureRegisterCommand, Member member) {
+        lectureCommandValidator.validatePathNameRegister(lectureRegisterCommand);
+
         completeMultipartUpload(lectureRegisterCommand);
+
         return getSavedLecture(lectureRegisterCommand, member);
     }
 

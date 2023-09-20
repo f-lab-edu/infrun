@@ -16,7 +16,7 @@ public enum ErrorCode {
     NOT_FOUND_MEMBER("존재하지 않는 회원입니다."),
 
     //LECTURE
-    DUPLICATED_FILE_NAME("중복되는 파일명이 존재합니다."),
+    DUPLICATED_LECTURE_PART_NAME("중복되는 파트-강의상세명이 존재합니다."),
     NOT_FOUND_LECTURE("존재하지 않는 강의입니다."),
 
     //LECTURE_REVIEW
