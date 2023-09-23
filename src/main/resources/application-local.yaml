@@ -4,17 +4,21 @@ spring:
       path: /h2-console
       enabled: true
   datasource:
-    url: jdbc:h2:mem:testdb;
+    url: jdbc:h2:mem:~/local
     username: sa
     password:
     driver-class-name: org.h2.Driver
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
   jpa:
     properties:
       hibernate:
         show_sql: true
         format_sql: true
         use_sql_comments: true
-    defer-datasource-initialization: true
+
 jwt:
   secret: Zi1sYWItZWR1LWluZnJ1bi1zZWNyZXQtand0LWtleS1oczUxMgo=
   token-validity-in-seconds: 86400
