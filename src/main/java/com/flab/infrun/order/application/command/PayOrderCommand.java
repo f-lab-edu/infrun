@@ -9,7 +9,8 @@ public record PayOrderCommand(
     Long orderId,
     BigDecimal amount,
     PayMethod payMethod,
-    PayType payType
+    PayType payType,
+    Integer installmentMonths
 ) {
 
 }

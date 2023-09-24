@@ -11,7 +11,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flab.infrun.common.config.security.UserAdapter;
-import com.flab.infrun.coupon.domain.CouponRepository;
 import com.flab.infrun.member.domain.Member;
 import com.flab.infrun.order.application.OrderFacade;
 import com.flab.infrun.order.application.result.CreatedOrderResult;
@@ -100,7 +99,8 @@ final class OrderControllerTest {
     void payOrder_success() throws Exception {
         given(orderFacade.payOrder(any()))
             .willReturn(payedOrderResult());
-        final var request = new PayOrderRequest(1L, BigDecimal.valueOf(90_000), "CARD", "LUMP_SUM");
+        final var request = new PayOrderRequest(1L, BigDecimal.valueOf(90_000), "CARD", "LUMP_SUM",
+            1);
 
         final ResultActions result = mockMvc.perform(post(ORDER_URI + "/pay")
             .contentType(MediaType.APPLICATION_JSON)
@@ -136,12 +136,15 @@ final class OrderControllerTest {
 
     private static Stream<Arguments> provideInvalidPayOrderRequest() {
         return Stream.of(
-            Arguments.of(new PayOrderRequest(null, BigDecimal.valueOf(90_000), "CARD", "LUMP_SUM")),
-            Arguments.of(new PayOrderRequest(1L, null, "CARD", "LUMP_SUM")),
-            Arguments.of(new PayOrderRequest(1L, BigDecimal.valueOf(90_000), null, "LUMP_SUM")),
-            Arguments.of(new PayOrderRequest(1L, BigDecimal.valueOf(90_000), "ANY", "LUMP_SUM")),
-            Arguments.of(new PayOrderRequest(1L, BigDecimal.valueOf(90_000), "CARD", null)),
-            Arguments.of(new PayOrderRequest(1L, BigDecimal.valueOf(90_000), "CARD", "ANY"))
+            Arguments.of(
+                new PayOrderRequest(null, BigDecimal.valueOf(90_000), "CARD", "LUMP_SUM", 1)),
+            Arguments.of(new PayOrderRequest(1L, null, "CARD", "LUMP_SUM", 1)),
+            Arguments.of(new PayOrderRequest(1L, BigDecimal.valueOf(90_000), null, "LUMP_SUM", 1)),
+            Arguments.of(new PayOrderRequest(1L, BigDecimal.valueOf(90_000), "ANY", "LUMP_SUM", 1)),
+            Arguments.of(new PayOrderRequest(1L, BigDecimal.valueOf(90_000), "CARD", null, 1)),
+            Arguments.of(new PayOrderRequest(1L, BigDecimal.valueOf(90_000), "CARD", "ANY", 1)),
+            Arguments.of(new PayOrderRequest(1L, BigDecimal.valueOf(90_000), "CARD", "ANY", null)),
+            Arguments.of(new PayOrderRequest(1L, BigDecimal.valueOf(90_000), "CARD", "ANY", -1))
         );
     }
 

@@ -1,6 +1,7 @@
 package com.flab.infrun.payment.domain;
 
 import com.flab.infrun.common.entity.BaseEntity;
+import com.flab.infrun.payment.domain.exception.NotAllowedInstallmentMonthException;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -31,19 +32,30 @@ public class Payment extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private PayStatus payStatus;
 
+    private Integer installmentMonth;
+
     private Payment(
         final Long userId,
         final Long orderId,
         final BigDecimal amount,
         final PayType payType,
-        final PayMethod payMethod
+        final PayMethod payMethod,
+        final Integer installmentMonth
     ) {
+        verifyInstallment(payType, installmentMonth);
         this.userId = userId;
         this.orderId = orderId;
         this.amount = amount;
         this.payType = payType;
         this.payMethod = payMethod;
         this.payStatus = PayStatus.PAYMENT_SUCCESS;
+        this.installmentMonth = installmentMonth;
+    }
+
+    private void verifyInstallment(final PayType payType, final Integer installmentMonth) {
+        if (payType == PayType.INSTALLMENT && installmentMonth < 1) {
+            throw new NotAllowedInstallmentMonthException();
+        }
     }
 
     public static Payment create(
@@ -51,9 +63,10 @@ public class Payment extends BaseEntity {
         final Long orderId,
         final BigDecimal amount,
         final PayType payType,
-        final PayMethod payMethod
+        final PayMethod payMethod,
+        final Integer installmentMonth
     ) {
-        return new Payment(userId, orderId, amount, payType, payMethod);
+        return new Payment(userId, orderId, amount, payType, payMethod, installmentMonth);
     }
 
     public BigDecimal getAmount() {
@@ -70,5 +83,9 @@ public class Payment extends BaseEntity {
 
     public PayStatus getPayStatus() {
         return payStatus;
+    }
+
+    public Integer getInstallmentMonth() {
+        return installmentMonth;
     }
 }

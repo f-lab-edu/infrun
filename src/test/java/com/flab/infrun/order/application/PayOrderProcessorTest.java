@@ -25,6 +25,7 @@ import com.flab.infrun.order.domain.exception.OrderPayAmountNotMatchException;
 import com.flab.infrun.payment.domain.PayMethod;
 import com.flab.infrun.payment.domain.PayStatus;
 import com.flab.infrun.payment.domain.PayType;
+import com.flab.infrun.payment.domain.exception.NotAllowedInstallmentMonthException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.stream.Stream;
@@ -61,7 +62,8 @@ final class PayOrderProcessorTest extends IntegrationTest {
             1L,
             BigDecimal.valueOf(40_000),
             PayMethod.CARD,
-            PayType.LUMP_SUM);
+            PayType.LUMP_SUM,
+            1);
 
         final var result = sut.execute(command);
 
@@ -82,10 +84,32 @@ final class PayOrderProcessorTest extends IntegrationTest {
             1L,
             BigDecimal.ZERO,
             PayMethod.CARD,
-            PayType.LUMP_SUM);
+            PayType.LUMP_SUM,
+            1);
 
         assertThatThrownBy(() -> sut.execute(command))
             .isInstanceOf(OrderPayAmountNotMatchException.class);
+
+        final Order order = orderRepository.findById(1L);
+
+        assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.ORDER_CANCELED);
+        assertThat(order.getCouponStatus()).isEqualTo(CouponStatus.REGISTERED);
+    }
+
+    @Test
+    @DisplayName("할부 결제인 경우 할부 개월 수가 1개월 이하라면 예외가 발생하고 주문이 취소된다")
+    void payOrder_withIncorrectInstallmentMonth() {
+        setupCouponAndOrder(OrderStatus.ORDER_CREATED);
+        final var command = new PayOrderCommand(
+            1L,
+            1L,
+            BigDecimal.valueOf(40_000),
+            PayMethod.CARD,
+            PayType.INSTALLMENT,
+            0);
+
+        assertThatThrownBy(() -> sut.execute(command))
+            .isInstanceOf(NotAllowedInstallmentMonthException.class);
 
         final Order order = orderRepository.findById(1L);
 
@@ -103,7 +127,8 @@ final class PayOrderProcessorTest extends IntegrationTest {
             1L,
             BigDecimal.valueOf(40_000),
             PayMethod.CARD,
-            PayType.LUMP_SUM);
+            PayType.LUMP_SUM,
+            1);
 
         assertThatThrownBy(() -> sut.execute(command))
             .isInstanceOfAny(

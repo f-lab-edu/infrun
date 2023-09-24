@@ -23,7 +23,10 @@ public record PayOrderRequest(
 
     @NotBlank(message = "결제 타입은 필수입니다.")
     @EnumValid(type = PayType.class, message = "결제 타입은 LUMP_SUM 또는 INSTALLMENT만 가능합니다.", ignoreCase = true)
-    String payType
+    String payType,
+
+    @Min(value = 1, message = "할부 개월 수는 1 이상이어야 합니다.")
+    Integer installmentMonths
 ) {
 
     public PayOrderCommand toCommand(final Member member) {
@@ -32,7 +35,8 @@ public record PayOrderRequest(
             1L,
             BigDecimal.valueOf(40_000),
             PayMethod.valueOf(payMethod),
-            PayType.valueOf(payType)
+            PayType.valueOf(payType),
+            installmentMonths
         );
     }
 }

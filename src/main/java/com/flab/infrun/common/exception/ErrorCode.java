@@ -40,7 +40,10 @@ public enum ErrorCode {
     NOT_FOUND_ORDER("주문을 찾을 수 없습니다."),
     ORDER_PAY_AMOUNT_NOT_MATCH("주문 결제 금액이 일치하지 않습니다."),
     ALREADY_CANCELED_ORDER("이미 취소된 주문입니다."),
-    ALREADY_COMPLETED_ORDER("이미 완료된 주문입니다.");
+    ALREADY_COMPLETED_ORDER("이미 완료된 주문입니다."),
+
+    // PAYMENT
+    NOT_ALLOWED_INSTALLMENT_MONTH("허용되지 않은 할부 개월입니다.");
 
     private final String message;
 

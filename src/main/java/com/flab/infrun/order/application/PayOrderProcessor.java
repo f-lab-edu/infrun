@@ -9,6 +9,7 @@ import com.flab.infrun.order.domain.exception.AlreadyCompletedOrderException;
 import com.flab.infrun.order.domain.exception.OrderPayAmountNotMatchException;
 import com.flab.infrun.payment.domain.Payment;
 import com.flab.infrun.payment.domain.PaymentRepository;
+import com.flab.infrun.payment.domain.exception.NotAllowedInstallmentMonthException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -26,7 +27,8 @@ public class PayOrderProcessor {
     @Transactional(dontRollbackOn = {
         AlreadyCanceledOrderException.class,
         AlreadyCompletedOrderException.class,
-        OrderPayAmountNotMatchException.class})
+        OrderPayAmountNotMatchException.class,
+        NotAllowedInstallmentMonthException.class})
     public PayedOrderResult execute(final PayOrderCommand command) {
         final Order order = orderRepository.findById(command.orderId());
 
@@ -35,8 +37,8 @@ public class PayOrderProcessor {
             final Payment payment = savePayment(command);
 
             return PayedOrderResult.from(payment, order.getOrderStatus());
-        } catch (AlreadyCanceledOrderException | AlreadyCompletedOrderException |
-                 OrderPayAmountNotMatchException e) {
+        } catch (AlreadyCanceledOrderException | AlreadyCompletedOrderException
+                 | OrderPayAmountNotMatchException | NotAllowedInstallmentMonthException e) {
             log.debug(e.getMessage());
             order.cancel();
 
@@ -50,7 +52,8 @@ public class PayOrderProcessor {
             command.orderId(),
             command.amount(),
             command.payType(),
-            command.payMethod());
+            command.payMethod(),
+            command.installmentMonths());
 
         return paymentRepository.save(payment);
     }
