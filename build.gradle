@@ -8,11 +8,16 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.1.0'
     id 'io.spring.dependency-management' version '1.1.0'
+    id 'jacoco'
 }
 
 group = 'flab.com'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '17'
+
+jacoco {
+    toolVersion = "0.8.8"
+}
 
 configurations {
     compileOnly {
@@ -31,6 +36,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-security'
 
+    implementation 'com.mysql:mysql-connector-j'
+
     implementation 'com.google.guava:guava:32.0.1-jre'
     implementation 'io.rest-assured:rest-assured'
 
@@ -48,6 +55,12 @@ dependencies {
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
+    //s3 추가
+    implementation platform('software.amazon.awssdk:bom:2.20.56')
+    implementation 'software.amazon.awssdk:s3'
+    implementation 'software.amazon.awssdk:sso'
+    implementation 'software.amazon.awssdk:ssooidc'
+
     compileOnly 'org.projectlombok:lombok'
 
     runtimeOnly 'com.h2database:h2'
@@ -62,6 +75,32 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+    finalizedBy('jacocoTestReport')
+
+    jacocoTestReport {
+        reports {
+            xml.enabled true
+        }
+        finalizedBy('jacocoTestCoverageVerification')
+    }
+
+    jacocoTestCoverageVerification {
+        violationRules {
+            rule {
+                enabled = true
+                element = "CLASS"
+                limit {
+                    counter = "LINE"
+                    value = "COVEREDRATIO"
+                    minimum = "0".toBigDecimal()
+                }
+            }
+        }
+    }
+}
+
+bootJar {
+    archiveFileName = 'app.jar'
 }
 
 // Querydsl 설정부

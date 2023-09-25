@@ -32,4 +32,9 @@ public class CouponRepositoryAdapter implements CouponRepository {
     public Optional<Coupon> findByCouponCodeWithLock(final String couponCode) {
         return couponJpaRepository.findByCodeWithLock(couponCode);
     }
+
+    @Override
+    public List<Coupon> findAllByOwnerId(final Long ownerId) {
+        return couponJpaRepository.findAllByOwnerId(ownerId);
+    }
 }

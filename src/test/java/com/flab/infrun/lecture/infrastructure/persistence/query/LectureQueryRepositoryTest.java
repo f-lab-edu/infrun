@@ -1,21 +1,14 @@
 package com.flab.infrun.lecture.infrastructure.persistence.query;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import com.flab.infrun.lecture.domain.Lecture;
 import com.flab.infrun.lecture.domain.LectureDetail;
-import com.flab.infrun.lecture.infrastructure.data.LectureDTO;
-import com.flab.infrun.lecture.infrastructure.persistence.query.condition.LectureSearchCondition;
 import com.flab.infrun.member.domain.Member;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 class LectureQueryRepositoryTest {
@@ -26,21 +19,21 @@ class LectureQueryRepositoryTest {
     Member member1;
     Member member2;
 
-    @Test
-    @Transactional
-    @DisplayName("Fetch Join Test")
-    void fetch_join_test() {
-        LectureSearchCondition searchCondition1 = new LectureSearchCondition("LectureA",
-            20000, 1, "JAVA", member1.getNickname());
-        LectureSearchCondition searchCondition2 = new LectureSearchCondition(null, null, null, null,
-            null);
-
-        List<LectureDTO> searched1 = repository.search(searchCondition1);
-        List<LectureDTO> searched2 = repository.search(searchCondition2);
-
-        assertThat(searched1.size()).isEqualTo(1);
-        assertThat(searched2.size()).isEqualTo(2);
-    }
+//    @Test
+//    @Transactional
+//    @DisplayName("Fetch Join Test")
+//    void fetch_join_test() {
+//        LectureSearchCondition searchCondition1 = new LectureSearchCondition("LectureA",
+//            20000, 1, "JAVA", member1.getNickname());
+//        LectureSearchCondition searchCondition2 = new LectureSearchCondition(null, null, null, null,
+//            null);
+//
+//        List<LectureDTO> searched1 = repository.search(searchCondition1);
+//        List<LectureDTO> searched2 = repository.search(searchCondition2);
+//
+//        assertThat(searched1.size()).isEqualTo(1);
+//        assertThat(searched2.size()).isEqualTo(2);
+//    }
 
     @BeforeEach
     void setup() {

@@ -1,7 +1,11 @@
 package com.flab.infrun.coupon.presentation;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -9,47 +13,60 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.flab.infrun.common.CommonExceptionHandler;
+import com.flab.infrun.common.config.security.UserAdapter;
 import com.flab.infrun.coupon.application.CouponFacade;
 import com.flab.infrun.coupon.application.command.CreateCouponCommand;
+import com.flab.infrun.coupon.application.result.CouponView;
 import com.flab.infrun.coupon.application.result.CreatedCouponResult;
 import com.flab.infrun.coupon.presentation.request.CreateCouponRequest;
+import com.flab.infrun.member.domain.Member;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-@ExtendWith(MockitoExtension.class)
+@WebMvcTest(controllers = CouponController.class)
 final class CouponControllerTest {
 
     private static final String COUPON_URI = "/coupons";
-
-    private MockMvc mockMvc;
-
     private ObjectMapper objectMapper;
-
-    @InjectMocks
-    private CouponController couponController;
-
-    @Mock
+    @Autowired
+    private MockMvc mockMvc;
+    @MockBean
     private CouponFacade couponFacade;
 
     @BeforeEach
     void setup() {
-        mockMvc = MockMvcBuilders
-            .standaloneSetup(couponController)
-            .setControllerAdvice(new CommonExceptionHandler())
-            .build();
         objectMapper = new ObjectMapper()
             .registerModule(new JavaTimeModule());
+    }
+
+    @Test
+    @DisplayName("쿠폰을 조회하면 200 상태코드와 쿠폰 리스트를 반환한다")
+    void getCoupons() throws Exception {
+        given(couponFacade.getCoupons(anyLong(), any(LocalDateTime.class)))
+            .willReturn(createCouponResult());
+
+        final var result = mockMvc.perform(get(COUPON_URI)
+                .with(user(createUser()))
+            )
+            .andDo(print());
+
+        result.andExpect(status().isOk())
+            .andExpect(jsonPath("$.data.quantity").value(2))
+            .andExpect(jsonPath("$.data.coupons").isNotEmpty());
+    }
+
+    private List<CouponView> createCouponResult() {
+        return List.of(
+            new CouponView(1L, 1000, "FIX"),
+            new CouponView(1L, 10, "RATE"));
     }
 
     @Test
@@ -63,6 +80,8 @@ final class CouponControllerTest {
                 LocalDateTime.of(2029, 12, 31, 0, 0, 0)));
 
         final var result = mockMvc.perform(post(COUPON_URI)
+            .with(user(createUser()))
+            .with(csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(request))
         ).andDo(print());
@@ -79,6 +98,8 @@ final class CouponControllerTest {
         final var request = createInvalidCouponRequest();
 
         final var result = mockMvc.perform(post(COUPON_URI)
+            .with(user(createUser()))
+            .with(csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(request))
         ).andDo(print());
@@ -103,5 +124,12 @@ final class CouponControllerTest {
             LocalDateTime.of(1999, 12, 31, 0, 0, 0),
             0
         );
+    }
+
+    private UserAdapter createUser() {
+        Member member = Member.of("test", "test", "test");
+        member.assignId(1L);
+
+        return new UserAdapter(member);
     }
 }

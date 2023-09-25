@@ -7,6 +7,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.flab.infrun.common.IntegrationTest;
+import com.flab.infrun.coupon.domain.Coupon;
 import com.flab.infrun.coupon.domain.CouponFixture;
 import com.flab.infrun.coupon.domain.CouponRepository;
 import com.flab.infrun.coupon.domain.CouponStatus;
@@ -171,7 +172,10 @@ final class PayOrderProcessorTest extends IntegrationTest {
             .price(BigDecimal.valueOf(50_000))
             .couponFixture(couponFixture);
 
-        couponRepository.save(couponFixture.build());
-        orderRepository.save(orderFixture.build());
+        final Coupon coupon = couponFixture.build();
+        final Order order = orderFixture.buildWithCoupon();
+
+        couponRepository.save(coupon);
+        orderRepository.save(order);
     }
 }

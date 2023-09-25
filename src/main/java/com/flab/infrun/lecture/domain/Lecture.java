@@ -55,10 +55,6 @@ public class Lecture {
         return id;
     }
 
-    public void setId(long key) {
-        this.id = key;
-    }
-
     public String getName() {
         return name;
     }

@@ -5,7 +5,7 @@ import com.flab.infrun.common.exception.SystemException;
 
 public final class InvalidCouponDiscountAmountException extends SystemException {
 
-    public InvalidCouponDiscountAmountException(final ErrorCode errorCode) {
-        super(errorCode);
+    public InvalidCouponDiscountAmountException() {
+        super(ErrorCode.INVALID_COUPON_DISCOUNT_AMOUNT);
     }
 }

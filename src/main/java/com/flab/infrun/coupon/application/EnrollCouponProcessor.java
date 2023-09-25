@@ -24,7 +24,7 @@ public class EnrollCouponProcessor {
         final Coupon coupon = couponRepository.findByCouponCodeWithLock(command.couponCode())
             .orElseThrow(NotFoundCouponException::new);
 
-        coupon.enroll(command.member(), currentTime);
+        coupon.enroll(command.member().getId(), currentTime);
 
         return EnrolledCouponResult.from(command.member().getEmail(), coupon);
     }

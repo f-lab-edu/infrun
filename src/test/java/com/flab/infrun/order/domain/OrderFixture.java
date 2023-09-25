@@ -54,7 +54,23 @@ public class OrderFixture {
             customerId,
             buildOrderItems(),
             price,
-            couponFixture.build());
+            null
+        );
+
+        order.assignId(id);
+        order.assignOrderStatus(orderStatus);
+
+        return order;
+    }
+
+    public Order buildWithCoupon() {
+        final Order order = Order.create(
+            customerId,
+            buildOrderItems(),
+            price,
+            couponFixture.buildWithEnrolled()
+        );
+
         order.assignId(id);
         order.assignOrderStatus(orderStatus);
 

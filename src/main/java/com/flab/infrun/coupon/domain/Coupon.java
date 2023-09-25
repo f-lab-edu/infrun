@@ -1,22 +1,17 @@
 package com.flab.infrun.coupon.domain;
 
-import com.flab.infrun.common.exception.ErrorCode;
 import com.flab.infrun.coupon.domain.exception.AlreadyRegisteredCouponException;
 import com.flab.infrun.coupon.domain.exception.AlreadyUsedCouponException;
 import com.flab.infrun.coupon.domain.exception.ExpiredCouponException;
 import com.flab.infrun.coupon.domain.exception.InvalidCouponOwnerException;
-import com.flab.infrun.member.domain.Member;
 import com.google.common.annotations.VisibleForTesting;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -43,18 +38,16 @@ public class Coupon {
 
     private LocalDateTime expirationAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "owner_id")
-    private Member owner;
+    private Long ownerId;
 
     @Builder
     private Coupon(final String code, final CouponStatus status, final DiscountInfo discountInfo,
-        final LocalDateTime expirationAt, final Member owner) {
+        final LocalDateTime expirationAt, final Long ownerId) {
         this.code = code;
         this.status = status;
         this.discountInfo = discountInfo;
         this.expirationAt = expirationAt;
-        this.owner = owner;
+        this.ownerId = ownerId;
     }
 
     public static Coupon create(
@@ -70,25 +63,25 @@ public class Coupon {
             .build();
     }
 
-    public void enroll(final Member owner, final LocalDateTime currentTime) {
+    public void enroll(final Long ownerId, final LocalDateTime currentTime) {
         verifyIsRegistrableAndExpireIfNecessary(currentTime);
-        this.owner = owner;
+        this.ownerId = ownerId;
         this.status = CouponStatus.REGISTERED;
     }
 
     private void verifyIsRegistrableAndExpireIfNecessary(final LocalDateTime currentTime) {
         if (this.status == CouponStatus.REGISTERED) {
-            throw new AlreadyRegisteredCouponException(ErrorCode.ALREADY_REGISTERED_COUPON);
+            throw new AlreadyRegisteredCouponException();
         }
         if (this.status == CouponStatus.USED) {
             throw new AlreadyUsedCouponException();
         }
         if (this.status == CouponStatus.EXPIRED) {
-            throw new ExpiredCouponException(ErrorCode.EXPIRED_COUPON);
+            throw new ExpiredCouponException();
         }
         if (this.expirationAt.isBefore(currentTime)) {
             this.status = CouponStatus.EXPIRED;
-            throw new ExpiredCouponException(ErrorCode.EXPIRED_COUPON);
+            throw new ExpiredCouponException();
         }
     }
 
@@ -99,17 +92,17 @@ public class Coupon {
 
     public void verifyIsUsableAndExpireIfNecessary(
         final LocalDateTime currentTime,
-        final Member customer
+        final Long customerId
     ) {
-        if (!this.owner.equals(customer)) {
+        if (!this.ownerId.equals(customerId)) {
             throw new InvalidCouponOwnerException();
         }
         if (this.status == CouponStatus.EXPIRED) {
-            throw new ExpiredCouponException(ErrorCode.EXPIRED_COUPON);
+            throw new ExpiredCouponException();
         }
         if (this.expirationAt.isBefore(currentTime)) {
             this.status = CouponStatus.EXPIRED;
-            throw new ExpiredCouponException(ErrorCode.EXPIRED_COUPON);
+            throw new ExpiredCouponException();
         }
         if (this.status == CouponStatus.USED) {
             throw new AlreadyUsedCouponException();
@@ -136,8 +129,8 @@ public class Coupon {
         return status;
     }
 
-    public Member getOwner() {
-        return owner;
+    public Long getOwnerId() {
+        return ownerId;
     }
 
     public DiscountInfo getDiscountInfo() {

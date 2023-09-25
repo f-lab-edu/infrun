@@ -1,13 +1,12 @@
 package com.flab.infrun.coupon.presentation.response;
 
 import com.flab.infrun.coupon.application.result.EnrolledCouponResult;
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public record EnrolledCouponResponse(
     String ownerEmail,
     String discountType,
-    BigDecimal discountValue,
+    int discountValue,
     LocalDateTime expirationAt
 ) {
 

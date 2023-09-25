@@ -28,8 +28,8 @@ public class DiscountInfo {
         return discountType;
     }
 
-    public BigDecimal getDiscountValue() {
-        return BigDecimal.valueOf(discountValue);
+    public int getDiscountValue() {
+        return discountValue;
     }
 
     public BigDecimal discount(final BigDecimal price) {

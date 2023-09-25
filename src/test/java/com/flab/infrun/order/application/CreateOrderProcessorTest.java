@@ -9,6 +9,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.flab.infrun.cart.domain.CartRepository;
 import com.flab.infrun.common.IntegrationTest;
+import com.flab.infrun.coupon.domain.Coupon;
 import com.flab.infrun.coupon.domain.CouponRepository;
 import com.flab.infrun.coupon.domain.DiscountInfo;
 import com.flab.infrun.coupon.domain.DiscountType;
@@ -18,6 +19,7 @@ import com.flab.infrun.lecture.domain.LectureFixture;
 import com.flab.infrun.lecture.infrastructure.persistence.jpa.LectureJpaRepository;
 import com.flab.infrun.member.domain.Member;
 import com.flab.infrun.member.domain.MemberRepository;
+import com.flab.infrun.member.infrastructure.persistence.MemberJpaRepository;
 import com.flab.infrun.order.application.command.CreateOrderCommand;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -43,6 +45,8 @@ final class CreateOrderProcessorTest extends IntegrationTest {
     private LectureJpaRepository lectureRepository;
     @Autowired
     private CouponRepository couponRepository;
+    @Autowired
+    private MemberJpaRepository memberJpaRepository;
 
     @BeforeEach
     void setup() {
@@ -57,6 +61,9 @@ final class CreateOrderProcessorTest extends IntegrationTest {
         final var customer = createMember();
         final var command = new CreateOrderCommand(customer, List.of(1L, 2L, 3L), null);
         final var currentTime = LocalDateTime.of(2023, 12, 31, 0, 0);
+
+        final List<Member> all = memberJpaRepository.findAll();
+        System.out.println("*************" + all.toString());
 
         final var result = sut.execute(command, currentTime);
 
@@ -89,7 +96,8 @@ final class CreateOrderProcessorTest extends IntegrationTest {
     @ParameterizedTest
     @MethodSource("provideInvalidCoupon")
     @DisplayName("쿠폰이 유효하지 않은 경우 예외가 발생한다")
-    void createOrder_withInvalidCouponCode(final String couponCode, final LocalDateTime expirationAt) {
+    void createOrder_withInvalidCouponCode(final String couponCode,
+        final LocalDateTime expirationAt) {
         final var currentTime = LocalDateTime.of(2023, 12, 31, 0, 0);
         final var customer = createMember();
         final var command = new CreateOrderCommand(customer, List.of(1L, 2L, 3L), couponCode);
@@ -104,6 +112,10 @@ final class CreateOrderProcessorTest extends IntegrationTest {
             Arguments.of("invalid-code", LocalDateTime.of(2023, 12, 31, 0, 0)),
             Arguments.of("coupon-code", LocalDateTime.of(2023, 12, 30, 0, 0))
         );
+    }
+
+    private Member createMember() {
+        return aMemberFixture().build();
     }
 
     private void setupCart() {
@@ -123,11 +135,7 @@ final class CreateOrderProcessorTest extends IntegrationTest {
                 .build()
         );
     }
-
-    private Member createMember() {
-        return aMemberFixture().build();
-    }
-
+    
     private void setupLectures() {
         lectureRepository.saveAll(
             List.of(
@@ -148,12 +156,13 @@ final class CreateOrderProcessorTest extends IntegrationTest {
     }
 
     private void setupCoupon(final LocalDateTime expirationAt) {
-        couponRepository.save(
-            aCouponFixture()
-                .expirationAt(expirationAt)
-                .discountInfo(
-                    DiscountInfo.of(DiscountType.FIX, 1_000))
-                .build());
+        final Coupon coupon = aCouponFixture()
+            .expirationAt(expirationAt)
+            .discountInfo(
+                DiscountInfo.of(DiscountType.FIX, 1_000))
+            .buildWithEnrolled();
+
+        couponRepository.save(coupon);
     }
 }
 

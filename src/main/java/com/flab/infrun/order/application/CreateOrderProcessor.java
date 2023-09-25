@@ -40,7 +40,7 @@ public class CreateOrderProcessor {
             command.couponCode(),
             currentTime);
         final List<Lecture> lectures = lectureRepository.findAllByIdIn(command.lectureIds());
-        BigDecimal price = calculatePrice(lectures);
+        final BigDecimal price = calculatePrice(lectures);
         final List<OrderItem> orderItems = createOrderItems(lectures);
 
         final Order order = orderRepository.save(
@@ -60,7 +60,7 @@ public class CreateOrderProcessor {
         }
 
         final Coupon coupon = couponRepository.findByCouponCode(couponCode);
-        coupon.verifyIsUsableAndExpireIfNecessary(currentTime, member);
+        coupon.verifyIsUsableAndExpireIfNecessary(currentTime, member.getId());
 
         return Optional.of(coupon);
     }

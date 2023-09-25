@@ -1,6 +1,5 @@
 package com.flab.infrun.coupon.domain;
 
-import com.flab.infrun.member.domain.MemberFixture;
 import java.time.LocalDateTime;
 
 public class CouponFixture {
@@ -10,7 +9,7 @@ public class CouponFixture {
     private CouponStatus status = CouponStatus.REGISTERED;
     private DiscountInfo discountInfo = DiscountInfo.of(DiscountType.FIX, 1_000);
     private LocalDateTime expirationAt = LocalDateTime.of(2099, 12, 31, 0, 0);
-    private MemberFixture ownerFixture = MemberFixture.aMemberFixture();
+    private Long ownerId = 1L;
 
     public static CouponFixture aCouponFixture() {
         return new CouponFixture();
@@ -41,8 +40,8 @@ public class CouponFixture {
         return this;
     }
 
-    public CouponFixture ownerFixture(final MemberFixture ownerFixture) {
-        this.ownerFixture = ownerFixture;
+    public CouponFixture ownerId(final Long ownerId) {
+        this.ownerId = ownerId;
         return this;
     }
 
@@ -52,8 +51,21 @@ public class CouponFixture {
             discountInfo,
             expirationAt
         );
+
         coupon.assignId(id);
-        coupon.enroll(ownerFixture.build(), LocalDateTime.now());
+
+        return coupon;
+    }
+
+    public Coupon buildWithEnrolled() {
+        final Coupon coupon = Coupon.create(
+            code,
+            discountInfo,
+            expirationAt
+        );
+
+        coupon.assignId(id);
+        coupon.enroll(ownerId, LocalDateTime.now());
 
         return coupon;
     }
