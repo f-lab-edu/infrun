@@ -29,13 +29,26 @@ public enum ErrorCode {
     INVALID_COUPON_DISCOUNT_TYPE("쿠폰 할인 타입이 유효하지 않습니다."),
     INVALID_COUPON_DISCOUNT_AMOUNT("쿠폰 할인 금액 또는 할인율이 유효하지 않습니다."),
     NOT_FOUND_COUPON("존재하지 않는 쿠폰입니다."),
+    ALREADY_USED_COUPON("이미 사용된 쿠폰입니다."),
     ALREADY_REGISTERED_COUPON("이미 등록된 쿠폰입니다."),
     EXPIRED_COUPON("만료된 쿠폰입니다."),
-    UNAVAILABLE_COUPON("사용할 수 없는 쿠폰입니다."),
+    INVALID_COUPON_OWNER("쿠폰 소유자가 아닙니다."),
 
     // CART
     NOT_FOUND_CART("수강바구니를 찾을 수 없습니다."),
-    NOT_FOUND_CART_ITEM("수강바구니에 해당 상품을 찾을 수 없습니다.");
+    NOT_FOUND_CART_ITEM("수강바구니에 해당 상품을 찾을 수 없습니다."),
+
+    // ORDER
+    INVALID_CREATE_ORDER("유효하지 않은 주문 정보입니다."),
+    INVALID_PRICE_VALUE("주문 금액은 0원보다 적을 수 없습니다."),
+    INVALID_ORDER_ITEM_PRICE_VALUE("주문 상품 가격이 올바르지 않습니다."),
+    NOT_FOUND_ORDER("주문을 찾을 수 없습니다."),
+    ORDER_PAY_AMOUNT_NOT_MATCH("주문 결제 금액이 일치하지 않습니다."),
+    ALREADY_CANCELED_ORDER("이미 취소된 주문입니다."),
+    ALREADY_COMPLETED_ORDER("이미 완료된 주문입니다."),
+
+    // PAYMENT
+    NOT_ALLOWED_INSTALLMENT_MONTH("허용되지 않은 할부 개월입니다.");
 
     private final String message;
 

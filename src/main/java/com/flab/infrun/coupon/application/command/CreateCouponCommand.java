@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 public record CreateCouponCommand(
     String discountType,
-    int discountAmount,
+    int discountValue,
     LocalDateTime expirationAt,
     int quantity
 ) {
@@ -17,7 +17,7 @@ public record CreateCouponCommand(
             code,
             DiscountInfo.of(
                 DiscountType.valueOf(discountType),
-                discountAmount
+                discountValue
             ),
             expirationAt
         );

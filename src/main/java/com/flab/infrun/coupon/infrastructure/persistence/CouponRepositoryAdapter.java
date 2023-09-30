@@ -2,6 +2,7 @@ package com.flab.infrun.coupon.infrastructure.persistence;
 
 import com.flab.infrun.coupon.domain.Coupon;
 import com.flab.infrun.coupon.domain.CouponRepository;
+import com.flab.infrun.coupon.domain.exception.NotFoundCouponException;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,12 @@ public class CouponRepositoryAdapter implements CouponRepository {
     @Override
     public List<Coupon> saveAll(final List<Coupon> coupons) {
         return couponJpaRepository.saveAll(coupons);
+    }
+
+    @Override
+    public Coupon findByCouponCode(final String couponCode) {
+        return couponJpaRepository.findByCode(couponCode)
+            .orElseThrow(NotFoundCouponException::new);
     }
 
     @Override

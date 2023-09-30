@@ -28,7 +28,7 @@ public class CouponReader {
         final List<Coupon> coupons
     ) {
         return coupons.stream()
-            .filter(Coupon::verifyIsUsable)
+            .filter(coupon -> coupon.getExpirationAt().isBefore(currentTime))
             .map(coupon -> new CouponView(
                 Duration.between(coupon.getExpirationAt(), currentTime).toDays(),
                 coupon.getDiscountInfo().getDiscountValue(),

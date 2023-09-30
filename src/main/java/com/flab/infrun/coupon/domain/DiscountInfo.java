@@ -1,6 +1,7 @@
 package com.flab.infrun.coupon.domain;
 
 import jakarta.persistence.Embeddable;
+import java.math.BigDecimal;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -16,8 +17,11 @@ public class DiscountInfo {
         this.discountValue = discountValue;
     }
 
-    public static DiscountInfo of(final DiscountType discountType, final int discountAmount) {
-        return new DiscountInfo(discountType, discountAmount);
+    public static DiscountInfo of(
+        final DiscountType discountType,
+        final int discountValue
+    ) {
+        return new DiscountInfo(discountType, discountValue);
     }
 
     public DiscountType getDiscountType() {
@@ -26,5 +30,10 @@ public class DiscountInfo {
 
     public int getDiscountValue() {
         return discountValue;
+    }
+
+    public BigDecimal discount(final BigDecimal price) {
+        return BigDecimal.valueOf(
+            this.discountType.calculateDiscountPrice(price.intValue(), discountValue));
     }
 }

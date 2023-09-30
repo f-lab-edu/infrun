@@ -3,9 +3,9 @@ package com.flab.infrun.coupon.domain.exception;
 import com.flab.infrun.common.exception.ErrorCode;
 import com.flab.infrun.common.exception.SystemException;
 
-public final class UnavailableCouponException extends SystemException {
+public class InvalidCouponOwnerException extends SystemException {
 
-    public UnavailableCouponException() {
-        super(ErrorCode.UNAVAILABLE_COUPON);
+    public InvalidCouponOwnerException() {
+        super(ErrorCode.INVALID_COUPON_OWNER);
     }
 }

@@ -26,11 +26,12 @@ final class EnrollCouponProcessorTest {
 
     @BeforeEach
     void setUp() {
-        final CouponRepository couponRepository = new StubCouponRepository();
+        final CouponRepository couponRepository = new FakeCouponRepository();
         sut = new EnrollCouponProcessor(couponRepository);
 
         couponRepository.save(
-            Coupon.create(couponCode, DiscountInfo.of(DiscountType.FIX, 1000), expirationAt));
+            Coupon.create(couponCode, DiscountInfo.of(DiscountType.FIX, 1_000),
+                expirationAt));
     }
 
     @Test
@@ -43,7 +44,7 @@ final class EnrollCouponProcessorTest {
 
         assertThat(result.ownerEmail()).isEqualTo(member.getEmail());
         assertThat(result.discountInfo().getDiscountType()).isEqualTo(DiscountType.FIX);
-        assertThat(result.discountInfo().getDiscountValue()).isEqualTo(1000);
+        assertThat(result.discountInfo().getDiscountValue()).isEqualTo(1_000);
         assertThat(result.expirationAt()).isEqualTo(expirationAt);
     }
 
