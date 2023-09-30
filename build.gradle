@@ -1,12 +1,23 @@
+buildscript {
+    ext {
+        queryDslVersion = "5.0.0"
+    }
+}
+
 plugins {
     id 'java'
     id 'org.springframework.boot' version '3.1.0'
     id 'io.spring.dependency-management' version '1.1.0'
+    id 'jacoco'
 }
 
 group = 'flab.com'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '17'
+
+jacoco {
+    toolVersion = "0.8.8"
+}
 
 configurations {
     compileOnly {
@@ -22,6 +33,33 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+
+    implementation 'com.mysql:mysql-connector-j'
+
+    implementation 'com.google.guava:guava:32.0.1-jre'
+    implementation 'io.rest-assured:rest-assured'
+
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+
+    // Querydsl 추가
+    implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+    annotationProcessor 'com.querydsl:querydsl-apt:5.0.0:jakarta'
+    annotationProcessor 'jakarta.annotation:jakarta.annotation-api'
+    annotationProcessor 'jakarta.persistence:jakarta.persistence-api'
+
+    implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.0'
+
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+
+    //s3 추가
+    implementation platform('software.amazon.awssdk:bom:2.20.56')
+    implementation 'software.amazon.awssdk:s3'
+    implementation 'software.amazon.awssdk:sso'
+    implementation 'software.amazon.awssdk:ssooidc'
 
     compileOnly 'org.projectlombok:lombok'
 
@@ -31,8 +69,54 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation 'io.rest-assured:rest-assured:5.1.1'
 }
 
 tasks.named('test') {
     useJUnitPlatform()
+    finalizedBy('jacocoTestReport')
+
+    jacocoTestReport {
+        reports {
+            xml.enabled true
+        }
+        finalizedBy('jacocoTestCoverageVerification')
+    }
+
+    jacocoTestCoverageVerification {
+        violationRules {
+            rule {
+                enabled = true
+                element = "CLASS"
+                limit {
+                    counter = "LINE"
+                    value = "COVEREDRATIO"
+                    minimum = "0".toBigDecimal()
+                }
+            }
+        }
+    }
+}
+
+bootJar {
+    archiveFileName = 'app.jar'
+}
+
+// Querydsl 설정부
+def generated = 'src/main/generated'
+
+// querydsl QClass 파일 생성 위치를 지정
+tasks.withType(JavaCompile) {
+    options.getGeneratedSourceOutputDirectory().set(file(generated))
+}
+
+// java source set 에 querydsl QClass 위치 추가
+sourceSets {
+    main.java.srcDirs += [generated]
+}
+
+// gradle clean 시에 QClass 디렉토리 삭제
+clean {
+    delete file(generated)
 }

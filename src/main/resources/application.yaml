@@ -2,12 +2,17 @@ server:
   port: 8080
 
 spring:
-  h2:
-    console:
-      path: /h2-console
-      enabled: true
-  datasource:
-    url: jdbc:h2:mem:~/local
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
+  application:
+    name: infrun
+  profiles:
+    active: local
+
+logging.level:
+  org.hibernate.SQL: debug
+
+aws:
+  s3:
+    bucketName: infrun
+    profileName: InfrunManager
+    region: ap-northeast-2
+    duration: 30

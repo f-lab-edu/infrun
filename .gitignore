@@ -57,7 +57,7 @@
 # .idea/modules.xml
 # .idea/*.iml
 # .idea/modules
-# *.iml
+*.iml
 # *.ipr
 
 # CMake
@@ -99,8 +99,6 @@ fabric.properties
 ### Intellij+all Patch ###
 # Ignore everything but code style settings and run configurations
 # that are supposed to be shared within teams.
-
-*.idea
 .idea/*
 
 !.idea/codeStyles
@@ -217,5 +215,10 @@ gradle-app.setting
 ### Gradle Patch ###
 # Java heap dump
 *.hprof
+
+# Querydsl
+/src/main/generated/
+
+.env
 
 # End of https://www.toptal.com/developers/gitignore/api/intellij+all,windows,macos,java,gradle,git
