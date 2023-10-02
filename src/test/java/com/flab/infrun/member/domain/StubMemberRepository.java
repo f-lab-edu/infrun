@@ -2,7 +2,6 @@ package com.flab.infrun.member.domain;
 
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class StubMemberRepository implements MemberRepository {
@@ -30,10 +29,11 @@ public final class StubMemberRepository implements MemberRepository {
     }
 
     @Override
-    public Optional<Member> findByEmail(final String email) {
+    public Member findByEmail(final String email) {
         return persistence.values().stream()
             .filter(member -> Objects.equals(member.getEmail(), email))
-            .findAny();
+            .findAny()
+            .get();
     }
 
     @Override
