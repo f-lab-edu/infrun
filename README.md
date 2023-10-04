@@ -18,3 +18,12 @@ Docker, Github Actions, NAVER Cloud Platform
 ## 프로젝트 구조
 
 ![architecture](https://github.com/f-lab-edu/infrun/assets/40778768/42cc2d5f-11b3-4718-ab7e-a433d344aa4f)
+
+## 앞으로 도전할 것
+
+- 캐싱을 활용한 조회 성능 개선 [ ]
+- SPOF 회피 
+  - DB 레플리케이션 [ ]
+  - 다중 서버 로드밸런싱 [ ]
+- 대용량 데이터 업로드 (영상) [ ]
+- 이벤트 기반 아키텍처 [ ]
