@@ -3,6 +3,7 @@ package com.flab.infrun.member.application;
 import com.flab.infrun.member.application.command.LoginCommand;
 import com.flab.infrun.member.domain.MemberRepository;
 import com.flab.infrun.member.domain.exception.NotFoundMemberException;
+import com.flab.infrun.member.domain.exception.NotMatchPasswordException;
 import com.flab.infrun.member.infrastructure.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -40,6 +41,9 @@ public class MemberLoginProcessor {
 
         final var member = memberRepository.findByEmail(command.email());
 
-        member.isMatchPassword(passwordEncoder.encode(command.password()));
+        if (!StringUtils.hasText(command.password())
+            || !passwordEncoder.matches(command.password(), member.getPassword())) {
+            throw new NotMatchPasswordException();
+        }
     }
 }

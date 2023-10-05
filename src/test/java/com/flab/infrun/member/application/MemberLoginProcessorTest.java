@@ -59,7 +59,7 @@ final class MemberLoginProcessorTest extends IntegrationTest {
     private static Stream<Arguments> provideInvalidCommand() {
         return Stream.of(
             Arguments.of(new LoginCommand(null, "password")),
-            Arguments.of(new LoginCommand("wrong@test.com", "password")),
+            Arguments.of(new LoginCommand("wrong_email@test.com", "password")),
             Arguments.of(new LoginCommand("test@test.com", null)),
             Arguments.of(new LoginCommand("test@test.com", "wrong_password"))
         );
