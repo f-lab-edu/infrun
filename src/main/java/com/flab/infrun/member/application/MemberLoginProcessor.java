@@ -1,6 +1,7 @@
 package com.flab.infrun.member.application;
 
 import com.flab.infrun.member.application.command.LoginCommand;
+import com.flab.infrun.member.application.result.LoginResult;
 import com.flab.infrun.member.domain.MemberRepository;
 import com.flab.infrun.member.domain.exception.NotFoundMemberException;
 import com.flab.infrun.member.domain.exception.NotMatchPasswordException;
@@ -22,7 +23,7 @@ public class MemberLoginProcessor {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public String execute(final LoginCommand command) {
+    public LoginResult execute(final LoginCommand command) {
         verifyCommand(command);
 
         final var authenticationToken = new UsernamePasswordAuthenticationToken(
@@ -31,7 +32,7 @@ public class MemberLoginProcessor {
             .authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        return tokenProvider.generateToken(authentication);
+        return new LoginResult(tokenProvider.generateToken(authentication));
     }
 
     private void verifyCommand(final LoginCommand command) {

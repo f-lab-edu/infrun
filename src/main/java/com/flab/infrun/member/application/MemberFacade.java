@@ -2,6 +2,7 @@ package com.flab.infrun.member.application;
 
 import com.flab.infrun.member.application.command.LoginCommand;
 import com.flab.infrun.member.application.command.SignupCommand;
+import com.flab.infrun.member.application.result.LoginResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -9,13 +10,14 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class MemberFacade {
 
-    private final MemberProcessor processor;
+    private final MemberSignupProcessor signupProcessor;
+    private final MemberLoginProcessor loginProcessor;
 
-    public Long signup(final SignupCommand command) {
-        return processor.register(command);
+    public void signup(final SignupCommand command) {
+        signupProcessor.execute(command);
     }
 
-    public String login(final LoginCommand command) {
-        return processor.login(command);
+    public LoginResult login(final LoginCommand command) {
+        return loginProcessor.execute(command);
     }
 }

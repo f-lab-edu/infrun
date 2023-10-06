@@ -39,7 +39,8 @@ final class MemberLoginProcessorTest extends IntegrationTest {
 
         final var result = sut.execute(command);
 
-        assertThat(result).isNotBlank();
+        assertThat(result).isNotNull();
+        assertThat(result.token()).isNotBlank();
     }
 
     @ParameterizedTest
