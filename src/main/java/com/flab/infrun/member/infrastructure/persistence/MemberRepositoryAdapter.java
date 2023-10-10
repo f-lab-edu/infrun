@@ -3,7 +3,6 @@ package com.flab.infrun.member.infrastructure.persistence;
 import com.flab.infrun.member.domain.Member;
 import com.flab.infrun.member.domain.MemberRepository;
 import com.flab.infrun.member.domain.exception.NotFoundMemberException;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -27,13 +26,14 @@ public class MemberRepositoryAdapter implements MemberRepository {
     }
 
     @Override
-    public Optional<Member> findByEmail(final String email) {
-        return jpaRepository.findByEmail(email);
+    public Member findByEmail(final String email) {
+        return jpaRepository.findByEmail(email)
+            .orElseThrow(NotFoundMemberException::new);
     }
 
     @Override
     public Member findById(final Long id) {
         return jpaRepository.findById(id)
-            .orElseThrow(() -> new NotFoundMemberException());
+            .orElseThrow(NotFoundMemberException::new);
     }
 }

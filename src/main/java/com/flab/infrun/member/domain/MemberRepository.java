@@ -1,7 +1,5 @@
 package com.flab.infrun.member.domain;
 
-import java.util.Optional;
-
 public interface MemberRepository {
 
     Member save(final Member member);
@@ -10,7 +8,7 @@ public interface MemberRepository {
 
     boolean existsByNickname(final String nickname);
 
-    Optional<Member> findByEmail(final String email);
+    Member findByEmail(final String email);
 
     Member findById(final Long id);
 }
