@@ -3,6 +3,7 @@ package com.flab.infrun.member.presentation;
 
 import com.flab.infrun.common.response.Response;
 import com.flab.infrun.member.application.MemberFacade;
+import com.flab.infrun.member.application.result.LoginResult;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,13 +23,13 @@ public class MemberController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public Response<Long> signup(@RequestBody @Valid final SignupRequest request) {
-        var result = facade.signup(request.toCommand());
+        facade.signup(request.toCommand());
 
-        return Response.success(result);
+        return Response.success(1L);
     }
 
     @PostMapping("/login")
-    public Response<String> login(@RequestBody @Valid final LoginRequest request) {
+    public Response<LoginResult> login(@RequestBody @Valid final LoginRequest request) {
         var result = facade.login(request.toCommand());
 
         return Response.success(result);

@@ -1,6 +1,7 @@
 package com.flab.infrun.member.domain;
 
 import com.flab.infrun.common.entity.BaseEntity;
+import com.flab.infrun.member.domain.exception.NotMatchPasswordException;
 import com.google.common.annotations.VisibleForTesting;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -51,6 +52,12 @@ public class Member extends BaseEntity {
 
     public void promoteToTeacher() {
         this.role = Role.TEACHER;
+    }
+
+    public void isMatchPassword(final String password) {
+        if (!this.password.equals(password)) {
+            throw new NotMatchPasswordException();
+        }
     }
 
     public Long getId() {
