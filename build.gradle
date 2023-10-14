@@ -9,11 +9,11 @@ plugins {
     id 'org.springframework.boot' version '3.1.0'
     id 'io.spring.dependency-management' version '1.1.0'
     id 'jacoco'
+    id 'org.jetbrains.kotlin.jvm' version '1.9.10'
 }
 
 group = 'flab.com'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '17'
 
 jacoco {
     toolVersion = "0.8.8"
@@ -42,6 +42,8 @@ dependencies {
     implementation 'io.rest-assured:rest-assured'
 
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
 
     // Querydsl 추가
     implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
@@ -101,6 +103,19 @@ tasks.named('test') {
 
 bootJar {
     archiveFileName = 'app.jar'
+}
+
+// Kotlin 설정부
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+}
+
+compileTestKotlin {
+    kotlinOptions {
+        jvmTarget = "17"
+    }
 }
 
 // Querydsl 설정부
