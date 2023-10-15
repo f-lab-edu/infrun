@@ -18,7 +18,7 @@ public class UserAdapter extends User {
     }
 
     private static Collection<? extends GrantedAuthority> authorities(final Role role) {
-        return Set.of(new SimpleGrantedAuthority(role.getValue()));
+        return Set.of(new SimpleGrantedAuthority(role.value));
     }
 
     public Member getMember() {
