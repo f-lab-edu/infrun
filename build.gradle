@@ -10,6 +10,8 @@ plugins {
     id 'io.spring.dependency-management' version '1.1.0'
     id 'jacoco'
     id 'org.jetbrains.kotlin.jvm' version '1.9.10'
+    id 'org.jetbrains.kotlin.plugin.jpa' version '1.9.10'
+    id 'org.jetbrains.kotlin.plugin.spring' version '1.9.10'
 }
 
 group = 'flab.com'
@@ -17,6 +19,18 @@ version = '0.0.1-SNAPSHOT'
 
 jacoco {
     toolVersion = "0.8.8"
+}
+
+noArg {
+    annotation("jakarta.persistence.Entity")
+    annotation("jakarta.persistence.Embeddable")
+    annotation("jakarta.persistence.MappedSuperclass")
+    invokeInitializers = true
+}
+allOpen {
+    annotation("jakarta.persistence.Entity")
+    annotation("jakarta.persistence.Embeddable")
+    annotation("jakarta.persistence.MappedSuperclass")
 }
 
 configurations {
@@ -43,7 +57,9 @@ dependencies {
 
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 
+    implementation 'org.jetbrains.kotlin:kotlin-reflect'
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+    implementation 'io.github.microutils:kotlin-logging:3.0.5'
 
     // Querydsl 추가
     implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
