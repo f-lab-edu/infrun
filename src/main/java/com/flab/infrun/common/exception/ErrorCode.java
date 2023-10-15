@@ -16,7 +16,6 @@ public enum ErrorCode {
     NOT_FOUND_MEMBER("존재하지 않는 회원입니다."),
     INVALID_PASSWORD("비밀번호 형식이 올바르지 않습니다."),
     NOT_MATCH_PASSWORD("비밀번호가 일치하지 않습니다."),
-    INVALID_PASSWORD("비밀번호 형식이 올바르지 않습니다."),
 
     //LECTURE
     DUPLICATED_FILE_NAME("중복되는 파일명이 존재합니다."),
