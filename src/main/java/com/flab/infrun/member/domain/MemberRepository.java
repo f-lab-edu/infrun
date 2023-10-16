@@ -2,13 +2,13 @@ package com.flab.infrun.member.domain;
 
 public interface MemberRepository {
 
-    Member save(final Member member);
+    Member save(Member member);
 
-    boolean existsByEmail(final String email);
+    Member findByEmail(String email);
 
-    boolean existsByNickname(final String nickname);
+    Member findById(Long id);
 
-    Member findByEmail(final String email);
+    boolean existsByEmail(String email);
 
-    Member findById(final Long id);
+    boolean existsByNickname(String nickname);
 }
