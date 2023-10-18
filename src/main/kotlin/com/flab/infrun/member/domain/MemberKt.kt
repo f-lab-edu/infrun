@@ -3,7 +3,7 @@ package com.flab.infrun.member.domain
 import com.flab.infrun.common.entity.BaseEntity
 import jakarta.persistence.*
 
-@Table(name = "members")
+@Table(name = "members_kt")
 @Entity
 class MemberKt(
     id: Long = 0,

@@ -69,7 +69,8 @@ class TokenProviderKt(
         val userDetails = userDetailsService.loadUserByUsername(claims.subject)
         val authorities = Arrays.stream(
             claims[AUTHORITIES_KEY].toString().split(",".toRegex()).dropLastWhile { it.isEmpty() }
-                .toTypedArray())
+                .toTypedArray()
+        )
             .map { role: String? -> SimpleGrantedAuthority(role) }
             .toList()
 
