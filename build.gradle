@@ -22,12 +22,6 @@ jacoco {
     toolVersion = "0.8.8"
 }
 
-noArg {
-    annotation("jakarta.persistence.Entity")
-    annotation("jakarta.persistence.Embeddable")
-    annotation("jakarta.persistence.MappedSuperclass")
-    invokeInitializers = true
-}
 allOpen {
     annotation("jakarta.persistence.Entity")
     annotation("jakarta.persistence.Embeddable")
