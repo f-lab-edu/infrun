@@ -1,0 +1,10 @@
+root=true
+
+[*]
+charset=utf-8
+indent_style=space
+indent_size=4
+insert_final_newline=true
+disabled_rules=no-wildcard-imports,import-ordering
+
+[*.{kt,kts}]
