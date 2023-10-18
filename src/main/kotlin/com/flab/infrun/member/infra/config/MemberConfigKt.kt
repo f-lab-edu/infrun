@@ -17,7 +17,7 @@ class MemberConfigKt {
     }
 
     @Bean
-    fun memberVerifierKt(memberJpaRepository: MemberKtJpaRepository) : MemberVerifierKt {
+    fun memberVerifierKt(memberJpaRepository: MemberKtJpaRepository): MemberVerifierKt {
         return MemberVerifierKtImpl(memberJpaRepository)
     }
 }
