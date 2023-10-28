@@ -1,5 +1,6 @@
 package com.flab.infrun.member.application
 
+import com.flab.infrun.common.annotation.ApplicationService
 import com.flab.infrun.member.application.data.LoginData
 import com.flab.infrun.member.domain.MemberRepositoryKt
 import com.flab.infrun.member.domain.exception.NotFoundMemberExceptionKt
@@ -9,14 +10,17 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.util.StringUtils
 
+@ApplicationService
 class MemberLoginProcessorKt(
     private val memberRepository: MemberRepositoryKt,
     private val passwordEncoder: PasswordEncoder,
     private val tokenProvider: TokenProviderKt,
     private val authenticationMangerBuilder: AuthenticationManagerBuilder,
 ) {
+    @Transactional
     fun execute(command: Command): LoginData {
         verifyCommand(command)
 
