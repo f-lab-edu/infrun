@@ -5,7 +5,6 @@ import com.flab.infrun.member.application.result.LoginResult;
 import com.flab.infrun.member.domain.MemberRepository;
 import com.flab.infrun.member.domain.exception.NotFoundMemberException;
 import com.flab.infrun.member.domain.exception.NotMatchPasswordException;
-import com.flab.infrun.member.infrastructure.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -18,7 +17,6 @@ import org.springframework.util.StringUtils;
 @RequiredArgsConstructor
 public class MemberLoginProcessor {
 
-    private final TokenProvider tokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
@@ -32,7 +30,7 @@ public class MemberLoginProcessor {
             .authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        return new LoginResult(tokenProvider.generateToken(authentication));
+        return new LoginResult("token");
     }
 
     private void verifyCommand(final LoginCommand command) {
