@@ -1,7 +1,7 @@
 package com.flab.infrun.member.infra.config
 
-import com.flab.infrun.member.application.MemberLoginProcessorKt
-import com.flab.infrun.member.application.MemberSignupProcessorKt
+import com.flab.infrun.member.application.processor.MemberLoginProcessorKt
+import com.flab.infrun.member.application.processor.MemberSignupProcessorKt
 import com.flab.infrun.member.domain.MemberRepositoryKt
 import com.flab.infrun.member.domain.MemberVerifierKt
 import com.flab.infrun.member.infra.jwt.TokenProviderKt
