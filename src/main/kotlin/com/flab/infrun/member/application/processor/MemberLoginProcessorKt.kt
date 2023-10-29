@@ -1,4 +1,4 @@
-package com.flab.infrun.member.application
+package com.flab.infrun.member.application.processor
 
 import com.flab.infrun.common.annotation.ApplicationService
 import com.flab.infrun.member.application.data.LoginData
