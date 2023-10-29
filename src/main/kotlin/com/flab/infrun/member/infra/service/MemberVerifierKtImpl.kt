@@ -1,4 +1,4 @@
-package com.flab.infrun.member.infra
+package com.flab.infrun.member.infra.service
 
 import com.flab.infrun.member.domain.MemberVerifierKt
 import com.flab.infrun.member.domain.exception.DuplicatedEmailException

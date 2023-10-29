@@ -1,95 +1,90 @@
 package com.flab.infrun.member.infra.jwt
 
+import com.flab.infrun.common.domain.AuthenticatedUser
+import com.flab.infrun.common.domain.Role
+import com.flab.infrun.member.infra.properties.JwtProperties
+import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.Jwts
+import io.jsonwebtoken.MalformedJwtException
 import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.io.Decoders
 import io.jsonwebtoken.security.Keys
-import org.springframework.beans.factory.InitializingBean
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-import org.springframework.security.core.Authentication
-import org.springframework.security.core.GrantedAuthority
-import org.springframework.security.core.authority.SimpleGrantedAuthority
-import org.springframework.security.core.userdetails.UserDetailsService
-import org.springframework.stereotype.Component
 import java.security.Key
+import java.time.Instant
 import java.util.*
-import java.util.stream.Collectors
 
-@Component
 class TokenProviderKt(
-    private val userDetailsService: UserDetailsService,
-    @Value("\${jwt.secret}")
-    private val secret: String,
-    @Value("\${jwt.token-validity-in-seconds}")
-    private var tokenValidityInMilliseconds: Long = 0,
-) : InitializingBean {
+    private val jwtProperties: JwtProperties,
+) {
 
-    private var key: Key? = null
+    private val keyBytes = Decoders.BASE64.decode(jwtProperties.secret)
+    private var key: Key = Keys.hmacShaKeyFor(keyBytes)
 
-    init {
-        this.tokenValidityInMilliseconds *= 1000
+    fun createToken(
+        userId: Long,
+        email: String,
+        roles: List<Role>,
+    ): String {
+        val now = Instant.now()
+
+        return encode(
+            AuthenticatedUser(
+                jti = UUID.randomUUID().toString(),
+                userId = userId,
+                email = email,
+                roles = roles,
+                issuer = jwtProperties.issuer,
+                issuedAt = now,
+                expiry = now.plusSeconds(jwtProperties.accessTokenExpirySecs),
+            )
+        )
     }
 
-    override fun afterPropertiesSet() {
-        val keyBytes = Decoders.BASE64.decode(secret)
-        key = Keys.hmacShaKeyFor(keyBytes)
-    }
-
-    fun generateToken(authentication: Authentication): String {
-        val authorities = getAuthoritiesToString(authentication)
-        val validity = validityDate
-
+    private fun encode(authenticatedUser: AuthenticatedUser): String {
         return Jwts.builder()
-            .setSubject(authentication.name)
-            .claim(AUTHORITIES_KEY, authorities)
-            .signWith(key, SignatureAlgorithm.HS256)
-            .setExpiration(validity)
+            .setId(UUID.randomUUID().toString())
+            .setSubject(authenticatedUser.userId.toString())
+            .setIssuer(jwtProperties.issuer)
+            .setIssuedAt(Date.from(Instant.now()))
+            .claim("email", authenticatedUser.email)
+            .claim("roles", authenticatedUser.roles)
+            .signWith(key, SignatureAlgorithm.HS512)
+            .setExpiration(Date.from(authenticatedUser.expiry))
             .compact()
     }
 
-    private fun getAuthoritiesToString(authentication: Authentication): String {
-        return authentication.authorities.stream()
-            .map { obj: GrantedAuthority -> obj.authority }
-            .collect(Collectors.joining(","))
-    }
-
-    private val validityDate: Date
-        get() {
-            val now = Date().time
-            return Date(now + tokenValidityInMilliseconds)
-        }
-
-    fun getAuthentication(token: String?): Authentication {
-        val claims = Jwts.parserBuilder()
-            .setSigningKey(key)
-            .build()
-            .parseClaimsJws(token)
-            .body
-        val userDetails = userDetailsService.loadUserByUsername(claims.subject)
-        val authorities = Arrays.stream(
-            claims[AUTHORITIES_KEY].toString().split(",".toRegex()).dropLastWhile { it.isEmpty() }
-                .toTypedArray()
-        )
-            .map { role: String? -> SimpleGrantedAuthority(role) }
-            .toList()
-
-        return UsernamePasswordAuthenticationToken(userDetails, token, authorities)
-    }
-
-    fun validateToken(token: String?): Boolean {
-        return try {
+    fun decode(token: String): AuthenticatedUser {
+        val claims = try {
             Jwts.parserBuilder()
                 .setSigningKey(key)
+                .requireIssuer(jwtProperties.issuer)
                 .build()
                 .parseClaimsJws(token)
-            true
+                .body
+        } catch (e: ExpiredJwtException) {
+            e.claims
         } catch (e: Exception) {
-            false
+            throw e
         }
-    }
 
-    companion object {
-        private const val AUTHORITIES_KEY = "auth"
+        val jti = claims.id ?: throw MalformedJwtException("invalid jwt")
+        val userId = claims.subject.toLong() ?: throw MalformedJwtException("invalid userId")
+        val email =
+            claims.get("email", String::class.java) ?: throw MalformedJwtException("invalid email")
+        val roles = claims.get("roles", List::class.java).map { Role.valueOf(it as String) }
+            ?: throw MalformedJwtException("invalid roles")
+        val issuer = claims.issuer ?: throw MalformedJwtException("invalid issuer")
+        val issuedAt = claims.issuedAt ?: throw MalformedJwtException("invalid issuedAt")
+        val expiry = claims.expiration ?: throw MalformedJwtException("invalid expiry")
+
+        return AuthenticatedUser(
+            jti = jti,
+            userId = userId,
+            email = email,
+            roles = roles,
+            issuer = issuer,
+            issuedAt = issuedAt.toInstant(),
+            expiry = expiry.toInstant(),
+        )
     }
 }
