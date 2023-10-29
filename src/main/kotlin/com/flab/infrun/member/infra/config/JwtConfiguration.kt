@@ -1,6 +1,6 @@
 package com.flab.infrun.member.infra.config
 
-import com.flab.infrun.member.infra.jwt.TokenProviderKt
+import com.flab.infrun.member.infra.jwt.TokenProvider
 import com.flab.infrun.member.infra.properties.JwtProperties
 import com.flab.infrun.member.infra.security.handler.RestAuthenticationEntryPoint
 import com.flab.infrun.member.infra.security.handler.TokenAccessDeniedHandler
@@ -33,7 +33,7 @@ class JwtConfiguration {
     @Bean
     fun tokenProviderKt(
         jwtProperties: JwtProperties,
-    ): TokenProviderKt {
-        return TokenProviderKt(jwtProperties = jwtProperties)
+    ): TokenProvider {
+        return TokenProvider(jwtProperties = jwtProperties)
     }
 }

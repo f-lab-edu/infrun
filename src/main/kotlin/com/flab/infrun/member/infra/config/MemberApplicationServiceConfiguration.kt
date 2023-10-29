@@ -4,7 +4,7 @@ import com.flab.infrun.member.application.processor.MemberLoginProcessorKt
 import com.flab.infrun.member.application.processor.MemberSignupProcessorKt
 import com.flab.infrun.member.domain.MemberRepositoryKt
 import com.flab.infrun.member.domain.MemberVerifierKt
-import com.flab.infrun.member.infra.jwt.TokenProviderKt
+import com.flab.infrun.member.infra.jwt.TokenProvider
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
@@ -17,7 +17,7 @@ class MemberApplicationServiceConfiguration {
     fun memberLoginProcessorKt(
         memberRepository: MemberRepositoryKt,
         passwordEncoder: PasswordEncoder,
-        tokenProvider: TokenProviderKt,
+        tokenProvider: TokenProvider,
         authenticationManagerBuilder: AuthenticationManagerBuilder,
     ): MemberLoginProcessorKt {
         return MemberLoginProcessorKt(

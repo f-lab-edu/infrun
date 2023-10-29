@@ -13,7 +13,7 @@ import java.security.Key
 import java.time.Instant
 import java.util.*
 
-class TokenProviderKt(
+class TokenProvider(
     private val jwtProperties: JwtProperties,
 ) {
 

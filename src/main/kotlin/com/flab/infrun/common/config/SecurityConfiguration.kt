@@ -1,6 +1,6 @@
 package com.flab.infrun.common.config
 
-import com.flab.infrun.member.infra.jwt.TokenProviderKt
+import com.flab.infrun.member.infra.jwt.TokenProvider
 import com.flab.infrun.member.infra.security.filter.TokenAuthenticationFilter
 import com.flab.infrun.member.infra.security.handler.RestAuthenticationEntryPoint
 import org.springframework.boot.context.properties.EnableConfigurationProperties
@@ -24,7 +24,7 @@ import org.springframework.web.servlet.HandlerExceptionResolver
 class SecurityConfiguration(
     private val restAuthenticationEntryPoint: RestAuthenticationEntryPoint,
     private val tokenAccessDeniedHandler: AccessDeniedHandler,
-    private val tokenProviderKt: TokenProviderKt,
+    private val tokenProvider: TokenProvider,
     private val handlerExceptionResolver: HandlerExceptionResolver,
 ) {
 
@@ -49,7 +49,7 @@ class SecurityConfiguration(
             }
             .addFilterBefore(
                 TokenAuthenticationFilter(
-                    tokenProvider = tokenProviderKt,
+                    tokenProvider = tokenProvider,
                     handlerExceptionResolver = handlerExceptionResolver,
                 ),
                 UsernamePasswordAuthenticationFilter::class.java

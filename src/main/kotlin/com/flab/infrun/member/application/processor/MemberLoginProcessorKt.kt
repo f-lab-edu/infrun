@@ -5,7 +5,7 @@ import com.flab.infrun.member.application.data.LoginData
 import com.flab.infrun.member.domain.MemberRepositoryKt
 import com.flab.infrun.member.domain.exception.NotFoundMemberExceptionKt
 import com.flab.infrun.member.domain.exception.NotMatchPasswordException
-import com.flab.infrun.member.infra.jwt.TokenProviderKt
+import com.flab.infrun.member.infra.jwt.TokenProvider
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.transaction.annotation.Transactional
@@ -15,7 +15,7 @@ import org.springframework.util.StringUtils
 class MemberLoginProcessorKt(
     private val memberRepository: MemberRepositoryKt,
     private val passwordEncoder: PasswordEncoder,
-    private val tokenProvider: TokenProviderKt,
+    private val tokenProvider: TokenProvider,
     private val authenticationMangerBuilder: AuthenticationManagerBuilder,
 ) {
     @Transactional

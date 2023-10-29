@@ -1,6 +1,6 @@
 package com.flab.infrun.member.infra.security.filter
 
-import com.flab.infrun.member.infra.jwt.TokenProviderKt
+import com.flab.infrun.member.infra.jwt.TokenProvider
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -15,7 +15,7 @@ import org.springframework.web.servlet.HandlerExceptionResolver
 import java.time.Instant
 
 class TokenAuthenticationFilter(
-    private val tokenProvider: TokenProviderKt,
+    private val tokenProvider: TokenProvider,
     private val handlerExceptionResolver: HandlerExceptionResolver,
 ) : OncePerRequestFilter() {
 
