@@ -1,3 +1,3 @@
 package com.flab.infrun.common.annotation
 
-annotation class ApplicationService
+annotation class ApplicationService()
